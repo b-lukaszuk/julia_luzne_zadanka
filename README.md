@@ -8,6 +8,18 @@ The official [Julia webpage](https://julialang.org/)
 
 # Additional info
 
+## Julia version
+
+```bash
+julia -v
+```
+
+<pre>
+julia version 1.4.1
+</pre>
+
+## Caution note
+
 **Do użytku własnego, nie powinno być używane przez nikogo innego.**
 
 **For personal use only, should not be used by anyone else.**
