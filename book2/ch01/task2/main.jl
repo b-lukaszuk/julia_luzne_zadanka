@@ -33,8 +33,10 @@ end
 
 function get_geogr_coordinates_from_user()::Dict{String,Integer}
     coordinates::Dict{String,Integer} = Dict()
-    coordinates["latitude"] = get_geogr_coordinate_from_user("\nEnter latitude (integer, -90 to 90) in degrees: ", -90, 90)
-    coordinates["longitude"] = get_geogr_coordinate_from_user("\nEnter longitude (integer, -180 to 180) in degrees: ", -180, 180)
+    coordinates["latitude"] = get_geogr_coordinate_from_user(
+        "\nEnter latitude (integer, -90 to 90) in degrees: ", -90, 90)
+    coordinates["longitude"] = get_geogr_coordinate_from_user(
+        "\nEnter longitude (integer, -180 to 180) in degrees: ", -180, 180)
     coordinates
 end
 
@@ -47,8 +49,9 @@ function get_geogr_coordinates_of_2_points()::Array{Dict{String,Integer}}
     points
 end
 
-# distance = 6371.01 × arccos(sin(t1) × sin(t2) + cos(t1) × cos(t2) × cos(g1 − g2))
-function get_distance(p1::Dict{String,Integer}, p2::Dict{String,Integer})::Float64
+# distance = 6371.01 × arccos(sin(lat1) × sin(lat2) + cos(lat1) × cos(lat2) × cos(long1 − long2))
+function get_distance(p1::Dict{String,Integer},
+    p2::Dict{String,Integer})::Float64
     6371.01 * acos(
         sin(deg2rad(p1["latitude"])) * sin(deg2rad(p2["latitude"]))
         +
