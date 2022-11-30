@@ -1,3 +1,5 @@
+using Printf
+
 function get_from_user(prompt_msg::String, input_type::DataType)
     while true
         try
@@ -45,6 +47,16 @@ function get_geogr_coordinates_of_2_points()::Array{Tuple{Integer,Integer}}
     points
 end
 
+# distance = 6371.01 × arccos(sin(t1) × sin(t2) + cos(t1) × cos(t2) × cos(g1 − g2))
+
+function get_distance(p1::Tuple{Integer,Integer}, p2::Tuple{Integer,Integer})::Float64
+    6371.01 * acos(
+        sin(deg2rad(p1[1])) * sin(deg2rad(p2[1]))
+        +
+        cos(deg2rad(p1[1])) * cos(deg2rad(p2[1])) * cos(deg2rad(p1[2]) - deg2rad(p2[2])))
+end
+
+
 function print_program_description()::Nothing
     println("\nHi.\n")
     println("This program reads the geographical coordinates of two points.")
@@ -60,7 +72,10 @@ end
 function main()
     print_program_description()
     points::Array{Tuple{Integer,Integer}} = get_geogr_coordinates_of_2_points()
-    println("You typed $points[1] and $points[2]")
+    println("\nGeographical coordinates of two points obtained.")
+    println("Calculating distance between (lat, long):")
+    println("($(points[1][1]), $(points[1][2])) and ($(points[2][1]), $(points[2][2]))")
+    @printf("%.2f [km]", get_distance(points...))
     println("\nThat's all. Goodbye!\n")
 end
 
