@@ -31,15 +31,15 @@ function get_geogr_coordinate_from_user(prompt_msg::String,
     coordinate
 end
 
-function get_geogr_coordinates_from_user()::Tuple{Integer,Integer}
-    (
-        get_geogr_coordinate_from_user("\nEnter latitude (integer, -90 to 90) in degrees: ", -90, 90),
-        get_geogr_coordinate_from_user("\nEnter longitude (integer, -180 to 180) in degrees: ", -180, 180)
-    )
+function get_geogr_coordinates_from_user()::Dict{String,Integer}
+    coordinates::Dict{String,Integer} = Dict()
+    coordinates["latitude"] = get_geogr_coordinate_from_user("\nEnter latitude (integer, -90 to 90) in degrees: ", -90, 90)
+    coordinates["longitude"] = get_geogr_coordinate_from_user("\nEnter longitude (integer, -180 to 180) in degrees: ", -180, 180)
+    coordinates
 end
 
-function get_geogr_coordinates_of_2_points()::Array{Tuple{Integer,Integer}}
-    points::Array{Tuple{Integer,Integer}} = []
+function get_geogr_coordinates_of_2_points()::Array{Dict{String,Integer}}
+    points::Array{Dict{String,Integer}} = []
     for i in 1:2
         print("\n--Obtaining data for point ", i, "--\n")
         push!(points, get_geogr_coordinates_from_user())
@@ -48,12 +48,18 @@ function get_geogr_coordinates_of_2_points()::Array{Tuple{Integer,Integer}}
 end
 
 # distance = 6371.01 × arccos(sin(t1) × sin(t2) + cos(t1) × cos(t2) × cos(g1 − g2))
-
-function get_distance(p1::Tuple{Integer,Integer}, p2::Tuple{Integer,Integer})::Float64
+function get_distance(p1::Dict{String,Integer}, p2::Dict{String,Integer})::Float64
     6371.01 * acos(
-        sin(deg2rad(p1[1])) * sin(deg2rad(p2[1]))
+        sin(deg2rad(p1["latitude"])) * sin(deg2rad(p2["latitude"]))
         +
-        cos(deg2rad(p1[1])) * cos(deg2rad(p2[1])) * cos(deg2rad(p1[2]) - deg2rad(p2[2])))
+        cos(deg2rad(p1["latitude"])) * cos(deg2rad(p2["latitude"])) *
+        cos(deg2rad(p1["longitude"]) - deg2rad(p2["longitude"])))
+end
+
+function pause_until_keypress()
+    print("Press any key to begin: ")
+    readline()
+    println()
 end
 
 
@@ -71,12 +77,14 @@ end
 
 function main()
     print_program_description()
-    points::Array{Tuple{Integer,Integer}} = get_geogr_coordinates_of_2_points()
+    pause_until_keypress()
+    points::Array{Dict{String,Integer}} = get_geogr_coordinates_of_2_points()
     println("\nGeographical coordinates of two points obtained.")
-    println("Calculating distance between (lat, long):")
-    println("($(points[1][1]), $(points[1][2])) and ($(points[2][1]), $(points[2][2]))")
-    @printf("%.2f [km]", get_distance(points...))
-    println("\nThat's all. Goodbye!\n")
+    println("\nCalculating distance between (lat, long):")
+    print("($(points[1]["latitude"]), $(points[1]["longitude"])) and ")
+    println("($(points[2]["latitude"]), $(points[2]["longitude"]))")
+    @printf("Result: %.2f [km]", get_distance(points...))
+    println("\n\nThat's all. Goodbye!\n")
 end
 
 main()
