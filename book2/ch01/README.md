@@ -74,11 +74,13 @@ Write a program that begins by reading a number of cents from the user as an int
 
 ## My notes
 
-penny - 1/100th of a dollar, a cent
-nickel - five centes
-dime - ten cents
-quarter - 25 cents
-loonie - 1 dollar coin in Canada (hint from the book)
-toonie - 2 dollar coin in Canada (hint from the book)
+List of available coins
+
++ penny - 1/100th of a dollar, a cent
++ nickel - five centes
++ dime - ten cents
++ quarter - 25 cents
++ loonie - 1 dollar coin in Canada (hint from the book)
++ toonie - 2 dollar coin in Canada (hint from the book)
 
 I think I will write the solution using [Pluto.jl](https://github.com/fonsp/Pluto.jl). Since Pluto.jl is interactive (and reactive) I think there is no point of handling user input as in terminal (See: my solution to task2 from this chapter).
