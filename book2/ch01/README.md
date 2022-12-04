@@ -6,6 +6,7 @@
 
 1. [Task 1](#task-1)
 2. [Task 2](#task-2)
+3. [Task 3](#task-3)
 
 ---
 
@@ -56,3 +57,26 @@ The value 6371.01 in the previous equation wasn’t selected at random. It is th
 Create a program that allows the user to enter the latitude and longitude of two points on the Earth in degrees. Your program should display the distance between the points, following the surface of the earth, in kilometers.
 
 Hint: Python’s trigonometric functions operate in radians. [...] The math module contains a function named radians which converts from degrees to radians.
+
+# Task 3
+
+[Go to: Table of contents](#table-of-contents)
+
+## Title
+
+Making Change
+
+(Part 1, Exercise 13 from the book)
+
+## Description
+
+Write a program that begins by reading a number of cents from the user as an integer. Then your program should compute and display the denominations of the coins that should be used to give that amount of change to the shopper. The change should be given using as few coins as possible. Assume that the machine is loaded with pennies, nickels, dimes, quarters, loonies and toonies.
+
+## My notes
+
+penny - 1/100th of a dollar, a cent
+nickel - five centes
+dime - ten cents
+quarter - 25 cents
+loonie - 1 dollar coin in Canada (hint from the book)
+toonie - 2 dollar coin in Canada (hint from the book)
