@@ -8,6 +8,7 @@
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
 4. [Task 4](#task-4)
+5. [Task 5](#task-5)
 
 ---
 
@@ -99,3 +100,23 @@ Free Fall
 ## Description
 
 Create a program that determines how quickly an object is traveling when it hits the ground. The user will enter the height from which the object is dropped in meters (m). Because the object is dropped its initial speed is 0 m/s. Assume that the acceleration due to gravity is 9.8 m/s^2. You can use the formula vf = sqrt(v_i^2 + 2ad) to compute the final speed, vf, when the initial speed, vi, acceleration, a, and distance, d, are known.
+
+# Task 5
+
+[Go to: Table of contents](#table-of-contents)
+
+## Title
+
+Area of a Regular Polygon
+
+(Part 1, Exercise 23 from the book)
+
+## Description
+
+A polygon is regular if its sides are all the same length and the angles between all of the adjacent sides are equal. The area of a regular polygon can be computed using the following formula, where `s` is the length of a side and `n` is the number of sides:
+
+<pre>
+area = (n * s^2) / (4 * tan(PI / n))
+</pre>
+
+Write a program that reads s and n from the user and then displays the area of a regular polygon constructed from these values.
