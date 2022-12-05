@@ -4,9 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ e163eaf0-f06f-4dad-bd2f-0771a9e349b2
-using Printf
-
 # ╔═╡ 7a948dee-73f8-11ed-21af-7b437918e3d2
 md"# Task 3"
 
@@ -35,9 +32,9 @@ List of coins and their values:
 # ╔═╡ 37278acd-d2c3-49b1-9df1-c3ecc882f222
 md"## Solution"
 
-# ╔═╡ 2c819b49-3b67-4999-9ccd-fa14501d3afa
-function my_math_floor(num::Float64)::Int64
-	Int(parse(Float64, @sprintf("%0.f", num)))
+# ╔═╡ 16bdabfb-4567-4e34-b5f8-6744837d02e5
+function my_round(num::Float64)::Int64
+	Int(round(num, digits=0, base=10))
 end
 
 # ╔═╡ 7da93653-583d-41ba-b863-2be754b2b803
@@ -68,7 +65,7 @@ end
 function get_change_money_info(dollars::Float64)::String
 	result::String = "To change \$$dollars you should use:\n"
 	coins_value_name::Dict{Int, String} = Dict(200 => "toonie", 100 => "loonie", 25 => "quarter", 10 => "dime", 5 => "nickel", 1 => "penny")
-	change::Dict{Int, Int} = get_change(my_math_floor(dollars*100), available_coins)
+	change::Dict{Int, Int} = get_change(my_round(dollars*100), available_coins)
 	for k in keys(change)
 		result = result * "$(change[k]) x $(coins_value_name[k])\n"
 	end
@@ -90,8 +87,7 @@ Text(get_change_money_info(4.77))
 # ╟─6c87ae80-6bb0-4ad9-b479-5cf33efa00ff
 # ╟─c75d7ebd-12f2-43c0-8248-d7ea68e62772
 # ╟─37278acd-d2c3-49b1-9df1-c3ecc882f222
-# ╠═e163eaf0-f06f-4dad-bd2f-0771a9e349b2
-# ╠═2c819b49-3b67-4999-9ccd-fa14501d3afa
+# ╠═16bdabfb-4567-4e34-b5f8-6744837d02e5
 # ╠═7da93653-583d-41ba-b863-2be754b2b803
 # ╠═f4a1845e-0a96-4adc-a4e6-0cb606703474
 # ╠═c6abd44b-19fa-4a10-94be-0a956b0e903e
