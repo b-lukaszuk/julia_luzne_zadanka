@@ -74,7 +74,7 @@ Making Change
 
 Write a program that begins by reading a number of cents from the user as an integer. Then your program should compute and display the denominations of the coins that should be used to give that amount of change to the shopper. The change should be given using as few coins as possible. Assume that the machine is loaded with pennies, nickels, dimes, quarters, loonies and toonies.
 
-## My notes
+## My Notes
 
 List of available coins
 
@@ -101,6 +101,10 @@ Free Fall
 
 Create a program that determines how quickly an object is traveling when it hits the ground. The user will enter the height from which the object is dropped in meters (m). Because the object is dropped its initial speed is 0 m/s. Assume that the acceleration due to gravity is 9.8 m/s^2. You can use the formula vf = sqrt(v_i^2 + 2ad) to compute the final speed, vf, when the initial speed, vi, acceleration, a, and distance, d, are known.
 
+## My Notes
+
+I think I will write the solution using [Pluto.jl](https://github.com/fonsp/Pluto.jl). Since Pluto.jl is interactive (and reactive) I think there is no point of handling user input as in terminal (See: my solution to task2 from this chapter).
+
 # Task 5
 
 [Go to: Table of contents](#table-of-contents)
@@ -120,3 +124,7 @@ area = (n * s^2) / (4 * tan(PI / n))
 </pre>
 
 Write a program that reads s and n from the user and then displays the area of a regular polygon constructed from these values.
+
+## My Notes
+
+I think I will write the solution using [Pluto.jl](https://github.com/fonsp/Pluto.jl). Since Pluto.jl is interactive (and reactive) I think there is no point of handling user input as in terminal (See: my solution to task2 from this chapter).
