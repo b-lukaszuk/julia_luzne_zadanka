@@ -38,6 +38,10 @@ function my_round(num::Float64)::Float64
 end
 
 # ╔═╡ 2c5a9f9a-bab1-4152-8179-14fbe14f7d48
+# proper display of superfixes on the graph will require libGR.so
+# installation from julia REPL
+# using Pkg
+# ENV["GRDIR"]=""; Pkg.build("GR")
 begin
 	plot(no_of_sides, reg_polyg_area, seriestype=:scatter,
 		markersize=reg_polyg_area)
