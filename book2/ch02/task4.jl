@@ -28,27 +28,24 @@ A roulette wheel has 38 spaces on it. Of these spaces, 18 are black, 18 are red,
 
 Write a program that simulates a spin of a roulette wheel by using Python’s random number generator. Display the number that was selected and all of the bets that must be payed, e.g.
 
-<pre>
-The spin resulted in 13...
-Pay 13
-Pay Black
-Pay Odd
-Pay 1 to 18
-</pre>
+$(html"<blockquote>
+The spin resulted in 13...</br>
+Pay 13</br>
+Pay Black</br>
+Pay Odd</br>
+Pay 1 to 18</blockquote>")
 
 or
 
-<pre>
-The spin resulted in 0...
-Pay 0
-</pre>
+$(html"<blockquote>
+The spin resulted in 0...</br>
+Pay 0</blockquote>")
 
 or
 
-<pre>
-The spin resulted in 00...
-Pay 00
-</pre>
+$(html"<blockquote>
+The spin resulted in 00...</br>
+Pay 00</blockquote>")
 """
 
 # ╔═╡ 04067ce1-3200-4bc8-b7c8-716e71be6f4c
