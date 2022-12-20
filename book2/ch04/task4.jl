@@ -31,7 +31,7 @@ NO GUARANTEE IT WILL WORK OR WORK CORRECTLY! USE IT AT YOUR OWN RISK!
 """
 
 # ╔═╡ 36f068cd-f16b-436e-8e54-82dc3e1acd8b
-function are_all_chars_legal(text::String, legal_chars::String)
+function are_all_chars_legal(text::String, legal_chars::String)::Bool
     all([ch in legal_chars for ch in text])
 end
 
@@ -78,13 +78,13 @@ end
 
 # ╔═╡ 8156600c-5f57-4a47-84f1-8a71de43edca
 function dec2hex(decimal::Integer, hex_chars::String="0123456789abcdef")::String
-	hex::String = ""
-	after_division::Integer = decimal
-	while after_division != 0
-		hex = string(hex, hex_chars[(after_division % 16) + 1])
+    hex::String = ""
+    after_division::Integer = decimal
+    while after_division != 0
+        hex = string(hex, hex_chars[(after_division%16)+1])
         after_division = after_division ÷ 16
-	end
-	return hex[end:-1:1]
+    end
+    return hex[end:-1:1]
 end
 
 # ╔═╡ 401abf1b-6564-44e2-a1b9-fc28ed7c55bb
