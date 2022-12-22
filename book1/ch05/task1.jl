@@ -8,10 +8,26 @@ using InteractiveUtils
 using PlutoUI: with_terminal
 
 # ╔═╡ e5fed7c2-8174-11ed-2ced-dbeff236d7c0
-md"""# Chapter 5. Selected Exercises.
-
+md"""
 [Link to
 exercises](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_exercises_6)
+"""
+
+# ╔═╡ d327f4ba-83ad-4b32-a516-a08462796fe4
+md"""# Task 1
+
+## Original exercise number
+
+Exercise 5-2
+
+## Description
+
+Write a script that reads the current time and converts it to a time of day in
+hours, minutes, and seconds, plus the number of days since the epoch.
+
+- I will use the aforementioned `time` function
+
+On UNIX systems, the epoch is 1 January 1970.
 """
 
 # ╔═╡ 31feb954-3e10-4647-8936-542377f1cae7
@@ -23,22 +39,8 @@ OWN RISK!
 # ╔═╡ 39b91278-5589-4c50-ba3c-9a97b613693d
 md"""## Imports"""
 
-# ╔═╡ e008aa01-1376-4e5f-855b-b9dbf00a78c8
-md"""## Task 1
-
-### Original exercise number
-
-Exercise 5-2
-
-### Description
-
-Write a script that reads the current time and converts it to a time of day in
-hours, minutes, and seconds, plus the number of days since the epoch.
-
-- I will use the aforementioned `time` function
-
-On UNIX systems, the epoch is 1 January 1970.
-"""
+# ╔═╡ 4dd8ab34-0ce2-4571-b37b-726646609669
+md"""## Solution"""
 
 # ╔═╡ 06ef1541-31f5-431b-8a04-b51de217f703
 function get_num_of_full_days_since_epoch()::Int64
@@ -334,10 +336,11 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─e5fed7c2-8174-11ed-2ced-dbeff236d7c0
+# ╟─d327f4ba-83ad-4b32-a516-a08462796fe4
 # ╟─31feb954-3e10-4647-8936-542377f1cae7
 # ╟─39b91278-5589-4c50-ba3c-9a97b613693d
 # ╠═91a407cf-8b25-4b74-8815-f245f1fe3a8c
-# ╟─e008aa01-1376-4e5f-855b-b9dbf00a78c8
+# ╟─4dd8ab34-0ce2-4571-b37b-726646609669
 # ╠═06ef1541-31f5-431b-8a04-b51de217f703
 # ╠═654131e2-7527-4cc1-badd-e4112c7b9f2e
 # ╠═b807c758-568f-4573-a9b8-8f3a6afb8547
