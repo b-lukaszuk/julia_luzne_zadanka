@@ -44,9 +44,17 @@ import PlutoUI: with_terminal
 # ╔═╡ e9397504-667f-4eb8-bf7f-9fc5c3fd5c10
 md"""### Functions"""
 
+# ╔═╡ b196e684-b174-417d-86b8-1d3c24ae3817
+function is_ascii_letter(char:: Char):: Bool
+	return (65 <= Int(char) <= 90) || (97 <= Int(char) <= 122)
+end
+
 # ╔═╡ 5b28d627-40c3-4551-9b87-3f8fdb01ae97
-function shift_a_z_char(a_z_char:: Char, by:: Int, lower:: Bool = true):: Char
-    letters:: String = lower ?
+function rotate_char(a_z_char:: Char, by:: Int):: Char
+	if !is_ascii_letter(a_z_char)
+		return a_z_char
+	end
+    letters:: String = islowercase(a_z_char) ?
         "abcdefghijklmnopqrstuvwxyz" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     no_of_chars:: Int = length(letters)
     ind:: Int = (Int(a_z_char) - Int(letters[1]) + by) % no_of_chars
@@ -55,11 +63,7 @@ end
 
 # ╔═╡ 675053c7-92ae-40ba-a99e-2820e7005826
 function rotateword(word_a_z:: String, by:: Int):: String
-    rotated_word:: String = ""
-    for c in word_a_z
-        rotated_word = rotated_word * shift_a_z_char(c, by, islowercase(c))
-    end
-    return rotated_word
+    return map(c -> rotate_char(c, by), word_a_z)
 end
 
 # ╔═╡ 6f51d4c6-0691-47eb-a540-663d27f87dcd
@@ -343,6 +347,7 @@ version = "17.4.0+0"
 # ╟─24f88435-7427-42ea-8c5c-0ca216a35a23
 # ╠═d712a0b5-4453-4bc0-9ba4-8627b1206661
 # ╟─e9397504-667f-4eb8-bf7f-9fc5c3fd5c10
+# ╠═b196e684-b174-417d-86b8-1d3c24ae3817
 # ╠═5b28d627-40c3-4551-9b87-3f8fdb01ae97
 # ╠═675053c7-92ae-40ba-a99e-2820e7005826
 # ╟─6f51d4c6-0691-47eb-a540-663d27f87dcd
