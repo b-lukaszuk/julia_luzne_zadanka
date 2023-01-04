@@ -56,8 +56,7 @@ function rotate_char(a_z_char:: Char, by:: Int):: Char
 	end
     letters:: String = islowercase(a_z_char) ?
         "abcdefghijklmnopqrstuvwxyz" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    no_of_chars:: Int = length(letters)
-    ind:: Int = (Int(a_z_char) - Int(letters[1]) + by) % no_of_chars
+    ind:: Int = (Int(a_z_char) - Int(letters[1]) + by) % length(letters)
     return ind >= 0 ? letters[ind + 1] : letters[end + ind + 1]
 end
 
@@ -76,8 +75,8 @@ with_terminal() do
 	println("Testing rotateword function. Examples.\n")
 	for i in eachindex(words)
 		println("-" ^ 3)
-		println("Rotating $(words[i]) by $(rotations[i])")
-		println("Result: $(rotateword(words[i], rotations[i]))")
+		println("Rotating '$(words[i])' by $(rotations[i])")
+		println("Result: '$(rotateword(words[i], rotations[i]))'")
 	end
 	println("\nThat's all. Goodbye!")
 end
