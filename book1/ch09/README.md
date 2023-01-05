@@ -1,6 +1,7 @@
 # Chapter 9. Case Study: Word Play.
 
 [Chapter 9, and its exercises](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap09) from the book.
+
 [words.txt](https://github.com/BenLauwens/ThinkJulia.jl/blob/master/data/words.txt) from Ben Lauwens GitHub (here I will not inclede it here).
 
 ---
