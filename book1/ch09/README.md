@@ -7,7 +7,7 @@
 
 # Table of contents
 
-1. Task 1](#task-1)
+1. [Task 1](#task-1)
 
 ---
 
@@ -22,3 +22,11 @@ Exercise 9-1
 ## Description
 
 Write a program that reads words.txt and prints only the words with more than 20 characters (not counting whitespace).
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
