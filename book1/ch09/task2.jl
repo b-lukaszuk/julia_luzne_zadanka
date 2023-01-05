@@ -47,14 +47,10 @@ function get_lines(file_path::String = "./words/words.txt")::Vector{String}
     return lines
 end
 
-# ╔═╡ ff45c945-43d0-4159-9953-2b01481251ff
-function print_words_without_a_letter(words::Vector{String}, letter::Char='e')
-	for word in words
-        if !(letter in word)
-            println(word)
-        end
-    end
-    return nothing
+# ╔═╡ 6389df10-d9ef-4752-acbf-8cb2b9a89e0d
+function get_words_without_a_letter(
+    words::Vector{String}, letter::Char='e')::Vector{String}
+    return filter(word -> !(letter in word), words)
 end
 
 # ╔═╡ 768a5518-061f-4bd6-8771-2dadfa8cda40
@@ -62,8 +58,16 @@ md"""## Testing"""
 
 # ╔═╡ e9daef38-2769-4471-be70-43cc328b7a58
 with_terminal() do
-	println("Printing words from words.txt that contain no 'e'\n")
-	print_words_without_a_letter(get_lines(), 'e')
+	all_words::Vector{String} = get_lines()
+	no_e_words::Vector{String} = get_words_without_a_letter(all_words, 'e')
+	frac_no_e::Float64 = round(length(no_e_words) / length(all_words), digits=3)
+	print("Out of $(length(all_words)) words ")
+	println("$(length(no_e_words)) do not contain the letter 'e'")
+	println("So, $(frac_no_e*100)% words without 'e'")
+	println("Printing words from words.txt that contain no 'e':\n")
+	for word in no_e_words
+		println(word)
+	end
 	println("\nThat's all. Goodbye!")
 end
 
@@ -333,7 +337,7 @@ version = "17.4.0+0"
 # ╠═a18a78ae-61d6-4825-a506-adac41688bb4
 # ╟─9b5a13b3-11fe-4d33-998b-e1f1a65f3316
 # ╠═19b1e316-168d-45d8-953e-465dca621e5b
-# ╠═ff45c945-43d0-4159-9953-2b01481251ff
+# ╠═6389df10-d9ef-4752-acbf-8cb2b9a89e0d
 # ╟─768a5518-061f-4bd6-8771-2dadfa8cda40
 # ╠═e9daef38-2769-4471-be70-43cc328b7a58
 # ╟─00000000-0000-0000-0000-000000000001
