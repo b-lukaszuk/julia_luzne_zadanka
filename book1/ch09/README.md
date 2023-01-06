@@ -11,6 +11,7 @@
 1. [Task 1](#task-1)
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
+4. [Task 4](#task-4)
 
 ---
 
@@ -69,6 +70,27 @@ Exercise 9-3
 ## Description
 
 Write a function named `avoids` that takes a word and a string of forbidden letters, and that returns true if the word doesn’t use any of the forbidden letters.
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
+# Task 4
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 9-6
+
+## Description
+
+Write a function called `isabecedarian` that returns `true` if the letters in a word appear in alphabetical order (double letters are ok). How many abecedarian words are there?
 
 ## Exemplary usage
 
