@@ -67,7 +67,7 @@ md"""## Testing"""
 
 # ╔═╡ e9daef38-2769-4471-be70-43cc328b7a58
 with_terminal() do
-	all_words::Vector{String} = get_lines()
+	all_words::Vector{String} = get_lines() # the file contains 1 word per line
 	abecedarians::Vector{String} = filter(isabecedarian, all_words)
 	println("Looking for abecedarian words in 'words.txt'.")
 	println("Abecedarian - a word where all the letters are in alphabetical order.")

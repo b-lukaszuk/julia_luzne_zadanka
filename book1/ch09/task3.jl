@@ -62,7 +62,7 @@ md"""## Testing"""
 # ╔═╡ e9daef38-2769-4471-be70-43cc328b7a58
 with_terminal() do
 	println("Printing words from 'words.txt' that avoid 'aeiouy' chars.\n")
-	all_words::Vector{String} = get_lines()
+	all_words::Vector{String} = get_lines() # the file contains 1 word per line
 	words_no_aeiouy::Vector{String} = filter(w -> avoids(w, "aeiouy"), all_words)
 	for word in words_no_aeiouy
 		println(word)

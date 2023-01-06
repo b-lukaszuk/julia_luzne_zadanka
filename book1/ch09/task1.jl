@@ -40,6 +40,7 @@ import PlutoUI: with_terminal
 md"""### Functions"""
 
 # ╔═╡ 19b1e316-168d-45d8-953e-465dca621e5b
+# the file contains 1 word per line
 function get_lines(file_path::String = "./words/words.txt")::Vector{String}
     lines::Vector{String} = []
     open(file_path) do file

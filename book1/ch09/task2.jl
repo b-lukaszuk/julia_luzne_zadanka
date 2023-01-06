@@ -58,7 +58,7 @@ md"""## Testing"""
 
 # ╔═╡ e9daef38-2769-4471-be70-43cc328b7a58
 with_terminal() do
-	all_words::Vector{String} = get_lines()
+	all_words::Vector{String} = get_lines() # the file contains 1 word per line
 	no_e_words::Vector{String} = get_words_without_a_letter(all_words, 'e')
 	frac_no_e::Float64 = round(length(no_e_words) / length(all_words), digits=3)
 	print("Out of $(length(all_words)) words ")
