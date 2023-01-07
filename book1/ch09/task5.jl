@@ -68,7 +68,7 @@ end
 # ╔═╡ 60862e0b-135b-46d0-af10-0b5e76b66d94
 function contains_n_double_chars(word::String, n::Int=3)::Bool
 	my_regex::Regex = Regex(get_regex_n_double_chars(n))
-	m::Union{RegexMatch, Nothing} = match(my_regex, word)
+	m::Union{RegexMatch, Nothing} = match(my_regex, lowercase(word))
 	return !isnothing(m)
 end
 
