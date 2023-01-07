@@ -12,6 +12,7 @@
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
 4. [Task 4](#task-4)
+5. [Task 5](#task-5)
 
 ---
 
@@ -91,6 +92,31 @@ Exercise 9-6
 ## Description
 
 Write a function called `isabecedarian` that returns `true` if the letters in a word appear in alphabetical order (double letters are ok). How many abecedarian words are there?
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
+# Task 5
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 9-7
+
+## Description
+
+This question is based on a Puzzler that was broadcast on the radio program Car Talk (https://www.cartalk.com/puzzler/browse):
+
+Give me a word with three consecutive double letters. I’ll give you a couple of words that almost qualify, but don’t. For example, the word committee, c-o-m-m-i-t-t-e-e. It would be great except for the i that sneaks in there. Or Mississippi: M-i-s-s-i-s-s-i-p-p-i. If you could take out those i’s it would work. But there is a word that has three consecutive pairs of letters and to the best of my knowledge this may be the only word. Of course there are probably 500 more but I can only think of one. What is the word?
+
+Write a program to find it.
 
 ## Exemplary usage
 
