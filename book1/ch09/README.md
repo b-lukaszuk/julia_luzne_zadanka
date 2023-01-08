@@ -13,6 +13,7 @@
 3. [Task 3](#task-3)
 4. [Task 4](#task-4)
 5. [Task 5](#task-5)
+6. [Task 6](#task-6)
 
 ---
 
@@ -117,6 +118,37 @@ This question is based on a Puzzler that was broadcast on the radio program Car 
 Give me a word with three consecutive double letters. I’ll give you a couple of words that almost qualify, but don’t. For example, the word committee, c-o-m-m-i-t-t-e-e. It would be great except for the i that sneaks in there. Or Mississippi: M-i-s-s-i-s-s-i-p-p-i. If you could take out those i’s it would work. But there is a word that has three consecutive pairs of letters and to the best of my knowledge this may be the only word. Of course there are probably 500 more but I can only think of one. What is the word?
 
 Write a program to find it.
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
+# Task 6
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 9-9
+
+## Description
+
+Here’s another Car Talk Puzzler you can solve with a search (https://www.cartalk.com/puzzler/browse):
+
+Recently I had a visit with my mom and we realized that the two digits that make up my age when reversed resulted in her age. For example, if she’s 73, I’m 37. We wondered how often this has happened over the years but we got sidetracked with other topics and we never came up with an answer.
+
+When I got home I figured out that the digits of our ages have been reversible six times so far. I also figured out that if we’re lucky it would happen again in a few years, and if we’re really lucky it would happen one more time after that. In other words, it would have happened 8 times over all. So the question is, how old am I now?
+
+Write a Julia program that searches for solutions to this Puzzler.
+
+### Tip
+
+You might find the function `lpad` useful.
 
 ## Exemplary usage
 
