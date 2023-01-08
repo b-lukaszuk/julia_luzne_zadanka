@@ -37,7 +37,7 @@ pd.describe(tab31)
 begin
 	plts.scatter(tab31[:, :age], tab31[:, :pi_max], legend=false)
 	plts.xlims!((5, 25))
-	plts.title!("Scatter diagram of PImax by age")
+	plts.title!("Fig. 3.15. Scatter diagram of PImax by age")
 	plts.xlabel!("Age [years]")
 	plts.ylabel!("PImax [cm \$H_2 O\$]")
 end
@@ -58,7 +58,7 @@ pd.describe(tab32)
 # ╔═╡ 5087bad9-6b83-4f85-a9bb-840fd90a8952
 begin
 	plts.histogram(tab32[:, :igm], bins=0.0:0.1:4.7, weights=tab32[:, :num_of_children], legend=false)
-	plts.title!("Concentration of IgM in\n298 children aged 6 months to 6 years.")
+	plts.title!("Fig. 3.7. (a) Concentration of IgM in\n298 children aged 6 months to 6 years")
 	plts.xlabel!("IgM [g/l]")
 	plts.ylabel!("Number of children")
 end
@@ -66,9 +66,27 @@ end
 # ╔═╡ 1f476f12-8fce-447f-9117-57a65e1a0753
 begin
 	plts.plot(tab32[:, :igm], tab32[:, :num_of_children], legend=false)
-	plts.title!("Concentration of IgM in\n298 children aged 6 months to 6 years.")
+	plts.title!("Fig. 3.7. (b) Concentration of IgM in\n298 children aged 6 months to 6 years")
 	plts.xlabel!("IgM [g/l]")
 	plts.ylabel!("Number of children")
+end
+
+# ╔═╡ 41cf1f23-fe97-46d2-bc1c-2559459d6ad0
+begin
+	cum_freq::Vector{<:Number} = cumsum(tab32[:, :num_of_children])
+	cum_freq = cum_freq ./ cum_freq[end] .* 100
+	plts.histogram(tab32[:, :igm], bins=0.0:0.1:4.7, weights=cum_freq, legend=false)
+	plts.title!("Fig 3.10 (a) Concentration of IgM in\n298 children aged 6 months to 6 years.")
+	plts.xlabel!("IgM [g/l]")
+	plts.ylabel!("Cumulative frequency [%]")
+end
+
+# ╔═╡ 8281adc6-6f81-4acc-8ee2-b62028a6ad6a
+begin
+	plts.plot(tab32[:, :igm], cum_freq, legend=false)
+	plts.title!("Fig 3.10 (b) Concentration of IgM in\n298 children aged 6 months to 6 years.")
+	plts.xlabel!("IgM [g/l]")
+	plts.ylabel!("Cumulative frequency [%]")
 end
 
 # ╔═╡ 930771d7-325e-4df9-83d2-af135dc694bd
@@ -85,7 +103,7 @@ end
 # ╔═╡ 6ead812c-4743-47c7-873e-d7cc462c50d9
 begin
 	plts.histogram(ages, bins=vcat([0], ages), weights=frequencies, legend=false)
-	plts.title!("Incorrect histogram of road accident data (tab 3.3)")
+	plts.title!("Fig. 3.5. Incorrect histogram\nof road accident data (tab 3.3)")
 	plts.xlabel!("Age [years]")
 	plts.ylabel!("Number of accidents")
 end
@@ -93,7 +111,7 @@ end
 # ╔═╡ f57b70cc-2f18-4d49-93f0-b0a2e8426e85
 begin
 	plts.histogram(ages, bins=vcat([0], ages), weights=frequencies, legend=false, normalize=true)
-	plts.title!("Correct histogram of road accident data (tab 3.3)")
+	plts.title!("Fig. 3.6. Correct histogram\nof road accident data (tab 3.3)")
 	plts.xlabel!("Age [years]")
 	plts.ylabel!("Frequency per year of age")
 end
@@ -1108,6 +1126,8 @@ version = "1.4.1+0"
 # ╠═0aeb9138-d2f3-481d-96a2-806b911c6e5b
 # ╠═5087bad9-6b83-4f85-a9bb-840fd90a8952
 # ╠═1f476f12-8fce-447f-9117-57a65e1a0753
+# ╠═41cf1f23-fe97-46d2-bc1c-2559459d6ad0
+# ╠═8281adc6-6f81-4acc-8ee2-b62028a6ad6a
 # ╟─930771d7-325e-4df9-83d2-af135dc694bd
 # ╠═cf671774-0fcd-44fd-aec4-b6a63fdccefe
 # ╠═6ead812c-4743-47c7-873e-d7cc462c50d9
