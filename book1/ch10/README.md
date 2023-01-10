@@ -8,6 +8,7 @@
 
 1. [Task 1](#task-1)
 2. [Task 2](#task-2)
+3. [Task 3](#task-3)
 
 ---
 
@@ -67,3 +68,29 @@ using Pluto
 Pluto.run()
 ```
 
+# Task 3
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 10-8
+
+## Description
+
+This exercise pertains to the so-called Birthday Paradox, which you can read about at https://en.wikipedia.org/wiki/Birthday_paradox.
+
+If there are 23 students in your class, what are the chances that two of you have the same birthday? You can estimate this probability by generating random samples of 23 birthdays and checking for matches.
+
+### TIP
+
+You can generate random birthdays with rand(1:365).
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
