@@ -7,6 +7,7 @@
 # Table of contents
 
 1. [Task 1](#task-1)
+2. [Task 2](#task-2)
 
 ---
 
@@ -27,6 +28,34 @@ julia> t = [[1, 2], [3], [4, 5, 6]];
 
 julia> nestedsum(t)
 21
+</pre>
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
+# Task 2
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 10-5
+
+## Description
+
+Write a function called `issort` that takes an array as a parameter and returns `true` if the array is sorted in ascending order and `false` otherwise. For example:
+
+<pre>
+julia> issort([1, 2, 2])
+true
+julia> issort(['b', 'a'])
+false
 </pre>
 
 ## Exemplary usage
