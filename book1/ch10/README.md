@@ -9,6 +9,7 @@
 1. [Task 1](#task-1)
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
+4. [Task 4](#task-4)
 
 ---
 
@@ -94,3 +95,29 @@ Created with [Pluto.jl](https://plutojl.org/), running notebook
 using Pluto
 Pluto.run()
 ```
+
+# Task 4
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 10-9
+
+## Description
+
+Write a function that reads the file `words.txt` and builds an array with one element per word. Write two versions of this function, one using `push!` and the other using the idiom `t = [t..., x]`. Which one takes longer to run? Why?
+
+## My notes
+
+[words.txt](https://github.com/BenLauwens/ThinkJulia.jl/blob/master/data/words.txt) from Ben Lauwens GitHub (here I will not inclede it here, in my repo).
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
