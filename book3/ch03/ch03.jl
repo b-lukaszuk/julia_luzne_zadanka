@@ -13,8 +13,8 @@ md"""### Imports"""
 # ╔═╡ 4779b736-a2b3-4122-b397-c43119735a9d
 begin
 	import DataFrames as pd # Pandas in Python
-	import Statistics as stat
 	import Plots as plts
+	import Statistics as stat
 end
 
 # ╔═╡ 18f00c4f-8d38-4d40-bd67-b34c87c34f83
@@ -115,6 +115,20 @@ begin
 	plts.xlabel!("Age [years]")
 	plts.ylabel!("Frequency per year of age")
 end
+
+# ╔═╡ 3c4c0610-060e-4eca-ae71-d41ef5c2c4e9
+md"""### Tab 3.6"""
+
+# ╔═╡ ecdd8974-b0ac-49da-97bd-5d09f7a6d244
+begin
+	consump_g_pers_wk::Vector{<:Number} = [1040, 70, 25, 155, 975, 80, 20, 80, 915, 70, 15, 85, 785, 75, 20, 75, 620, 115, 45, 105]
+	year::Vector{Int} = repeat([1960, 1965, 1970, 1975, 1980], inner=4)
+	bread_type::Vector{String} = repeat(["white", "brown", "wholemeal", "other"], outer=5)
+	tab36 = pd.DataFrame((;consump_g_pers_wk, year, bread_type))
+end
+
+# ╔═╡ 01cefc16-f9dc-456f-aab8-54db3cb7ee70
+pd.describe(tab36)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -454,9 +468,9 @@ version = "1.3.0"
 
 [[deps.Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Printf", "Requires"]
-git-tree-sha1 = "ab9aa169d2160129beb241cb2750ca499b4e90e9"
+git-tree-sha1 = "2422f47b34d4b127720a18f86fa7b1aa2e141f29"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.15.17"
+version = "0.15.18"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -724,9 +738,9 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.RecipesBase]]
 deps = ["SnoopPrecompile"]
-git-tree-sha1 = "18c35ed630d7229c5584b945641a73ca83fb5213"
+git-tree-sha1 = "261dddd3b862bd2c940cf6ca4d1c8fe593e457c8"
 uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
-version = "1.3.2"
+version = "1.3.3"
 
 [[deps.RecipesPipeline]]
 deps = ["Dates", "NaNMath", "PlotUtils", "RecipesBase", "SnoopPrecompile"]
@@ -776,9 +790,10 @@ uuid = "777ac1f9-54b0-4bf8-805c-2214025038e7"
 version = "1.1.0"
 
 [[deps.SnoopPrecompile]]
-git-tree-sha1 = "f604441450a3c0569830946e5b33b78c928e1a85"
+deps = ["Preferences"]
+git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
 uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
-version = "1.0.1"
+version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
@@ -854,9 +869,9 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
-git-tree-sha1 = "e4bdc63f5c6d62e80eb1c0043fcc0360d5950ff7"
+git-tree-sha1 = "94f38103c984f89cf77c402f2a68dbd870f8165f"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.9.10"
+version = "0.9.11"
 
 [[deps.URIs]]
 git-tree-sha1 = "ac00576f90d8a259f2c9d823e91d1de3fd44d348"
@@ -1132,5 +1147,8 @@ version = "1.4.1+0"
 # ╠═cf671774-0fcd-44fd-aec4-b6a63fdccefe
 # ╠═6ead812c-4743-47c7-873e-d7cc462c50d9
 # ╠═f57b70cc-2f18-4d49-93f0-b0a2e8426e85
+# ╟─3c4c0610-060e-4eca-ae71-d41ef5c2c4e9
+# ╠═ecdd8974-b0ac-49da-97bd-5d09f7a6d244
+# ╠═01cefc16-f9dc-456f-aab8-54db3cb7ee70
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
