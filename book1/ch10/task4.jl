@@ -67,11 +67,13 @@ with_terminal() do
 end
 
 # ╔═╡ 3bb0bac4-e8ba-4639-a571-5abff50daa90
-with_terminal() do
-	println("Testing get_lines_from_file2 function.")
-	println("The function uses 't = [t..., x]' aproach")
-	@time get_lines_from_file2("./words/words.txt");
-end
+# running this cell is both resources (e.g. memory) and time consuming
+# I do not recommend doing it, just read the conclusion below
+#with_terminal() do
+#	println("Testing get_lines_from_file2 function.")
+#	println("The function uses 't = [t..., x]' aproach")
+#	@time get_lines_from_file2("./words/words.txt");
+#end
 
 # ╔═╡ 5b81b095-554a-444c-a0e3-60b09cae5275
 md"""## Conclusion
