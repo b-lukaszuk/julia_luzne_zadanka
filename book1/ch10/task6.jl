@@ -76,15 +76,16 @@ function get_interlocked_pairs(words::Vector{String})::Dict{String, Tuple{String
     result::Dict{String, Tuple{String, String}} = Dict()
     for i in eachindex(words)
         for j in i+1:length(words)
-            if length(words[i]) != length(words[j])
+            word1, word2 = words[i], words[j]
+            if length(word1) != length(word2)
                 continue
             end
-            tmp1 = interlock_words(words[i], words[j])
-            tmp2 = interlock_words(words[j], words[i])
-            if haskey(words_dict, tmp1)
-                result[tmp1] = (words[i], words[j])
-            elseif haskey(words_dict, tmp2)
-                result[tmp2] = (words[j], words[i])
+            interlocked_word1 = interlock_words(word1, word2)
+            interlocked_word2 = interlock_words(word2, word1)
+            if haskey(words_dict, interlocked_word1)
+                result[interlocked_word1] = (word1, word2)
+            elseif haskey(words_dict, interlocked_word2)
+                result[interlocked_word2] = (word2, word1)
             end
         end
     end
