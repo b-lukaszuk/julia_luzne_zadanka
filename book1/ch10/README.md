@@ -178,9 +178,9 @@ Can you find any words that are three-way interlocked; that is, every third lett
 
 [words.txt](https://github.com/BenLauwens/ThinkJulia.jl/blob/master/data/words.txt) from Ben Lauwens GitHub (here I will not inclede it here, in my repo).
 
-Since I expected that the task is computationally expensive I limited myself to 7000 words. Still, it took about 15 secs to execute the code in the cell above.
+Since I expected that the task is computationally expensive I limited myself to 7000 words. Still, it took about 15 secs to execute the code.
 
-The result seem to be valid:
+The result seems to be valid:
 - [aahs](https://en.wiktionary.org/wiki/aahs)
 - [baas](https://dictionary.cambridge.org/dictionary/dutch-english/baas)
 
