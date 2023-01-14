@@ -11,6 +11,7 @@
 3. [Task 3](#task-3)
 4. [Task 4](#task-4)
 5. [Task 5](#task-5)
+6. [Task 6](#task-6)
 
 ---
 
@@ -133,6 +134,45 @@ Exercise 10-11
 ## Description
 
 Two words are a “reverse pair” if each is the reverse of the other. Write a program reversepairs that finds all the reverse pairs in the word array.
+
+## My notes
+
+[words.txt](https://github.com/BenLauwens/ThinkJulia.jl/blob/master/data/words.txt) from Ben Lauwens GitHub (here I will not inclede it here, in my repo).
+
+## Exemplary usage
+
+Created with [Pluto.jl](https://plutojl.org/), running notebook
+
+``` julia
+using Pluto
+Pluto.run()
+```
+
+# Task 6
+
+[Go to: Table of contents](#table-of-contents)
+
+## Original exercise number
+
+Exercise 10-12
+
+## Description
+
+Two words “interlock” if taking alternating letters from each forms a new word. For example, “shoe” and “cold” interlock to form “schooled”.
+
+Credit: This exercise is inspired by an example at http://puzzlers.org.
+
+### Part 1
+
+Write a program that finds all pairs of words that interlock.
+
+#### TIP
+
+Don’t enumerate all pairs!
+
+### Part 2
+
+Can you find any words that are three-way interlocked; that is, every third letter forms a word, starting from the first, second or third?
 
 ## My notes
 
