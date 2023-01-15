@@ -43,13 +43,10 @@ YOUR OWN RISK!"""
 md"""### Functions"""
 
 # ╔═╡ 568282e1-c38c-449c-8d0b-13199f4d63da
-function get_lines_from_file(path::String = "./words/words.txt"; how_many::Int = 1000)::Vector{String}
+function get_lines_from_file(path::String = "./words/words.txt")::Vector{String}
   lines::Vector{String} = []
   open(path) do file
-      for (i, line) in enumerate(eachline(file))
-          if i > how_many
-            break
-          end
+      for line in eachline(file)
           push!(lines, line)
       end
   end
@@ -71,8 +68,9 @@ function interlock_words(word1::String, word2::String)::String
 end
 
 # ╔═╡ bf7d3a76-fb18-44e7-b398-efe5d49e8017
-function get_interlocked_pairs(words::Vector{String})::Dict{String, Tuple{String, String}}
-    words_dict::Dict{String, Int} = vect_of_words_to_dict(words)
+# creates interlocked pairs and checks if they are present in words_dict
+function get_interlocked_pairs(words::Vector{String},
+words_dict::Dict{String, Int})::Dict{String, Tuple{String, String}}
     result::Dict{String, Tuple{String, String}} = Dict()
     for i in eachindex(words)
         for j in i+1:length(words)
@@ -96,14 +94,15 @@ end
 md"""## Testing"""
 
 # ╔═╡ 65d0842f-75d3-4b5f-89b5-74f3d32d09fe
-get_interlocked_pairs(["shoe", "cold", "schooled"])
+get_interlocked_pairs(["shoe", "cold", "schooled"], Dict("schooled" => 1))
 
 # ╔═╡ 98413374-18f6-4610-a3d7-9614d9d12edc
 begin
     # the file contains 1 lowercase word per line
-    words::Vector{String} = get_lines_from_file(how_many=7000)
+    words::Vector{String} = get_lines_from_file()
+	words_dict::Dict{String, Int} = vect_of_words_to_dict(words)
     # the following line (or this code cell) executes in about 15 secs on my laptop
-    rev_words = get_interlocked_pairs(words)
+    interlocked_words = get_interlocked_pairs(words[1:7000], words_dict)
 end
 
 # ╔═╡ 4ddc832d-3da7-42ef-8ffd-a485040e86be
