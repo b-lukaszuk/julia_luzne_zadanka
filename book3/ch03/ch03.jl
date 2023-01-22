@@ -131,32 +131,38 @@ tab36 = pd.DataFrame((
 # ╔═╡ f82f0214-0eb9-428e-a75b-002971a0ddc9
 md"""### Figure 3.16"""
 
-# ╔═╡ 351288f6-4abd-41e5-bb24-ece64acbff21
-begin
-	# in GR backend there seems to be no option to build a grouped barplot
-	# so I will practice doing it by hand
-	# first filtering
-	year1 = collect(1960:5:1980) .-1.5
-	consumption1 = filter(:bread_type => bt -> bt == "white", tab36)[!, "consumption"]
-	year2 = collect(1960:5:1980) .-0.5
-	consumption2 = filter(:bread_type => bt -> bt == "brown", tab36)[!, "consumption"]
-	year3 = collect(1960:5:1980) .+0.5
-	consumption3 = filter(:bread_type => bt -> bt == "wholemeal", tab36)[!, "consumption"]
-	year4 = collect(1960:5:1980) .+1.5
-	consumption4 = filter(:bread_type => bt -> bt == "other", tab36)[!, "consumption"]
+# ╔═╡ ac9a2122-c363-408e-a9a0-1a7ab4f5d27e
+function draw_grouped_barplot(df::pd.DataFrame,
+	x::String, y::String, group_by::String,
+	colors::Vector{String},
+	title::String, xlabel::String, ylabel::String,
+	legend_label::String)
+	groups = collect(Set(df[!, group_by]))
+	no_of_groups::Int = length(groups)
+	bar_width::Int = 1
+	xloc::Float64 = -(no_of_groups * bar_width / 2 - 0.5)
+	subtab = [] # it will be DataFrame
+	xs = []
+	ys = []
+	plts.bar()
+	for i in 1:no_of_groups
+		subtab = filter(group_by => gb -> gb == groups[i], df)
+		xs = subtab[!, x] .+ xloc
+		ys = subtab[!, y]
+		xloc += bar_width
+		plts.bar!(xs, ys, bar_width=bar_width, color=colors[i], label=groups[i])
+	end
+	plts.title!(title, legend_title=legend_label)
+	plts.xlabel!(xlabel)
+	plts.ylabel!(ylabel)
 end
 
-# ╔═╡ 1b4153cb-956c-4371-bdfc-0f934d3bf4c5
-begin
-	plts.bar(year1, consumption1, bar_width=1, color="lightblue",
-		legend_title="Bread type", label="white")
-	plts.bar!(year2, consumption2, bar_width=1, color="brown", label="brown")
-	plts.bar!(year3, consumption3, bar_width=1, color="yellow", label="wholemeal")
-	plts.bar!(year4, consumption4, bar_width=1, color="lightgreen", label="other")
-	plts.title!("Figure 3.16 (a)")
-	plts.xlabel!("Year")
-	plts.ylabel!("Consumption of bread\n(g per person per week)")
-end
+# ╔═╡ 01e29efa-ad1d-4498-aade-b9afafdc3687
+draw_grouped_barplot(tab36, "year", "consumption", "bread_type",
+	["lightblue", "brown", "yellow", "lightgreen"],
+	"Figure 3.16 (a)", "Year",
+	"Consumption of bread\n(g per person per week)",
+	"Bread type")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1178,7 +1184,7 @@ version = "1.4.1+0"
 # ╟─3c4c0610-060e-4eca-ae71-d41ef5c2c4e9
 # ╠═356c5a9d-e26f-4636-a176-ea8a174b5914
 # ╟─f82f0214-0eb9-428e-a75b-002971a0ddc9
-# ╠═351288f6-4abd-41e5-bb24-ece64acbff21
-# ╠═1b4153cb-956c-4371-bdfc-0f934d3bf4c5
+# ╠═ac9a2122-c363-408e-a9a0-1a7ab4f5d27e
+# ╠═01e29efa-ad1d-4498-aade-b9afafdc3687
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
