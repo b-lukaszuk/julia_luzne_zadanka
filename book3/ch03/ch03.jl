@@ -119,16 +119,44 @@ end
 # ╔═╡ 3c4c0610-060e-4eca-ae71-d41ef5c2c4e9
 md"""### Tab 3.6"""
 
-# ╔═╡ ecdd8974-b0ac-49da-97bd-5d09f7a6d244
+# ╔═╡ 356c5a9d-e26f-4636-a176-ea8a174b5914
+# consumption in gram per person per week
+# I reshaped the table from the book slightly
+tab36 = pd.DataFrame((
+	bread_type = repeat(["white", "brown", "wholemeal", "other"], inner=5),
+	year = repeat([1960, 1965, 1970, 1975, 1980], outer=4),
+	consumption = [1040, 975, 915, 785, 620, 70, 80, 70, 75, 115, 25, 20, 15, 20, 45, 155, 80, 85, 75, 105]
+))
+
+# ╔═╡ f82f0214-0eb9-428e-a75b-002971a0ddc9
+md"""### Figure 3.16"""
+
+# ╔═╡ 351288f6-4abd-41e5-bb24-ece64acbff21
 begin
-	consump_g_pers_wk::Vector{<:Number} = [1040, 70, 25, 155, 975, 80, 20, 80, 915, 70, 15, 85, 785, 75, 20, 75, 620, 115, 45, 105]
-	year::Vector{Int} = repeat([1960, 1965, 1970, 1975, 1980], inner=4)
-	bread_type::Vector{String} = repeat(["white", "brown", "wholemeal", "other"], outer=5)
-	tab36 = pd.DataFrame((;consump_g_pers_wk, year, bread_type))
+	# in GR backend there seems to be no option to build a grouped barplot
+	# so I will practice doing it by hand
+	# first filtering
+	year1 = collect(1960:5:1980) .-1.5
+	consumption1 = filter(:bread_type => bt -> bt == "white", tab36)[!, "consumption"]
+	year2 = collect(1960:5:1980) .-0.5
+	consumption2 = filter(:bread_type => bt -> bt == "brown", tab36)[!, "consumption"]
+	year3 = collect(1960:5:1980) .+0.5
+	consumption3 = filter(:bread_type => bt -> bt == "wholemeal", tab36)[!, "consumption"]
+	year4 = collect(1960:5:1980) .+1.5
+	consumption4 = filter(:bread_type => bt -> bt == "other", tab36)[!, "consumption"]
 end
 
-# ╔═╡ 01cefc16-f9dc-456f-aab8-54db3cb7ee70
-pd.describe(tab36)
+# ╔═╡ 1b4153cb-956c-4371-bdfc-0f934d3bf4c5
+begin
+	plts.bar(year1, consumption1, bar_width=1, color="lightblue",
+		legend_title="Bread type", label="white")
+	plts.bar!(year2, consumption2, bar_width=1, color="brown", label="brown")
+	plts.bar!(year3, consumption3, bar_width=1, color="yellow", label="wholemeal")
+	plts.bar!(year4, consumption4, bar_width=1, color="lightgreen", label="other")
+	plts.title!("Figure 3.16 (a)")
+	plts.xlabel!("Year")
+	plts.ylabel!("Consumption of bread\n(g per person per week)")
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1148,7 +1176,9 @@ version = "1.4.1+0"
 # ╠═6ead812c-4743-47c7-873e-d7cc462c50d9
 # ╠═f57b70cc-2f18-4d49-93f0-b0a2e8426e85
 # ╟─3c4c0610-060e-4eca-ae71-d41ef5c2c4e9
-# ╠═ecdd8974-b0ac-49da-97bd-5d09f7a6d244
-# ╠═01cefc16-f9dc-456f-aab8-54db3cb7ee70
+# ╠═356c5a9d-e26f-4636-a176-ea8a174b5914
+# ╟─f82f0214-0eb9-428e-a75b-002971a0ddc9
+# ╠═351288f6-4abd-41e5-bb24-ece64acbff21
+# ╠═1b4153cb-956c-4371-bdfc-0f934d3bf4c5
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
