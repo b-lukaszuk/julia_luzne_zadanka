@@ -8,6 +8,12 @@ Probably I will solve it in pure julia (*.jl file), interactive mode (in Emacs o
 
 # Chapter 9. Comparing groups - continuous data
 
+# Warning regarding solutions
+
+NO GUARANTEE THAT THE SOLUTIONS WILL WORK OR WORK CORRECTLY! USE THEM AT YOUR OWN RISK!
+
+THE ANSWERS PROVIDED BELOW MAY BE WRONG. USE THEM AT YOUR OWN RISK!
+
 # Additional info
 
 **Do użytku własnego, nie powinno być używane przez nikogo innego.**
