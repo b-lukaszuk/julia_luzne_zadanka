@@ -66,3 +66,14 @@ ht.ExactOneSampleKSTest(tab96_marked,
 ht.ExactOneSampleKSTest(tab96_sligth_or_none,
     dst.Normal(stat.mean(tab96_sligth_or_none), stat.std(tab96_sligth_or_none)))
 ht.UnequalVarianceTTest(tab96_sligth_or_none, tab96_marked)
+
+
+#########################################################
+# CH 9.8 THREE OR MORE INDEPENDENT GROUPS OF OBSERVATIONS
+#########################################################
+# table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
+# bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
+follate_gr1 = [243, 251, 275, 291, 347, 354, 380, 392]
+follate_gr2 = [206, 210, 226, 249, 255, 273, 285, 295, 309]
+follate_gr3 = [241, 258, 270, 293, 328]
+ht.OneWayANOVATest(follate_gr1, follate_gr2, follate_gr3)
