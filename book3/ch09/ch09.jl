@@ -78,14 +78,18 @@ tab910 = pd.DataFrame(
     grs=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
 ))
 
-# returns a named tuple
-function split_by_group(values::Vector{<:Number}, groups::Vector{String})
+function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
     gr_names::Vector{String} = unique(groups)
-    res_dict::Dict{String,Vector{<:Number}} = Dict()
+    result::Dict{String,Vector{<:Number}} = Dict()
     for gr in gr_names
-        res_dict[gr] = values[findall(x -> x == gr, groups)]
+        result[gr] = values[findall(x -> x == gr, groups)]
     end
-    return NamedTuple(Symbol(k) => v for (k, v) in res_dict)
+    return result
 end
 
-ht.OneWayANOVATest(split_by_group(tab910[!, "follate"], tab910[!, "grs"])...)
+function dict2namedtuple(d::Dict{String,Vector{<:Number}})
+    return NamedTuple(Symbol(k) => v for (k, v) in d)
+end
+
+split_by_group(tab910[!, "follate"], tab910[!, "grs"]) |> dict2namedtuple |>
+x -> ht.OneWayANOVATest(x...)
