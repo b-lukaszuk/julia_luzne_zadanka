@@ -105,8 +105,10 @@ function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String},
     for i in eachindex(groups)
         for j in (i+1):length(groups)
             gi, gj = groups[i], groups[j]
+            eqvars = ht.pvalue(ht.LeveneTest(grouped[gi], grouped[gj])) >= 0.05
             push!(comparisons, "$(gi) vs. $(gj)")
-            ht.EqualVarianceTTest(grouped[gi], grouped[gj]) |> ht.pvalue |> x -> push!(p_values, x)
+            (eqvars ? ht.EqualVarianceTTest(grouped[gi], grouped[gj]) : ht.UnequalVarianceTTest(grouped[gi], grouped[gj])) |>
+            ht.pvalue |> x -> push!(p_values, x)
         end
     end
     if adjust
