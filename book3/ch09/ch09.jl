@@ -75,7 +75,7 @@ ht.UnequalVarianceTTest(tab96_sligth_or_none, tab96_marked)
 # bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
 tab910 = pd.DataFrame(
     (; follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328],
-    grs=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
+    gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
 ))
 
 function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
@@ -91,5 +91,22 @@ function dict2namedtuple(d::Dict{String,Vector{<:Number}})
     return NamedTuple(Symbol(k) => v for (k, v) in d)
 end
 
-split_by_group(tab910[!, "follate"], tab910[!, "grs"]) |> dict2namedtuple |>
+split_by_group(tab910[!, "follate"], tab910[!, "gr"]) |> dict2namedtuple |>
 x -> ht.OneWayANOVATest(x...)
+
+function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String})::Dict{String,Float64}
+    grouped::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
+    groups::Vector{String} = collect(keys(grouped))
+    comparisons::Vector{String} = []
+    p_values::Vector{Float64} = []
+    for i in eachindex(groups)
+        for j in (i+1):length(groups)
+            x = ht.EqualVarianceTTest(grouped[groups[i]], grouped[groups[j]])
+            push!(comparisons, "$(groups[i]) vs. $(groups[j])")
+            push!(p_values, ht.pvalue(x))
+        end
+    end
+    return Dict(k => v for (k, v) in zip(comparisons, p_values))
+end
+
+pairwise_t_test(tab910[!, "follate"], tab910[!, "gr"])
