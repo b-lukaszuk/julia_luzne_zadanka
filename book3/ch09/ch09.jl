@@ -1,6 +1,7 @@
 import DataFrames as pd # pandas in python
 import Distributions as dst
 import HypothesisTests as ht
+import MultipleTesting as mt
 import Statistics as stat
 
 
@@ -94,19 +95,24 @@ end
 split_by_group(tab910[!, "follate"], tab910[!, "gr"]) |> dict2namedtuple |>
 x -> ht.OneWayANOVATest(x...)
 
-function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String})::Dict{String,Float64}
+function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String},
+    adjust::Bool=true, adjustment_mt::mt.PValueAdjustment=mt.BenjaminiHochberg
+)::Dict{String,Float64}
     grouped::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
     groups::Vector{String} = collect(keys(grouped))
     comparisons::Vector{String} = []
     p_values::Vector{Float64} = []
     for i in eachindex(groups)
         for j in (i+1):length(groups)
-            x = ht.EqualVarianceTTest(grouped[groups[i]], grouped[groups[j]])
             push!(comparisons, "$(groups[i]) vs. $(groups[j])")
-            push!(p_values, ht.pvalue(x))
+            ht.EqualVarianceTTest(grouped[groups[i]], grouped[groups[j]]) |> ht.pvalue |>
+            x -> push!(p_values, x)
         end
+    end
+    if adjust
+        p_values = mt.adjust(p_values, adjustment_mt())
     end
     return Dict(k => v for (k, v) in zip(comparisons, p_values))
 end
 
-pairwise_t_test(tab910[!, "follate"], tab910[!, "gr"])
+pairwise_t_test(tab910[!, "follate"], tab910[!, "gr"], true, mt.Bonferroni)
