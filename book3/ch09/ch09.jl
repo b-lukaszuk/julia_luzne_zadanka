@@ -96,7 +96,7 @@ split_by_group(tab910[!, "follate"], tab910[!, "gr"]) |> dict2namedtuple |>
 x -> ht.OneWayANOVATest(x...)
 
 function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String},
-    adjust::Bool=true, adjustment_mt::mt.PValueAdjustment=mt.BenjaminiHochberg
+    adjust::Bool=true, adjustment_mt=mt.BenjaminiHochberg
 )::Dict{String,Float64}
     grouped::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
     groups::Vector{String} = collect(keys(grouped))
@@ -104,9 +104,9 @@ function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String},
     p_values::Vector{Float64} = []
     for i in eachindex(groups)
         for j in (i+1):length(groups)
-            push!(comparisons, "$(groups[i]) vs. $(groups[j])")
-            ht.EqualVarianceTTest(grouped[groups[i]], grouped[groups[j]]) |> ht.pvalue |>
-            x -> push!(p_values, x)
+            gi, gj = groups[i], groups[j]
+            push!(comparisons, "$(gi) vs. $(gj)")
+            ht.EqualVarianceTTest(grouped[gi], grouped[gj]) |> ht.pvalue |> x -> push!(p_values, x)
         end
     end
     if adjust
