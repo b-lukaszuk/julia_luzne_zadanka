@@ -118,3 +118,14 @@ function pairwise_t_test(vals::Vector{<:Number}, grs::Vector{<:String},
 end
 
 pairwise_t_test(tab910[!, "follate"], tab910[!, "gr"], true, mt.Bonferroni)
+
+# table91.5. Reduction i weekly headache activity for three treatement groups,
+# expressed as a percentage of baseline data (fentress et al., 1986)
+tab915 = pd.DataFrame(
+    (; relax_feedback=[62, 74, 86, 74, 91, 37],
+    relax=[69, 43, 100, 94, 100, 98],
+    untreated=[50, -120, 100, -288, 4, -76])
+)
+
+ht.KruskalWallisTest(tab915[!, :relax_feedback], tab915[!, :relax],
+    tab915[!, :untreated])
