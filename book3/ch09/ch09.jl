@@ -1,7 +1,7 @@
 import DataFrames as pd # pandas in python
 import Distributions as dst
-import Statistics as stat
 import HypothesisTests as ht
+import Statistics as stat
 
 
 #########
@@ -73,7 +73,19 @@ ht.UnequalVarianceTTest(tab96_sligth_or_none, tab96_marked)
 #########################################################
 # table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
 # bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
-follate_gr1 = [243, 251, 275, 291, 347, 354, 380, 392]
-follate_gr2 = [206, 210, 226, 249, 255, 273, 285, 295, 309]
-follate_gr3 = [241, 258, 270, 293, 328]
-ht.OneWayANOVATest(follate_gr1, follate_gr2, follate_gr3)
+tab910 = pd.DataFrame(
+    (; follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328],
+    grs=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
+))
+
+# returns a named tuple
+function split_by_group(values::Vector{<:Number}, groups::Vector{String})
+    gr_names::Vector{String} = unique(groups)
+    res_dict::Dict{String,Vector{<:Number}} = Dict()
+    for gr in gr_names
+        res_dict[gr] = values[findall(x -> x == gr, groups)]
+    end
+    return NamedTuple(Symbol(k) => v for (k, v) in res_dict)
+end
+
+ht.OneWayANOVATest(split_by_group(tab910[!, "follate"], tab910[!, "grs"])...)
