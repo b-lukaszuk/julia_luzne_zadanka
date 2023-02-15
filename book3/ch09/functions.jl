@@ -17,7 +17,7 @@ function are_eql_vars(vals1::Vector{<:Number}, vals2::Vector{<:Number}; alpha::F
 end
 
 function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05)::Bool
-    p_val::Float64 = 0
+    p_val::Float64 = 999.0
     for v in vals
         p_val = pg.normality(v).pval[1]
         if (p_val < alpha)
@@ -25,4 +25,16 @@ function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05
         end
     end
     return true
+end
+
+function compare2grs_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+    eq_vars::Bool = are_eql_vars(vals1, vals2)
+    norm_dists::Bool = are_all_norm_distributed(vals1, vals2)
+    if !norm_dists
+        return ht.pvalue(ht.MannWhitneyUTest(vals1, vals2))
+    elseif eq_vars
+        return ht.pvalue(ht.EqualVarianceTTest(vals1, vals2))
+    else
+        return ht.pvalue(ht.UnequalVarianceTTest(vals1, vals2))
+    end
 end
