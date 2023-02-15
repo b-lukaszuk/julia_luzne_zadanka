@@ -10,7 +10,7 @@ md"""# Chapter 1. Probability"""
 # ╔═╡ 21f45d1d-9db3-470a-afae-5d31ef1f4c3e
 md"""## Warning
 
-The content of this folder may be incorrect, erroneous and/or harmful. Use it at Your own risk."""
+The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk."""
 
 
 # ╔═╡ 0018f4d8-e909-4f5b-a7ed-ca4550a101ac
