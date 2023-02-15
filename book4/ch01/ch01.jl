@@ -40,6 +40,78 @@ begin
 	first(gss, 5)
 end
 
+# ╔═╡ 27620472-714e-4285-b785-01541fbab503
+md"""### Fraction of Bankers"""
+
+# ╔═╡ e6c8cafe-da15-41af-94e8-2b7a034dffe5
+# the code for "banking and related activities" is 6870
+banker = (gss[!, :indus10] .== 6870);
+
+# ╔═╡ 928aee16-3657-44af-9c3c-d710e72bd54a
+"Number of bankers in the dataset: $(sum(banker))"
+
+# ╔═╡ ce6f3827-0f7c-4463-9c8f-d417f23c55ba
+"Fraction of bankers in the dataset: $(sum(banker) / length(banker))"
+
+# ╔═╡ 52533666-0a44-46d8-987f-d618918a6ef5
+md"""### The Probability Function"""
+
+# ╔═╡ 2c69b6bb-5748-4479-a055-ee801fc476f1
+begin
+	# computing probability
+	function get_prob(A::Vector{<:Number})::Float64
+		return sum(A) / length(A)
+	end
+
+	function get_prob(A::Union{Vector{Bool}, BitVector})::Float64
+		return sum(A) / length(A)
+	end
+end
+
+# ╔═╡ 8ec010c2-41c4-47bb-aced-6db24b714c59
+"Experimental probability of being a banker: $(get_prob(banker))"
+
+# ╔═╡ 0544df22-e00c-46e1-942c-e085d521eda8
+begin
+	# 1 - Male, 2 - Female
+	female = (gss[!, :sex] .== 2)
+	"Experimental probability of being a banker: $(get_prob(female))"
+end
+
+# ╔═╡ 11f3e137-9f39-46fc-9d0c-01cf29d2fa6a
+md"""### Political Views and Parties
+Coding of `polviews`:
+- Extremely liberal 1
+- Liberal 2
+- Slightly liberal 3
+- Moderate 4
+- Slightly conservative 5
+- Conservative 6
+- Extremely conservative 7
+
+Coding of `partyid`:
+- Strong democrat 0
+- Not strong democrat 1
+- Independent, near democrat 2
+- Independent 3
+- Independent, near republican 4
+- Not strong republican 5
+- Strong republican 6
+- Other party 7
+"""
+
+# ╔═╡ 364da58e-819c-45dd-9ede-baa5fa667f03
+begin
+	liberal = (gss[!, :polviews] .<= 3)
+	"Experimental probability of liberal views: $(get_prob(liberal))"
+end
+
+# ╔═╡ 6105f242-d9c6-4f9a-abdd-d2d814327c1d
+begin
+	democrat = (gss[!, :partyid] .<= 1)
+	"Experimental probability of partyid democrat: $(get_prob(democrat))"
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -469,5 +541,16 @@ version = "17.4.0+0"
 # ╟─ff5217ac-43b4-45f7-86f0-606482a3fcfa
 # ╟─1ba92f60-4366-4c75-a448-bb62623e3221
 # ╠═28309c7a-1c24-4864-b5f7-6fc52db55ff5
+# ╟─27620472-714e-4285-b785-01541fbab503
+# ╠═e6c8cafe-da15-41af-94e8-2b7a034dffe5
+# ╠═928aee16-3657-44af-9c3c-d710e72bd54a
+# ╠═ce6f3827-0f7c-4463-9c8f-d417f23c55ba
+# ╟─52533666-0a44-46d8-987f-d618918a6ef5
+# ╠═2c69b6bb-5748-4479-a055-ee801fc476f1
+# ╠═8ec010c2-41c4-47bb-aced-6db24b714c59
+# ╠═0544df22-e00c-46e1-942c-e085d521eda8
+# ╟─11f3e137-9f39-46fc-9d0c-01cf29d2fa6a
+# ╠═364da58e-819c-45dd-9ede-baa5fa667f03
+# ╠═6105f242-d9c6-4f9a-abdd-d2d814327c1d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
