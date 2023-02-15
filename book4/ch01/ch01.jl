@@ -43,9 +43,11 @@ end
 # ╔═╡ 27620472-714e-4285-b785-01541fbab503
 md"""### Fraction of Bankers"""
 
+# ╔═╡ d5eca4b4-ce1e-4847-873b-96d9564dcb39
+md"""the code (indus10 column) for "banking and related activities" is 6870"""
+
 # ╔═╡ e6c8cafe-da15-41af-94e8-2b7a034dffe5
-# the code for "banking and related activities" is 6870
-banker = (gss[!, :indus10] .== 6870);
+banker = Vector{Bool}((gss[!, :indus10] .== 6870));
 
 # ╔═╡ 928aee16-3657-44af-9c3c-d710e72bd54a
 "Number of bankers in the dataset: $(sum(banker))"
@@ -63,7 +65,7 @@ begin
 		return sum(A) / length(A)
 	end
 
-	function get_prob(A::Union{Vector{Bool}, BitVector})::Float64
+	function get_prob(A::Vector{Bool})::Float64
 		return sum(A) / length(A)
 	end
 end
@@ -71,10 +73,12 @@ end
 # ╔═╡ 8ec010c2-41c4-47bb-aced-6db24b714c59
 "Experimental probability of being a banker: $(get_prob(banker))"
 
+# ╔═╡ 946b0960-3e39-4697-9718-89c422a3ba4b
+md"""Coding of sex: 1 - Male, 2 - Female"""
+
 # ╔═╡ 0544df22-e00c-46e1-942c-e085d521eda8
 begin
-	# 1 - Male, 2 - Female
-	female = (gss[!, :sex] .== 2)
+	female = Vector{Bool}((gss[!, :sex] .== 2))
 	"Experimental probability of being a banker: $(get_prob(female))"
 end
 
@@ -102,15 +106,56 @@ Coding of `partyid`:
 
 # ╔═╡ 364da58e-819c-45dd-9ede-baa5fa667f03
 begin
-	liberal = (gss[!, :polviews] .<= 3)
+	liberal = Vector{Bool}((gss[!, :polviews] .<= 3))
 	"Experimental probability of liberal views: $(get_prob(liberal))"
 end
 
 # ╔═╡ 6105f242-d9c6-4f9a-abdd-d2d814327c1d
 begin
-	democrat = (gss[!, :partyid] .<= 1)
+	democrat = Vector{Bool}((gss[!, :partyid] .<= 1))
 	"Experimental probability of partyid democrat: $(get_prob(democrat))"
 end
+
+# ╔═╡ 899a5de0-bb1e-46e2-93cf-d69a10914df3
+md"""### Conjunction"""
+
+# ╔═╡ c3963f5d-da0b-4664-96d5-dbe40731dcbe
+begin
+	p_banker_and_democrat = get_prob(Vector{Bool}(banker .&& democrat))
+	"Experimental probability of banker and democrat: $p_banker_and_democrat"
+end
+
+# ╔═╡ 18a1e2b5-8ab8-4b21-92d2-90350655409e
+begin
+	p_democrat_and_banker = get_prob(Vector{Bool}(democrat .&& banker))
+	"Experimental probability of democrat and banker: $p_democrat_and_banker"
+end
+
+# ╔═╡ cff1ea7d-466e-4f5f-81ef-1fad38f6eef4
+md"""### Conditional Probability"""
+
+# ╔═╡ 667fa8a6-055e-43bc-ae4c-5d410fd48517
+md"""What is the probability that a respondent is a democrat, given that they are liberal?"""
+
+# ╔═╡ e459a955-3f98-449c-9d26-c0fc47324f19
+function get_cond_prob(proposition::Vector{Bool}, given::Vector{Bool})::Float64
+	return get_prob(proposition[given])
+end
+
+# ╔═╡ 201cc89b-366c-45ba-9e36-e0756ea2fce0
+"Experimental P(democrat | liberal) = $(get_cond_prob(democrat, liberal))"
+
+# ╔═╡ a54b8b96-63cb-443d-ba25-05beeec446a6
+md"""What is the probability that a respondent is female, given that they are a banker?"""
+
+# ╔═╡ 475de773-b242-47d5-b216-b52b58816e9f
+"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
+
+# ╔═╡ 95c86f6b-d03e-4c39-becd-f7f6e2d87fe6
+md"""What is the probability that a respondent is liberal, given that they are female?"""
+
+# ╔═╡ d092f04f-1bbf-430a-a8b7-62456bd8cf13
+"Experimental P(liberal | female) = $(get_cond_prob(liberal, female))"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -542,15 +587,28 @@ version = "17.4.0+0"
 # ╟─1ba92f60-4366-4c75-a448-bb62623e3221
 # ╠═28309c7a-1c24-4864-b5f7-6fc52db55ff5
 # ╟─27620472-714e-4285-b785-01541fbab503
+# ╟─d5eca4b4-ce1e-4847-873b-96d9564dcb39
 # ╠═e6c8cafe-da15-41af-94e8-2b7a034dffe5
 # ╠═928aee16-3657-44af-9c3c-d710e72bd54a
 # ╠═ce6f3827-0f7c-4463-9c8f-d417f23c55ba
 # ╟─52533666-0a44-46d8-987f-d618918a6ef5
 # ╠═2c69b6bb-5748-4479-a055-ee801fc476f1
 # ╠═8ec010c2-41c4-47bb-aced-6db24b714c59
+# ╟─946b0960-3e39-4697-9718-89c422a3ba4b
 # ╠═0544df22-e00c-46e1-942c-e085d521eda8
 # ╟─11f3e137-9f39-46fc-9d0c-01cf29d2fa6a
 # ╠═364da58e-819c-45dd-9ede-baa5fa667f03
 # ╠═6105f242-d9c6-4f9a-abdd-d2d814327c1d
+# ╟─899a5de0-bb1e-46e2-93cf-d69a10914df3
+# ╠═c3963f5d-da0b-4664-96d5-dbe40731dcbe
+# ╠═18a1e2b5-8ab8-4b21-92d2-90350655409e
+# ╟─cff1ea7d-466e-4f5f-81ef-1fad38f6eef4
+# ╟─667fa8a6-055e-43bc-ae4c-5d410fd48517
+# ╠═e459a955-3f98-449c-9d26-c0fc47324f19
+# ╠═201cc89b-366c-45ba-9e36-e0756ea2fce0
+# ╟─a54b8b96-63cb-443d-ba25-05beeec446a6
+# ╠═475de773-b242-47d5-b216-b52b58816e9f
+# ╟─95c86f6b-d03e-4c39-becd-f7f6e2d87fe6
+# ╠═d092f04f-1bbf-430a-a8b7-62456bd8cf13
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
