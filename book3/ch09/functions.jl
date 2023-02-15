@@ -38,43 +38,39 @@ md"""## Imports"""
 
 # ╔═╡ ab88ccac-2bc9-4ec5-adca-871621723c2f
 begin
-	import HypothesisTests as ht
-	import MultipleTesting as mt
-	import Pingouin as pg
+    import HypothesisTests as ht
+    import MultipleTesting as mt
+    import Pingouin as pg
 end
 
 # ╔═╡ ad1559c3-b0d3-40c2-b76f-f384334011a0
 md"""## Functions"""
 
-# ╔═╡ b7b41906-106b-480a-91b1-7b3197940496
-begin
-	function get_avg(vals::Vector{<:Number})::Float64
-    	return sum(vals) / length(vals)
-	end
+# ╔═╡ d2913aa3-79cc-43d8-b4a0-6e4cdc1e64bb
+function get_avg(vals::Vector{<:Number})::Float64
+    return sum(vals) / length(vals)
+end
 
-	function get_sd(vals::Vector{<:Number})::Float64
-    	avg::Float64 = get_avg(vals)
-    	diffs_squared::Vector{<:Float64} = [(v - avg)^2 for v in vals]
-    	return sqrt(sum(diffs_squared) / (length(vals) - 1))
-	end
+# ╔═╡ b7b41906-106b-480a-91b1-7b3197940496
+function get_sd(vals::Vector{<:Number})::Float64
+    avg::Float64 = get_avg(vals)
+    diffs_squared::Vector{<:Float64} = [(v - avg)^2 for v in vals]
+    return sqrt(sum(diffs_squared) / (length(vals) - 1))
+end
+
+# ╔═╡ 6e9959ba-7d3b-40ad-aa2b-c11560e530ca
+function are_eql_vars(vals1::Vector{<:Number}, vals2::Vector{<:Number}; alpha::Float64=0.05)::Bool
+    return ht.pvalue(ht.LeveneTest(vals1, vals2)) >= alpha
 end
 
 # ╔═╡ 2bd67ebd-cad6-4ed8-a5ed-9e44227a0c6d
-begin
-	function are_eql_vars(vals1::Vector{<:Number}, vals2::Vector{<:Number}; alpha::Float64=0.05)::Bool
-    return ht.pvalue(ht.LeveneTest(vals1, vals2)) >= alpha
-	end
-
-	function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05)::Bool
-    	p_val::Float64 = 999.0
-    	for v in vals
-        	p_val = pg.normality(v).pval[1]
-        	if (p_val < alpha)
-            	return false
-        	end
-    	end
-    	return true
-	end
+function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05)::Bool
+    for v in vals
+        if (pg.normality(v).pval[1] < alpha)
+            return false
+        end
+    end
+    return true
 end
 
 # ╔═╡ 13daaaa1-cf7f-4127-8b86-3fbf85aa268f
@@ -125,12 +121,12 @@ md"""## Usage example"""
 
 # ╔═╡ 193f71cc-856c-4e5a-ae0f-8baec82d6d8c
 begin
-	# from D. Altman "Practical Statistics for Medical Research"
-	# table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
-	# bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
-	follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328]
-	gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
-	run_pairwise_compars_get_p_vals(follate, gr, true, mt.Bonferroni)
+    # from D. Altman "Practical Statistics for Medical Research"
+    # table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
+    # bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
+    follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328]
+    gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
+    run_pairwise_compars_get_p_vals(follate, gr, true, mt.Bonferroni)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -664,7 +660,9 @@ version = "17.4.0+0"
 # ╟─b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 # ╠═ab88ccac-2bc9-4ec5-adca-871621723c2f
 # ╟─ad1559c3-b0d3-40c2-b76f-f384334011a0
+# ╠═d2913aa3-79cc-43d8-b4a0-6e4cdc1e64bb
 # ╠═b7b41906-106b-480a-91b1-7b3197940496
+# ╠═6e9959ba-7d3b-40ad-aa2b-c11560e530ca
 # ╠═2bd67ebd-cad6-4ed8-a5ed-9e44227a0c6d
 # ╠═13daaaa1-cf7f-4127-8b86-3fbf85aa268f
 # ╠═36f6328e-6a87-4a2c-ad79-5591ce222c29
