@@ -25,6 +25,14 @@ The tests between two groups, for each possible pairs of n groups. The p-values 
 Comparisons and p-values will be returned in a dictionary e.g. Dict("var1 vs. var2" => 0.02, "var1 vs. var3" => 0.24, "var2 vs. var1" => 0.088)
 """
 
+# ╔═╡ f43af165-bad8-4700-9156-177d5ec9c224
+md"""# Warning
+
+NO GUARANTEE THAT THE SOLUTIONS WILL WORK OR WORK CORRECTLY!
+
+THE SOLUTIONS PROVIDED BELOW MAY BE WRONG. USE THEM AT YOUR OWN RISK!
+"""
+
 # ╔═╡ b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 md"""## Imports"""
 
@@ -652,6 +660,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─4fb3f188-ad18-11ed-2b24-d121dd5106d0
+# ╟─f43af165-bad8-4700-9156-177d5ec9c224
 # ╟─b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 # ╠═ab88ccac-2bc9-4ec5-adca-871621723c2f
 # ╟─ad1559c3-b0d3-40c2-b76f-f384334011a0
