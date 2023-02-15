@@ -38,3 +38,33 @@ function compare2grs_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})
         return ht.pvalue(ht.UnequalVarianceTTest(vals1, vals2))
     end
 end
+
+function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
+    gr_names::Vector{String} = unique(groups)
+    result::Dict{String,Vector{<:Number}} = Dict()
+    for gr in gr_names
+        result[gr] = values[findall(x -> x == gr, groups)]
+    end
+    return result
+end
+
+# runs unpaired tests
+function run_pairwise_compars_get_p_vals(vals::Vector{<:Number}, grs::Vector{<:String},
+    adjust::Bool=true, adjustment_mt=mt.BenjaminiHochberg
+)::Dict{String,Float64}
+    grouped::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
+    groups::Vector{String} = collect(keys(grouped))
+    comparisons::Vector{String} = []
+    p_values::Vector{Float64} = []
+    for i in eachindex(groups)
+        for j in (i+1):length(groups)
+            gi, gj = groups[i], groups[j]
+            push!(comparisons, "$(gi) vs. $(gj)")
+            push!(p_values, compare2grs_get_p_val(grouped[gi], grouped[gj]))
+        end
+    end
+    if adjust
+        p_values = mt.adjust(p_values, adjustment_mt())
+    end
+    return Dict(k => v for (k, v) in zip(comparisons, p_values))
+end
