@@ -18,7 +18,7 @@ Probably I will use [Pluto.jl](https://plutojl.org/) or [Jupyter](https://jupyte
 ls
 # output: README.md ch01.jl
 head -2 ch01.jl
-# output: ### A Pluto.jl notegook ###
+# output: ### A Pluto.jl notebook ###
 # output: # v0.19.19
 julia
 ```
@@ -40,6 +40,9 @@ jupyter notebook # opens notebook in a default browser
 
 ```bash
 julia ch01.jl
+```
+
+Or even better, open the file in interactive mode (with REPL) in VSCode or Emacs.
 
 # Additional info
 
