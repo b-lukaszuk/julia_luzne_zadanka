@@ -79,7 +79,7 @@ function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05
 end
 
 # ╔═╡ 13daaaa1-cf7f-4127-8b86-3fbf85aa268f
-function compare2grs_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+function run_unpaired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
     eq_vars::Bool = are_eql_vars(vals1, vals2)
     norm_dists::Bool = are_all_norm_distributed(vals1, vals2)
     if !norm_dists
@@ -89,6 +89,17 @@ function compare2grs_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})
     else
         return ht.pvalue(ht.UnequalVarianceTTest(vals1, vals2))
     end
+end
+
+# ╔═╡ ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
+function run_paired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+	diffs::Vector{<:Number} = vals1 .- vals2
+	norm_dist::Bool = are_all_norm_distributed(diffs)
+	if norm_dist
+		return ht.pvalue(ht.OneSampleTTest(diffs))
+	else
+		return ht.pvalue(ht.SignedRankTest(diffs))
+	end
 end
 
 # ╔═╡ 36f6328e-6a87-4a2c-ad79-5591ce222c29
@@ -112,7 +123,7 @@ function run_pairwise_compars_get_p_vals(vals::Vector{<:Number}, grs::Vector{<:S
         for j in (i+1):length(groups)
             gi, gj = groups[i], groups[j]
             push!(comparisons, "$(gi) vs. $(gj)")
-            push!(p_values, compare2grs_get_p_val(grouped[gi], grouped[gj]))
+            push!(p_values, run_unpaired_test_get_p_val(grouped[gi], grouped[gj]))
         end
     end
     if adjust
@@ -737,6 +748,7 @@ version = "17.4.0+0"
 # ╠═6e9959ba-7d3b-40ad-aa2b-c11560e530ca
 # ╠═2bd67ebd-cad6-4ed8-a5ed-9e44227a0c6d
 # ╠═13daaaa1-cf7f-4127-8b86-3fbf85aa268f
+# ╠═ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
 # ╠═36f6328e-6a87-4a2c-ad79-5591ce222c29
 # ╠═4e6c2b53-75a0-439f-a70e-302b242e9e11
 # ╟─47ef6176-803b-429d-8008-2d20bb2cf88b
