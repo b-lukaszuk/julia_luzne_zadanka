@@ -23,11 +23,14 @@ Comparing 2 or more groups of continuous variables (pairwise tests) and obtainin
 The program will check the assumptions of the tests:
 - normality of distributions,
 - homogeneity of variances,
+- convergence of ids, then normality of differences distribution
 and decide upon a test.
 
 It will choose between:
+- paired Student's T-Test
+- paired Wilcoxon's Test (Signed Rank Test)
 - unpaired U-Man-Whitney,
-- unpaired T-Student,
+- unpaired Student-T-Test,
 - unpaired Welch test.
 The tests between two groups, for each possible pairs of n groups. The p-values will be collected, multiplicity correction will be applied (optional).
 
@@ -78,6 +81,17 @@ function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05
     return true
 end
 
+# ╔═╡ ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
+function run_paired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+	diffs::Vector{<:Number} = vals1 .- vals2
+	norm_dist::Bool = are_all_norm_distributed(diffs)
+	if norm_dist
+		return ht.pvalue(ht.OneSampleTTest(diffs))
+	else
+		return ht.pvalue(ht.SignedRankTest(diffs))
+	end
+end
+
 # ╔═╡ 13daaaa1-cf7f-4127-8b86-3fbf85aa268f
 function run_unpaired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
     eq_vars::Bool = are_eql_vars(vals1, vals2)
@@ -91,17 +105,6 @@ function run_unpaired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Nu
     end
 end
 
-# ╔═╡ ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
-function run_paired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
-	diffs::Vector{<:Number} = vals1 .- vals2
-	norm_dist::Bool = are_all_norm_distributed(diffs)
-	if norm_dist
-		return ht.pvalue(ht.OneSampleTTest(diffs))
-	else
-		return ht.pvalue(ht.SignedRankTest(diffs))
-	end
-end
-
 # ╔═╡ 36f6328e-6a87-4a2c-ad79-5591ce222c29
 function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
     gr_names::Vector{String} = unique(groups)
@@ -112,18 +115,52 @@ function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{
     return result
 end
 
+# ╔═╡ 6977116a-757a-4f54-a8fc-262e2717de56
+function should_choose_paired(ids1::Vector{<:Number}, ids2::Vector{<:Number}, cutoff::Float64=0.7)
+	no_of_similarities::Int = length(intersect(ids1, ids2))
+	ids_avg_length::Float64 = (length(ids1) + length(ids2)) / 2
+	perc_of_silimarities::Float64 = no_of_similarities / ids_avg_length
+	return perc_of_silimarities >= cutoff
+end
+
+# ╔═╡ 8ba2ffa3-23fd-4009-a894-1d6269a16933
+# each element of bs should have 0 or 1 occurence in cs
+function where_are_bs_in_cs(bs::Vector{<:Number}, cs::Vector{<:Number})
+	return filter(!isnothing, [findfirst(x -> x == b, cs) for b in bs])
+end
+
+# ╔═╡ fd7469ca-c659-41ca-837b-dfafb562fb97
+function get_paired_vals(vals1::Vector{<:Number}, vals2::Vector{<:Number}, ids1::Vector{<:Number}, ids2::Vector{<:Number})::Tuple{Vector{<:Number}, Vector{<:Number}}
+	same_ids::Vector = intersect(ids1, ids2)
+	return (
+	vals1[where_are_bs_in_cs(same_ids, ids1)],
+	vals2[where_are_bs_in_cs(same_ids, ids2)]
+	)
+end
+
 # ╔═╡ 4e6c2b53-75a0-439f-a70e-302b242e9e11
-# runs unpaired tests
-function run_pairwise_compars_get_p_vals(vals::Vector{<:Number}, grs::Vector{<:String}, adjust::Bool=true, adjustment_mt=mt.BenjaminiHochberg)::Dict{String,Float64}
-    grouped::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
-    groups::Vector{String} = collect(keys(grouped))
+function run_pairwise_compars_get_p_vals(
+	vals::Vector{<:Number}, grs::Vector{<:String}, ids::Vector{<:Number},
+	adjust::Bool=true, adjustment_mt=mt.BenjaminiHochberg)::Dict{String,Float64}
+    grouped_vals::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
+	grouped_ids::Dict{String, Vector{<:Number}} = split_by_group(ids, grs)
+    groups::Vector{String} = collect(keys(grouped_vals))
     comparisons::Vector{String} = []
     p_values::Vector{Float64} = []
+	paired::Bool = false
     for i in eachindex(groups)
         for j in (i+1):length(groups)
             gi, gj = groups[i], groups[j]
+			paired = should_choose_paired(grouped_ids[gi], grouped_ids[gj])
             push!(comparisons, "$(gi) vs. $(gj)")
-            push!(p_values, run_unpaired_test_get_p_val(grouped[gi], grouped[gj]))
+			if paired
+				push!(p_values, run_paired_test_get_p_val(
+					get_paired_vals(grouped_vals[gi], grouped_vals[gj],
+					grouped_ids[gi], grouped_ids[gj])...
+				))
+			else
+				push!(p_values, run_unpaired_test_get_p_val(grouped_vals[gi], grouped_vals[gj]))
+			end
         end
     end
     if adjust
@@ -141,8 +178,18 @@ begin
     # table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
     # bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
     follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328]
-    gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
-    run_pairwise_compars_get_p_vals(follate, gr, true, mt.Bonferroni)
+    follate_gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
+    run_pairwise_compars_get_p_vals(follate, follate_gr, collect(1:length(follate)), true, mt.Bonferroni)
+end
+
+# ╔═╡ 1c27ec5c-3fc4-4769-b20d-4f9e2898d657
+begin
+	# from D. Altman "Practical Statistics for Medical Research"
+    # table 9.3
+	intake_kJ = [5260, 5470, 5640, 6180, 6390, 6515, 6805, 7515, 7515, 8230, 8770, 3910, 4220, 3885, 5160, 5645, 4680, 5265, 5975, 6790, 6900, 7335]
+	intake_gr = repeat(["premenopause", "postmenopause"], inner = 11)
+	intake_id = repeat(1:11, outer = 11)
+	run_pairwise_compars_get_p_vals(intake_kJ, intake_gr, intake_id, false, mt.Bonferroni)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -738,7 +785,7 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─4fb3f188-ad18-11ed-2b24-d121dd5106d0
 # ╟─f43af165-bad8-4700-9156-177d5ec9c224
-# ╟─a57441fb-7f7f-41f6-be6a-a305eae689cd
+# ╠═a57441fb-7f7f-41f6-be6a-a305eae689cd
 # ╟─b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 # ╠═ab88ccac-2bc9-4ec5-adca-871621723c2f
 # ╠═74449f97-871c-46ab-b03d-6140b3eff8c8
@@ -747,11 +794,15 @@ version = "17.4.0+0"
 # ╠═b7b41906-106b-480a-91b1-7b3197940496
 # ╠═6e9959ba-7d3b-40ad-aa2b-c11560e530ca
 # ╠═2bd67ebd-cad6-4ed8-a5ed-9e44227a0c6d
-# ╠═13daaaa1-cf7f-4127-8b86-3fbf85aa268f
 # ╠═ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
+# ╠═13daaaa1-cf7f-4127-8b86-3fbf85aa268f
 # ╠═36f6328e-6a87-4a2c-ad79-5591ce222c29
+# ╠═6977116a-757a-4f54-a8fc-262e2717de56
+# ╠═8ba2ffa3-23fd-4009-a894-1d6269a16933
+# ╠═fd7469ca-c659-41ca-837b-dfafb562fb97
 # ╠═4e6c2b53-75a0-439f-a70e-302b242e9e11
 # ╟─47ef6176-803b-429d-8008-2d20bb2cf88b
 # ╠═193f71cc-856c-4e5a-ae0f-8baec82d6d8c
+# ╠═1c27ec5c-3fc4-4769-b20d-4f9e2898d657
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
