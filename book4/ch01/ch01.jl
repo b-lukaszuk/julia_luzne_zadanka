@@ -169,6 +169,21 @@ md"""### Conditional Probability Is Not Commutative"""
 # ╔═╡ f03f6efe-2dcb-4334-beb1-bbac03beff66
 "Experimental P(banker | female) = $(get_cond_prob(banker, female))"
 
+# ╔═╡ 8e269d9f-1dff-4601-ad1e-9ccdd175a4e4
+md"""### Condition and Conjunction"""
+
+# ╔═╡ 8405c06b-cf28-4b5e-ae71-44999972d65d
+begin
+	liberal_and_democrat = Vector{Bool}(liberal .&& democrat)
+	"Experimental P(female | (liberal & democrat)) = $(get_cond_prob(female, liberal_and_democrat))"
+end
+
+# ╔═╡ 4be70c9a-1172-4ec5-b84a-41d8e5aedb7d
+begin
+	liberal_and_female = Vector{Bool}(liberal .&& female)
+	"Experimental P((liberal & female) | banker) = $(get_cond_prob(liberal_and_female, banker))"
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -625,5 +640,8 @@ version = "17.4.0+0"
 # ╟─5236fb18-eb47-46b0-b452-588be0500c01
 # ╠═c1d111c3-8f6d-4492-bbe9-bfec47695af1
 # ╠═f03f6efe-2dcb-4334-beb1-bbac03beff66
+# ╟─8e269d9f-1dff-4601-ad1e-9ccdd175a4e4
+# ╠═8405c06b-cf28-4b5e-ae71-44999972d65d
+# ╠═4be70c9a-1172-4ec5-b84a-41d8e5aedb7d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
