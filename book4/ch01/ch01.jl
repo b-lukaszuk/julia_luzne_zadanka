@@ -5,7 +5,9 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ b71d296c-ad3f-11ed-288f-5fa9ad07e290
-md"""# Chapter 1. Probability"""
+md"""# Chapter 1. Probability
+[Link to chapter online](https://allendowney.github.io/ThinkBayes2/chap01.html)
+"""
 
 # ╔═╡ 21f45d1d-9db3-470a-afae-5d31ef1f4c3e
 md"""## Warning
