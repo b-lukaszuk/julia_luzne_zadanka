@@ -23,7 +23,7 @@ Comparing 2 or more groups of continuous variables (pairwise tests) and obtainin
 The program will check the assumptions of the tests:
 - normality of distributions,
 - homogeneity of variances,
-- convergence of ids, then normality of differences distribution
+- convergence of ids, if good enough gets differences, checks their normality
 and decide upon a test.
 
 It will choose between:
@@ -180,16 +180,21 @@ begin
     follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328]
     follate_gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
     run_pairwise_compars_get_p_vals(follate, follate_gr, collect(1:length(follate)), true, mt.Bonferroni)
+	# the output is compatible with the one calculated 'by hand'
 end
 
 # ╔═╡ 1c27ec5c-3fc4-4769-b20d-4f9e2898d657
 begin
 	# from D. Altman "Practical Statistics for Medical Research"
-    # table 9.3
+    # table 9.3 + some random group, random values, random ids
 	intake_kJ = [5260, 5470, 5640, 6180, 6390, 6515, 6805, 7515, 7515, 8230, 8770, 3910, 4220, 3885, 5160, 5645, 4680, 5265, 5975, 6790, 6900, 7335]
 	intake_gr = repeat(["premenopause", "postmenopause"], inner = 11)
 	intake_id = repeat(1:11, outer = 11)
+	push!(intake_kJ, [5192, 4186, 4516, 4752, 5176]...)
+	push!(intake_gr, ["rand", "rand", "rand", "rand", "rand"]...)
+	push!(intake_id, [12, 13, 14, 15, 16]...)
 	run_pairwise_compars_get_p_vals(intake_kJ, intake_gr, intake_id, false, mt.Bonferroni)
+	# the output is compatible with the one calculated 'by hand'
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -785,7 +790,7 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─4fb3f188-ad18-11ed-2b24-d121dd5106d0
 # ╟─f43af165-bad8-4700-9156-177d5ec9c224
-# ╠═a57441fb-7f7f-41f6-be6a-a305eae689cd
+# ╟─a57441fb-7f7f-41f6-be6a-a305eae689cd
 # ╟─b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 # ╠═ab88ccac-2bc9-4ec5-adca-871621723c2f
 # ╠═74449f97-871c-46ab-b03d-6140b3eff8c8
