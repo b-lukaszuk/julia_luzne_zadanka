@@ -32,7 +32,8 @@ PlutoUI.TableOfContents()
 md"""## Code from chapter"""
 
 # ╔═╡ 1ba92f60-4366-4c75-a448-bb62623e3221
-md"""### Data from gss_bayes.csv"""
+md"""### Data from gss_bayes.csv
+[Link to the data file online](https://raw.githubusercontent.com/AllenDowney/BiteSizeBayes/master/gss_bayes.csv)"""
 
 # ╔═╡ 28309c7a-1c24-4864-b5f7-6fc52db55ff5
 begin
