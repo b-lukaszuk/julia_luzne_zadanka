@@ -159,6 +159,15 @@ md"""What is the probability that a respondent is liberal, given that they are f
 # ╔═╡ d092f04f-1bbf-430a-a8b7-62456bd8cf13
 "Experimental P(liberal | female) = $(get_cond_prob(liberal, female))"
 
+# ╔═╡ 5236fb18-eb47-46b0-b452-588be0500c01
+md"""### Conditional Probability Is Not Commutative"""
+
+# ╔═╡ c1d111c3-8f6d-4492-bbe9-bfec47695af1
+"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
+
+# ╔═╡ f03f6efe-2dcb-4334-beb1-bbac03beff66
+"Experimental P(banker | female) = $(get_cond_prob(banker, female))"
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -612,5 +621,8 @@ version = "17.4.0+0"
 # ╠═475de773-b242-47d5-b216-b52b58816e9f
 # ╟─95c86f6b-d03e-4c39-becd-f7f6e2d87fe6
 # ╠═d092f04f-1bbf-430a-a8b7-62456bd8cf13
+# ╟─5236fb18-eb47-46b0-b452-588be0500c01
+# ╠═c1d111c3-8f6d-4492-bbe9-bfec47695af1
+# ╠═f03f6efe-2dcb-4334-beb1-bbac03beff66
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
