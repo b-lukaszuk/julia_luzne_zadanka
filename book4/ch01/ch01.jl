@@ -184,6 +184,29 @@ begin
 	"Experimental P((liberal & female) | banker) = $(get_cond_prob(liberal_and_female, banker))"
 end
 
+# ╔═╡ dd39a65e-fecd-471c-b471-72f63bc8bb96
+md"""### Laws of Probability
+#### Theorem 1
+
+$P(A|B) = \frac{P(A \ and \ B)}{P(B)}$
+
+#### Theorem 2
+
+$P(A \ and \ B) = P(B) \ P(A|B)$
+
+#### Theorem 3
+
+$P(B) \ P(A|B) = P(A) \ P(B|A)$
+
+#### The Law of Total Probability
+
+$P(A) = P(B_{1} \ and \ A) + P(B_{2} \ and \ A)$
+
+This law applies only if $B_{1}$ and $B_{2}$ are:
+- Mutually exclusive, which means that only one of them can be true, and
+- Collectively exhaustive, which means that one of them must be true
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -643,5 +666,6 @@ version = "17.4.0+0"
 # ╟─8e269d9f-1dff-4601-ad1e-9ccdd175a4e4
 # ╠═8405c06b-cf28-4b5e-ae71-44999972d65d
 # ╠═4be70c9a-1172-4ec5-b84a-41d8e5aedb7d
+# ╟─dd39a65e-fecd-471c-b471-72f63bc8bb96
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
