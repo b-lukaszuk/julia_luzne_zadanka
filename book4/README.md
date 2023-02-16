@@ -8,15 +8,14 @@ Probably I will use [Pluto.jl](https://plutojl.org/) or [Jupyter](https://jupyte
 
 # Usage example
 
-## Pure julia file
-
-```bash
-julia main.jl
-```
-
 ## Pluto.jl notebook
 
 ``` bash
+ls
+# output: README.md ch01.jl
+head -2 ch01.jl
+# output: ### A Pluto.jl notegook ###
+# output: # v0.19.19
 julia
 ```
 
@@ -28,7 +27,15 @@ julia> Pluto.run() # opens notebook in a default browser
 ## Jupyter notebook
 
 ``` bash
+ls
+# output: README.md ch01.ipynb
 jupyter notebook # opens notebook in a default browser
+```
+
+## Pure julia file
+
+```bash
+julia ch01.jl
 ```
 
 # Additional info
