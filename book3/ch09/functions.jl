@@ -5,8 +5,18 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 4fb3f188-ad18-11ed-2b24-d121dd5106d0
-md"""# Utility functions with Julia
-## Idea
+md"""# Utility functions with Julia"""
+
+# ╔═╡ f43af165-bad8-4700-9156-177d5ec9c224
+md"""## Warning
+
+NO GUARANTEE THAT THE SOLUTIONS WILL WORK OR WORK CORRECTLY!
+
+THE SOLUTIONS PROVIDED BELOW MAY BE WRONG. USE THEM AT YOUR OWN RISK!
+"""
+
+# ╔═╡ a57441fb-7f7f-41f6-be6a-a305eae689cd
+md"""## Idea
 
 Comparing 2 or more groups of continuous variables (pairwise tests) and obtaining p-values for comparisons.
 
@@ -22,16 +32,7 @@ It will choose between:
 The tests between two groups, for each possible pairs of n groups. The p-values will be collected, multiplicity correction will be applied (optional).
 
 ## The Result
-Comparisons and p-values will be returned in a dictionary e.g. Dict("var1 vs. var2" => 0.02, "var1 vs. var3" => 0.24, "var2 vs. var1" => 0.088)
-"""
-
-# ╔═╡ f43af165-bad8-4700-9156-177d5ec9c224
-md"""# Warning
-
-NO GUARANTEE THAT THE SOLUTIONS WILL WORK OR WORK CORRECTLY!
-
-THE SOLUTIONS PROVIDED BELOW MAY BE WRONG. USE THEM AT YOUR OWN RISK!
-"""
+Comparisons and p-values will be returned in a dictionary e.g. Dict("var1 vs. var2" => 0.02, "var1 vs. var3" => 0.24, "var2 vs. var1" => 0.088)"""
 
 # ╔═╡ b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 md"""## Imports"""
@@ -41,7 +42,11 @@ begin
     import HypothesisTests as ht
     import MultipleTesting as mt
     import Pingouin as pg
+	import PlutoUI
 end
+
+# ╔═╡ 74449f97-871c-46ab-b03d-6140b3eff8c8
+PlutoUI.TableOfContents()
 
 # ╔═╡ ad1559c3-b0d3-40c2-b76f-f384334011a0
 md"""## Functions"""
@@ -135,11 +140,13 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 HypothesisTests = "09f84164-cd44-5f33-b23f-e6b0d136a0d5"
 MultipleTesting = "f8716d33-7c4a-5097-896f-ce0ecbd3ef6b"
 Pingouin = "61ac1d4c-5a1f-4019-949c-7919748f8c44"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 HypothesisTests = "~0.10.11"
 MultipleTesting = "~0.5.1"
 Pingouin = "~0.2.3"
+PlutoUI = "~0.7.50"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -148,7 +155,13 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "7649bf44c43ff6153e219f4202b6151c68cac639"
+project_hash = "f048c26bfe32bce3c58e98da0c76d0e1cb5cb880"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -183,6 +196,12 @@ deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
 git-tree-sha1 = "844b061c104c408b24537482469400af6075aae4"
 uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
 version = "0.1.5"
+
+[[deps.ColorTypes]]
+deps = ["FixedPointNumbers", "Random"]
+git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
+uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+version = "0.11.4"
 
 [[deps.Combinatorics]]
 git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
@@ -280,6 +299,12 @@ git-tree-sha1 = "d3ba08ab64bdfd27234d3f61956c966266757fe6"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
 version = "0.13.7"
 
+[[deps.FixedPointNumbers]]
+deps = ["Statistics"]
+git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
+uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
+version = "0.8.4"
+
 [[deps.Formatting]]
 deps = ["Printf"]
 git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
@@ -296,11 +321,29 @@ git-tree-sha1 = "709d864e3ed6e3545230601f94e11ebc65994641"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
 version = "0.3.11"
 
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
+[[deps.HypertextLiteral]]
+deps = ["Tricks"]
+git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.4"
+
 [[deps.HypothesisTests]]
 deps = ["Combinatorics", "Distributions", "LinearAlgebra", "Random", "Rmath", "Roots", "Statistics", "StatsBase"]
 git-tree-sha1 = "ae3b6964d58df11984d22644ce5546eaf20fe95d"
 uuid = "09f84164-cd44-5f33-b23f-e6b0d136a0d5"
 version = "0.10.11"
+
+[[deps.IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+version = "0.2.2"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -332,6 +375,12 @@ deps = ["Preferences"]
 git-tree-sha1 = "abc9885a7ca2052a736a600f7fa66209f96506e1"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.4.1"
+
+[[deps.JSON]]
+deps = ["Dates", "Mmap", "Parsers", "Unicode"]
+git-tree-sha1 = "3c837543ddb02250ef42f4738347454f95079d4e"
+uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+version = "0.21.3"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
@@ -373,6 +422,11 @@ version = "0.3.21"
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
+[[deps.MIMEs]]
+git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "0.1.4"
+
 [[deps.MacroTools]]
 deps = ["Markdown", "Random"]
 git-tree-sha1 = "42324d08725e200c23d4dfb549e0d5d89dede2d2"
@@ -409,9 +463,9 @@ version = "0.5.1"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
-git-tree-sha1 = "a7c3d1da1189a1c2fe843a3bfa04d18d20eb3211"
+git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
@@ -460,6 +514,12 @@ version = "0.2.3"
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 version = "1.8.0"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "5bb5129fdd62a2bbbe17c2756932259acf467386"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.50"
 
 [[deps.PooledArrays]]
 deps = ["DataAPI", "Future"]
@@ -626,6 +686,16 @@ version = "1.10.1"
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
+[[deps.Tricks]]
+git-tree-sha1 = "6bac775f2d42a611cdfcd1fb217ee719630c4175"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.6"
+
+[[deps.URIs]]
+git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
+uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
+version = "1.4.2"
+
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
@@ -657,8 +727,10 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─4fb3f188-ad18-11ed-2b24-d121dd5106d0
 # ╟─f43af165-bad8-4700-9156-177d5ec9c224
+# ╟─a57441fb-7f7f-41f6-be6a-a305eae689cd
 # ╟─b6a2fd82-1d7a-45f4-a03a-0c18213cd88c
 # ╠═ab88ccac-2bc9-4ec5-adca-871621723c2f
+# ╠═74449f97-871c-46ab-b03d-6140b3eff8c8
 # ╟─ad1559c3-b0d3-40c2-b76f-f384334011a0
 # ╠═d2913aa3-79cc-43d8-b4a0-6e4cdc1e64bb
 # ╠═b7b41906-106b-480a-91b1-7b3197940496
