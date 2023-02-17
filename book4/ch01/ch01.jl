@@ -26,7 +26,7 @@ begin
 end
 
 # ╔═╡ 8d5b4a4f-35aa-435a-a68a-6ff4cefceac0
-PlutoUI.TableOfContents()
+PlutoUI.TableOfContents(depth=4)
 
 # ╔═╡ ff5217ac-43b4-45f7-86f0-606482a3fcfa
 md"""## Code from chapter"""
@@ -185,20 +185,55 @@ begin
 end
 
 # ╔═╡ dd39a65e-fecd-471c-b471-72f63bc8bb96
-md"""### Laws of Probability
-#### Theorem 1
+md"""### Laws of Probability"""
 
-$P(A|B) = \frac{P(A \ and \ B)}{P(B)}$
+# ╔═╡ 16ddb8b5-9ee2-4798-97cc-90e008b7ac9d
+md"""#### Theorem 1
 
-#### Theorem 2
+$P(A|B) = \frac{P(A \ and \ B)}{P(B)}$"""
 
-$P(A \ and \ B) = P(B) \ P(A|B)$
+# ╔═╡ aa88711f-1f4d-4711-9bcf-48168843b3b1
+get_cond_prob(female, banker)
 
-#### Theorem 3
+# ╔═╡ 2556d2ec-0e42-4bd0-a4af-183885da8d51
+get_prob(Vector{Bool}(female .&& banker)) / get_prob(banker)
+
+# ╔═╡ 6bbe0418-2a8a-4161-ae51-3a8b953b27b7
+md"""#### Theorem 2
+
+$P(A \ and \ B) = P(B) \ P(A|B)$"""
+
+# ╔═╡ 43a0ccb1-2d21-4afb-9866-956e3374a0cc
+get_prob(Vector{Bool}(liberal .&& democrat))
+
+# ╔═╡ f3b8818c-02fb-4c00-a925-1427385c9d25
+get_prob(democrat) * get_cond_prob(liberal, democrat)
+
+# ╔═╡ 627a3525-8ba8-4db9-a327-1c8ece94ea73
+md"""#### Theorem 3
+
+In math we got conjunction, i.e
+
+$P(A \ and \ B) = P(B \ and \ A)$
+
+If We apply Theorem 2 to both sides we have
 
 $P(B) \ P(A|B) = P(A) \ P(B|A)$
 
-#### The Law of Total Probability
+and after solving for $P(A|B)$ we got Bayes's Theorem:
+
+$P(A|B) = \frac{P(A)P(B|A)}{P(B)}$
+
+"""
+
+# ╔═╡ b1c85c96-35be-4510-8502-fdfcc7f8a65c
+get_cond_prob(liberal, banker)
+
+# ╔═╡ 4c4bb214-cd21-4ba8-a573-d163003b4746
+get_prob(liberal) * get_cond_prob(banker, liberal) / get_prob(banker)
+
+# ╔═╡ 5b5677a0-3298-4d06-9880-0194a0a245f8
+md"""#### The Law of Total Probability
 
 $P(A) = P(B_{1} \ and \ A) + P(B_{2} \ and \ A)$
 
@@ -206,6 +241,31 @@ This law applies only if $B_{1}$ and $B_{2}$ are:
 - Mutually exclusive, which means that only one of them can be true, and
 - Collectively exhaustive, which means that one of them must be true
 """
+
+# ╔═╡ ac370ad2-076e-4df4-a99d-9b27e68de39f
+get_prob(banker)
+
+# ╔═╡ 45692fea-5687-46f2-9c33-c315d7420cb1
+begin
+	male = gss[!, :sex] .== 1
+	get_prob(Vector{Bool}(male .&& banker)) + get_prob(Vector{Bool}(female .&& banker))
+end
+
+# ╔═╡ 7adeb709-3216-41e9-887e-19bfc7abf9d8
+md"""For many (N) Bs, we got:
+
+$P(A) = \sum \limits_{i=1}^{N} P(B_{i}) P(A|B_{i})$
+"""
+
+# ╔═╡ f13aebbe-63fc-4a17-9e14-f4bfcdb98963
+begin
+	B = gss[!, :polviews]
+	sum(
+	[get_prob(Vector{Bool}(B .== i)) *
+	get_cond_prob(banker, Vector{Bool}(B .== i))
+		for i in 1:7]
+	)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -667,5 +727,19 @@ version = "17.4.0+0"
 # ╠═8405c06b-cf28-4b5e-ae71-44999972d65d
 # ╠═4be70c9a-1172-4ec5-b84a-41d8e5aedb7d
 # ╟─dd39a65e-fecd-471c-b471-72f63bc8bb96
+# ╟─16ddb8b5-9ee2-4798-97cc-90e008b7ac9d
+# ╠═aa88711f-1f4d-4711-9bcf-48168843b3b1
+# ╠═2556d2ec-0e42-4bd0-a4af-183885da8d51
+# ╟─6bbe0418-2a8a-4161-ae51-3a8b953b27b7
+# ╠═43a0ccb1-2d21-4afb-9866-956e3374a0cc
+# ╠═f3b8818c-02fb-4c00-a925-1427385c9d25
+# ╟─627a3525-8ba8-4db9-a327-1c8ece94ea73
+# ╠═b1c85c96-35be-4510-8502-fdfcc7f8a65c
+# ╠═4c4bb214-cd21-4ba8-a573-d163003b4746
+# ╟─5b5677a0-3298-4d06-9880-0194a0a245f8
+# ╠═ac370ad2-076e-4df4-a99d-9b27e68de39f
+# ╠═45692fea-5687-46f2-9c33-c315d7420cb1
+# ╟─7adeb709-3216-41e9-887e-19bfc7abf9d8
+# ╠═f13aebbe-63fc-4a17-9e14-f4bfcdb98963
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
