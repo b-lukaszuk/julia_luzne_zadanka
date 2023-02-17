@@ -267,6 +267,28 @@ begin
 	)
 end
 
+# ╔═╡ 4c865165-37cb-4b46-af82-f19b8ef0f840
+md"""## Exercises"""
+
+# ╔═╡ 3f38f11b-acad-44d2-bb6b-f133ae46028e
+md"""#### Exercise 1
+
+Let’s use the tools in this chapter to solve a variation of the Linda problem.
+
+Linda is 31 years old, single, outspoken, and very bright.
+She majored in philosophy.
+As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.
+
+Which is more probable?
+1. Linda is a banker.
+2. Linda is a banker and considers herself a liberal Democrat.
+
+To answer this question, compute
+- The probability that Linda is a female banker,
+- The probability that Linda is a liberal female banker, and
+- The probability that Linda is a liberal female banker and a Democrat.
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -741,5 +763,7 @@ version = "17.4.0+0"
 # ╠═45692fea-5687-46f2-9c33-c315d7420cb1
 # ╟─7adeb709-3216-41e9-887e-19bfc7abf9d8
 # ╠═f13aebbe-63fc-4a17-9e14-f4bfcdb98963
+# ╟─4c865165-37cb-4b46-af82-f19b8ef0f840
+# ╟─3f38f11b-acad-44d2-bb6b-f133ae46028e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
