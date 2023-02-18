@@ -298,6 +298,21 @@ get_prob(Vector{Bool}(liberal .&& female .&& banker))
 # ╔═╡ 3cd2cd2a-68a2-43c4-bcb6-766ecb8f5fcc
 get_prob(Vector{Bool}(liberal .&& female .&& banker .&& democrat))
 
+# ╔═╡ 79e7ae19-a9ce-4d88-8eae-6307d8b43f42
+md"""#### Exercise 2
+
+Use conditional to compute the following probabilities:
+- What is the probability that a respondent is liberal, given that they are a Democrat?
+- What is the probability that a respondent is a Democrat, given that they are liberal?
+
+Think carefully about the order of the arguments you pass to conditional."""
+
+# ╔═╡ 72bc1494-e79d-42f2-80c8-2a2fc1ee6460
+get_cond_prob(liberal, democrat)
+
+# ╔═╡ cdcf7170-b51b-47ba-bb7b-3367c7028811
+get_cond_prob(democrat, liberal)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -777,5 +792,8 @@ version = "17.4.0+0"
 # ╠═13b094c6-3712-446e-9cb6-a3b835bdaacf
 # ╠═030134bb-7e48-4c4e-bcef-401ee70e4ccc
 # ╠═3cd2cd2a-68a2-43c4-bcb6-766ecb8f5fcc
+# ╟─79e7ae19-a9ce-4d88-8eae-6307d8b43f42
+# ╠═72bc1494-e79d-42f2-80c8-2a2fc1ee6460
+# ╠═cdcf7170-b51b-47ba-bb7b-3367c7028811
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
