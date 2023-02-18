@@ -289,6 +289,15 @@ To answer this question, compute
 - The probability that Linda is a liberal female banker and a Democrat.
 """
 
+# ╔═╡ 13b094c6-3712-446e-9cb6-a3b835bdaacf
+get_prob(Vector{Bool}(female .&& banker))
+
+# ╔═╡ 030134bb-7e48-4c4e-bcef-401ee70e4ccc
+get_prob(Vector{Bool}(liberal .&& female .&& banker))
+
+# ╔═╡ 3cd2cd2a-68a2-43c4-bcb6-766ecb8f5fcc
+get_prob(Vector{Bool}(liberal .&& female .&& banker .&& democrat))
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -765,5 +774,8 @@ version = "17.4.0+0"
 # ╠═f13aebbe-63fc-4a17-9e14-f4bfcdb98963
 # ╟─4c865165-37cb-4b46-af82-f19b8ef0f840
 # ╟─3f38f11b-acad-44d2-bb6b-f133ae46028e
+# ╠═13b094c6-3712-446e-9cb6-a3b835bdaacf
+# ╠═030134bb-7e48-4c4e-bcef-401ee70e4ccc
+# ╠═3cd2cd2a-68a2-43c4-bcb6-766ecb8f5fcc
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
