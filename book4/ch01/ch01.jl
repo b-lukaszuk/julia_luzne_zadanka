@@ -313,6 +313,65 @@ get_cond_prob(liberal, democrat)
 # ╔═╡ cdcf7170-b51b-47ba-bb7b-3367c7028811
 get_cond_prob(democrat, liberal)
 
+# ╔═╡ 42b10d75-c669-475d-9138-f6e9c478884a
+md"""#### Exercise 3
+
+There’s a famous quote about young people, old people, liberals, and conservatives that goes something like:
+
+"If you are not a liberal at 25, you have no heart. If you are not a conservative at 35, you have no brain."
+
+Whether you agree with this proposition or not, it suggests some probabilities we can compute as an exercise. Rather than use the specific ages 25 and 35, let’s define young and old as under 30 or over 65:
+"""
+
+# ╔═╡ b096945a-2fea-48e6-8eae-a37f314cd651
+begin
+	young = Vector{Bool}(gss[!, "age"] .< 30)
+	get_prob(young)
+end
+
+# ╔═╡ 4782b5fb-6e65-419b-b0fe-44a1816b89c4
+begin
+	old = Vector{Bool}(gss[!, "age"] .>= 65)
+	get_prob(old)
+end
+
+# ╔═╡ 22e4948e-f2a9-4dbd-b4da-44eb50e5163f
+md"""For these thresholds, I chose round numbers near the 20th and 80th percentiles. Depending on your age, you may or may not agree with these definitions of “young” and “old”.
+
+I’ll define conservative as someone whose political views are:
+- “Conservative”,
+- “Slightly Conservative”, or
+- “Extremely Conservative”."""
+
+# ╔═╡ d0913054-009e-4149-8192-339ed3e7a93b
+begin
+	conservative = Vector{Bool}(gss[!, "polviews"] .>= 5)
+	get_prob(conservative)
+end
+
+# ╔═╡ 3f857a7b-b5a3-4586-9dcc-e575da18cdd6
+md"""Use prob and conditional to compute the following probabilities.
+- What is the probability that a randomly chosen respondent is a young liberal?
+- What is the probability that a young person is liberal?
+- What fraction of respondents are old conservatives?
+- What fraction of conservatives are old?
+
+For each statement, think about whether it is expressing a conjunction, a conditional probability, or both.
+
+For the conditional probabilities, be careful about the order of the arguments. If your answer to the last question is greater than 30%, you have it backwards!"""
+
+# ╔═╡ 704fa870-6035-49a4-8ed0-59991177b772
+get_prob(Vector{Bool}(young .&& liberal))
+
+# ╔═╡ 402f0eb5-88e9-4db9-9bd3-96f0d4e61bb4
+get_cond_prob(liberal, young)
+
+# ╔═╡ fcca2543-200f-4576-8e51-38e4b6006340
+get_prob(Vector{Bool}(old .&& conservative))
+
+# ╔═╡ c97021fc-5d1a-4bdd-a49a-6d294e6e5ce8
+get_cond_prob(old, conservative)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -795,5 +854,15 @@ version = "17.4.0+0"
 # ╟─79e7ae19-a9ce-4d88-8eae-6307d8b43f42
 # ╠═72bc1494-e79d-42f2-80c8-2a2fc1ee6460
 # ╠═cdcf7170-b51b-47ba-bb7b-3367c7028811
+# ╟─42b10d75-c669-475d-9138-f6e9c478884a
+# ╠═b096945a-2fea-48e6-8eae-a37f314cd651
+# ╠═4782b5fb-6e65-419b-b0fe-44a1816b89c4
+# ╟─22e4948e-f2a9-4dbd-b4da-44eb50e5163f
+# ╠═d0913054-009e-4149-8192-339ed3e7a93b
+# ╟─3f857a7b-b5a3-4586-9dcc-e575da18cdd6
+# ╠═704fa870-6035-49a4-8ed0-59991177b772
+# ╠═402f0eb5-88e9-4db9-9bd3-96f0d4e61bb4
+# ╠═fcca2543-200f-4576-8e51-38e4b6006340
+# ╠═c97021fc-5d1a-4bdd-a49a-6d294e6e5ce8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
