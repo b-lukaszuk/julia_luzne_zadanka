@@ -226,6 +226,34 @@ md"""As this example shows, our intuition for probability is not always reliable
 
 The Bayes table does the rest."""
 
+# ╔═╡ bd98b260-1b3a-4bc7-bd1f-ca0c10890c5a
+md"""## Exercises"""
+
+# ╔═╡ 4addcf84-1ea7-4a8f-b826-5f726ca46a98
+function update!(table)
+	table.unnorm = table.prior .* table.likelihood
+	table.posterior = table.unnorm ./ sum(table.unnorm)
+end
+
+# ╔═╡ d1a98692-070f-4ab7-9786-a09801f01578
+md"""### Exercise 1
+Suppose you have two coins in a box. One is a normal coin with heads on one side and tails on the other, and one is a trick coin with heads on both sides. You choose a coin at random and see that one of the sides is heads. What is the probability that you chose the trick coin?
+"""
+
+# ╔═╡ 8ede20ab-5e2f-49fd-9e2e-2aadb1875bb0
+ex1 = pd.DataFrame(
+	(; coin_no = [1, 2],
+	prior=[1//2, 1//2],
+	likelihood=[1//2, 1]
+	)
+)
+
+# ╔═╡ 9eddb47d-400d-42cc-9daa-f398fb771dfc
+begin
+	update!(ex1)
+	ex1
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -674,5 +702,10 @@ version = "17.4.0+0"
 # ╟─e9bb20bf-fac0-493c-a72a-ab15534a7cf9
 # ╠═5d3cab7f-4758-4ad8-af97-a287c5c420a1
 # ╟─536ed130-e53d-43d1-a724-174aa6f48dda
+# ╟─bd98b260-1b3a-4bc7-bd1f-ca0c10890c5a
+# ╠═4addcf84-1ea7-4a8f-b826-5f726ca46a98
+# ╟─d1a98692-070f-4ab7-9786-a09801f01578
+# ╠═8ede20ab-5e2f-49fd-9e2e-2aadb1875bb0
+# ╠═9eddb47d-400d-42cc-9daa-f398fb771dfc
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
