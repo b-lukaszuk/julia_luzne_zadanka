@@ -157,6 +157,29 @@ md"""The posterior probability for Bowl 1 is 0.6, and for Bowl 2 is 0.4.
 
 When we add up the unnormalized posteriors and divide through, we force the posteriors to add up to 1. This process is called “normalization”, which is why the total probability of the data is also called the “normalizing constant”."""
 
+# ╔═╡ 7d5bccec-876d-425b-a57f-261081b3d3b4
+md"""### The Dice problem
+
+Suppose I have a box with a 6-sided die, an 8-sided die, and a 12-sided die. I choose one of the dice at random, roll it, and report that the outcome is a 1. What is the probability that I chose the 6-sided die?"""
+
+# ╔═╡ cc718d26-3833-4ece-a440-89acbc610430
+md"""I will try to solve it using Bayes table from the previous example"""
+
+# ╔═╡ 8c82ab57-b94e-4d5c-b3c6-3eaf15f15bf5
+dice_problem = pd.DataFrame(
+	(; no_of_sides=[6, 8, 12],
+	prior=[1/3, 1/3, 1/3],
+	likelihood=[1/6, 1/8, 1/12]
+	)
+)
+
+# ╔═╡ 7a36515d-7ca6-480b-b62e-e6c9599752a8
+begin
+	dice_problem[!, "unnorm"] = dice_problem[!, "prior"] .* dice_problem[!, "likelihood"]
+	dice_problem[!, "posterior"] = dice_problem[!, "unnorm"] ./ sum(dice_problem[!, "unnorm"])
+	dice_problem
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -596,5 +619,9 @@ version = "17.4.0+0"
 # ╠═1dec6590-9004-463d-aaf7-d9a2d244e9a7
 # ╠═878fd95f-5e2f-4688-b875-1b4f9d352aff
 # ╟─6c6d359f-0385-41b1-8e61-65458852786f
+# ╟─7d5bccec-876d-425b-a57f-261081b3d3b4
+# ╟─cc718d26-3833-4ece-a440-89acbc610430
+# ╠═8c82ab57-b94e-4d5c-b3c6-3eaf15f15bf5
+# ╠═7a36515d-7ca6-480b-b62e-e6c9599752a8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
