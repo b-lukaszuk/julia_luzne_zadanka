@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ b71d296c-ad3f-11ed-288f-5fa9ad07e290
-md"""# Chapter 2. Bayes's
+md"""# Chapter 2. Bayes's Theorem
 [Link to chapter online](https://allendowney.github.io/ThinkBayes2/chap02.html)
 """
 
@@ -106,6 +106,56 @@ $P(D) = \sum \limits_{i=1}^{N} P(H_{i}) P(D|H_{i})$
 
 The process in this section, using data [in P(D|H) and P(D)] and a prior probability [P(H)] to compute a posterior probability [P(H|D)], is called a **Bayesian update**.
 """
+
+# ╔═╡ b0b5778c-fb95-405c-848b-84e958c6f359
+md"""### Bayes Tables
+A convenient tool for doing a Bayesian update is a Bayes table.
+"""
+
+# ╔═╡ 34494573-69f7-46cb-97d8-5616b1e88d52
+md"""Here Bayes table for the cookie problem"""
+
+# ╔═╡ c503bb91-d02d-4a6f-b364-aca1af367b36
+table = pd.DataFrame(
+	(; bowl=[1, 2],
+	prior=[0.5, 0.5],
+	likelihood=[0.75, 0.5])
+)
+
+# ╔═╡ 5d5db65c-0cc1-440e-aa35-89e14b2be49a
+md"""You might notice that the likelihoods don't add up to 1.
+That's OK; each of them is a probability condidioned on a different hypothesis.
+There's no reason they should add up to 1 and no problem if they don't"""
+
+# ╔═╡ d7de2e3c-1389-4d25-ab0a-c21eb06e2190
+begin
+	# unnorm - unnormalized posterior
+	table[!, "unnorm"] = table[!, "prior"] .* table[!, "likelihood"]
+	table
+end
+
+# ╔═╡ 3598aab2-8d1d-4977-9474-8f50167880c2
+md"""In Diachronic Bayes (see above, or TOC) we said that:
+
+$P(D) = \sum \limits_{i=1}^{N} P(H_{i}) P(D|H_{i})$
+"""
+
+# ╔═╡ 1dec6590-9004-463d-aaf7-d9a2d244e9a7
+begin
+	prob_data = sum(table[!, "unnorm"])
+	"So, P(D) = $(prob_data)"
+end
+
+# ╔═╡ 878fd95f-5e2f-4688-b875-1b4f9d352aff
+begin
+	table[!, "posterior"] = table[!, "unnorm"] ./ prob_data
+	table
+end
+
+# ╔═╡ 6c6d359f-0385-41b1-8e61-65458852786f
+md"""The posterior probability for Bowl 1 is 0.6, and for Bowl 2 is 0.4.
+
+When we add up the unnormalized posteriors and divide through, we force the posteriors to add up to 1. This process is called “normalization”, which is why the total probability of the data is also called the “normalizing constant”."""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -537,5 +587,14 @@ version = "17.4.0+0"
 # ╟─2b5752ce-a4b3-4d74-ae8f-eb6ed1df501b
 # ╟─94210b00-f8cf-4085-a033-370fd39b8519
 # ╟─98719a21-7fed-4df0-afc9-24edbffa7bba
+# ╟─b0b5778c-fb95-405c-848b-84e958c6f359
+# ╟─34494573-69f7-46cb-97d8-5616b1e88d52
+# ╠═c503bb91-d02d-4a6f-b364-aca1af367b36
+# ╟─5d5db65c-0cc1-440e-aa35-89e14b2be49a
+# ╠═d7de2e3c-1389-4d25-ab0a-c21eb06e2190
+# ╟─3598aab2-8d1d-4977-9474-8f50167880c2
+# ╠═1dec6590-9004-463d-aaf7-d9a2d244e9a7
+# ╠═878fd95f-5e2f-4688-b875-1b4f9d352aff
+# ╟─6c6d359f-0385-41b1-8e61-65458852786f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
