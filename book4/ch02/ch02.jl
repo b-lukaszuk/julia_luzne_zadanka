@@ -180,6 +180,52 @@ begin
 	dice_problem
 end
 
+# ╔═╡ 4eafb4be-833b-42d0-b48d-343bbcee1418
+md"""### The Monty Hall Problem
+
+The Monty Hall problem is based on a game show called *Let’s Make a Deal*.
+- there are three closed door
+- behind one door there is a car, behind the others goats
+
+The object of the game is to guess which door has the car. If you guess right, you get to keep the car.
+
+To answer this question, we have to make some assumptions about the behavior of the host:
+- the host always opens a door and offers you the option to switch
+- he never opens the door you picked or the door with the car
+- if you choose the door with the car, he chooses one of the other doors at random
+"""
+
+# ╔═╡ 8ed1590b-8216-48cd-8e3c-6b84c907c5e3
+monty = pd.DataFrame(
+	(; door_no=[1, 2, 3],
+	prior=[1//3, 1//3, 1//3],
+	)
+)
+
+# ╔═╡ e9bb20bf-fac0-493c-a72a-ab15534a7cf9
+md"""The data is that Monty (the host) opened Door 3 and revealed a goat.
+So let’s consider the probability of the data under each hypothesis:
+- If the car is behind Door 1, Monty chooses Door 2 or 3 at random, so the probability he opens Door 3 is $\frac{1}{2}$.
+- If the car is behind Door 2, Monty has to open Door 3, so the probability of the data under this hypothesis is 1.
+- If the car is behind Door 3, Monty does not open it, so the probability of the data under this hypothesis is 0.
+"""
+
+# ╔═╡ 5d3cab7f-4758-4ad8-af97-a287c5c420a1
+begin
+	monty[!, "likelihood"] = [1//2, 1, 0]
+	monty[!, "unnorm"] = monty[!, "prior"] .* monty[!, "likelihood"]
+	monty[!, "posterior"] = monty[!, "unnorm"] ./ sum(monty[!, "unnorm"])
+	monty
+end
+
+# ╔═╡ 536ed130-e53d-43d1-a724-174aa6f48dda
+md"""As this example shows, our intuition for probability is not always reliable. Bayes’s Theorem can help by providing a divide-and-conquer strategy:
+1. First, write down the hypotheses and the data.
+2. Next, figure out the prior probabilities.
+3. Finally, compute the likelihood of the data under each hypothesis.
+
+The Bayes table does the rest."""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -623,5 +669,10 @@ version = "17.4.0+0"
 # ╟─cc718d26-3833-4ece-a440-89acbc610430
 # ╠═8c82ab57-b94e-4d5c-b3c6-3eaf15f15bf5
 # ╠═7a36515d-7ca6-480b-b62e-e6c9599752a8
+# ╟─4eafb4be-833b-42d0-b48d-343bbcee1418
+# ╠═8ed1590b-8216-48cd-8e3c-6b84c907c5e3
+# ╟─e9bb20bf-fac0-493c-a72a-ab15534a7cf9
+# ╠═5d3cab7f-4758-4ad8-af97-a287c5c420a1
+# ╟─536ed130-e53d-43d1-a724-174aa6f48dda
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
