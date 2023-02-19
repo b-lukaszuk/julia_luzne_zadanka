@@ -242,7 +242,7 @@ Suppose you have two coins in a box. One is a normal coin with heads on one side
 
 # ╔═╡ 8ede20ab-5e2f-49fd-9e2e-2aadb1875bb0
 ex1 = pd.DataFrame(
-	(; coin_no = [1, 2],
+	(; coin_no=[1, 2],
 	prior=[1//2, 1//2],
 	likelihood=[1//2, 1]
 	)
@@ -252,6 +252,28 @@ ex1 = pd.DataFrame(
 begin
 	update!(ex1)
 	ex1
+end
+
+# ╔═╡ 8e808732-01d8-4e1e-ad02-112178a0aaee
+md"""### Exercise 2
+Suppose you meet someone and learn that they have two children. You ask if either child is a girl and they say yes. What is the probability that both children are girls?
+
+Hint: Start with four equally likely hypotheses.
+"""
+
+# ╔═╡ 103398e0-fc6c-41a9-ba85-a844cc2d5e35
+ex2 = pd.DataFrame(
+	(; hypothesis_no=collect(1:4),
+	hypothesis_state=["bb", "bg", "gb", "gg"],
+	prior=repeat([1//4], 4),
+	likelihood=[0, 1, 1, 1]
+	)
+)
+
+# ╔═╡ a5e5330b-fbdf-4987-a458-1637b6320e83
+begin
+	update!(ex2)
+	ex2
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -707,5 +729,8 @@ version = "17.4.0+0"
 # ╟─d1a98692-070f-4ab7-9786-a09801f01578
 # ╠═8ede20ab-5e2f-49fd-9e2e-2aadb1875bb0
 # ╠═9eddb47d-400d-42cc-9daa-f398fb771dfc
+# ╟─8e808732-01d8-4e1e-ad02-112178a0aaee
+# ╠═103398e0-fc6c-41a9-ba85-a844cc2d5e35
+# ╠═a5e5330b-fbdf-4987-a458-1637b6320e83
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
