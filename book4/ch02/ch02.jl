@@ -70,6 +70,43 @@ $P(B_{1}|V) = \frac{0.5*0.75}{0.625}$
 $P(B_{1}|V) = 0.6$
 """
 
+# ╔═╡ 98719a21-7fed-4df0-afc9-24edbffa7bba
+md"""### Diachronic Bayes
+
+Diachronic (related to change over time).
+
+We gonna update the probability of a hypothesis, H, given some body of data, D.
+
+Rewriting bayes's theorem with H (hypothesis) and D (data) yields:
+
+$P(H|D) = \frac{P(H)P(D|H)}{P(D)}$
+where:
+- P(H) - the probability of the hypothesis before we see the data, called the prior probability, or just **prior**
+- P(H|D) - the probability of the hypothesis after we see the dat, called the **posterior**
+- P(D|H) - the probability of the data under the hypothesis, called the **likelihood**
+- P(D) - the **total probability of the data**, under any hypothesis
+
+Computing P(D) can be tricky. It is supposed to be the probability of seeing the data under any hypothesis at all, but it can be hard to nail down what that means.
+
+Most often we simplify things by specifying a set of hypotheses that are:
+- Mutually exclusive, which means that only one of them can be true, and
+- Collectively exhaustive, which means one of them must be true
+
+Here we use the Law of Total Probability from Chapter 1:
+
+$P(D) = P(H_{1} \ and \ D) + P(H_{2} \ and \ D)$
+
+Applying Theorem 2 from Chapter 1 we got:
+
+$P(D) = P(H_{1})P(D|H_{1}) + P(H_{2})P(D|H_{2})$
+
+For many (N) hypothesis, we got:
+
+$P(D) = \sum \limits_{i=1}^{N} P(H_{i}) P(D|H_{i})$
+
+The process in this section, using data [in P(D|H) and P(D)] and a prior probability [P(H)] to compute a posterior probability [P(H|D)], is called a **Bayesian update**.
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -499,5 +536,6 @@ version = "17.4.0+0"
 # ╟─ff5217ac-43b4-45f7-86f0-606482a3fcfa
 # ╟─2b5752ce-a4b3-4d74-ae8f-eb6ed1df501b
 # ╟─94210b00-f8cf-4085-a033-370fd39b8519
+# ╟─98719a21-7fed-4df0-afc9-24edbffa7bba
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
