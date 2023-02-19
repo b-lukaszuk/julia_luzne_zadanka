@@ -168,8 +168,8 @@ md"""I will try to solve it using Bayes table from the previous example"""
 # ╔═╡ 8c82ab57-b94e-4d5c-b3c6-3eaf15f15bf5
 dice_problem = pd.DataFrame(
 	(; no_of_sides=[6, 8, 12],
-	prior=[1/3, 1/3, 1/3],
-	likelihood=[1/6, 1/8, 1/12]
+	prior=[1//3, 1//3, 1//3],
+	likelihood=[1//6, 1//8, 1//12]
 	)
 )
 
