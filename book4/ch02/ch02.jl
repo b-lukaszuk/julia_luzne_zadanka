@@ -276,6 +276,42 @@ begin
 	ex2
 end
 
+# ╔═╡ 3b5c6d43-399d-4de9-bb8c-f6d5e9848238
+md"""### Exercise 3
+
+There are many variations of [the Monty Hall problem](https://en.wikipedia.org/wiki/Monty_Hall_problem).
+
+For example, suppose Monty always chooses Door 2 if he can, and only chooses Door 3 if he has to (because the car is behind Door 2).
+1. If you choose Door 1 and Monty opens Door 2, what is the probability the car is behind Door 3?
+2. If you choose Door 1 and Monty opens Door 3, what is the probability the car is behind Door 2?
+"""
+
+# ╔═╡ 9d12e81a-b6b4-4f84-9a29-eef1cfd5e1e4
+ex31 = pd.DataFrame(
+	(; door_no=[1, 2, 3],
+	prior=repeat([1//3], 3),
+	likelihood=[1, 0, 1])
+)
+
+# ╔═╡ 49b548b0-ffd2-4bad-a57d-552d6d639a24
+begin
+	update!(ex31)
+	ex31
+end
+
+# ╔═╡ 0af84d8d-4b77-4f33-81bd-20f53eafc5c5
+ex32 = pd.DataFrame(
+	(; door_no=[1, 2, 3],
+	prior=repeat([1//3], 3),
+	likelihood=[0, 1, 0])
+)
+
+# ╔═╡ 4cd525ba-24a9-4bd0-9780-a28bdbd7aeee
+begin
+	update!(ex32)
+	ex32
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -732,5 +768,10 @@ version = "17.4.0+0"
 # ╟─8e808732-01d8-4e1e-ad02-112178a0aaee
 # ╠═103398e0-fc6c-41a9-ba85-a844cc2d5e35
 # ╠═a5e5330b-fbdf-4987-a458-1637b6320e83
+# ╟─3b5c6d43-399d-4de9-bb8c-f6d5e9848238
+# ╠═9d12e81a-b6b4-4f84-9a29-eef1cfd5e1e4
+# ╠═49b548b0-ffd2-4bad-a57d-552d6d639a24
+# ╠═0af84d8d-4b77-4f33-81bd-20f53eafc5c5
+# ╠═4cd525ba-24a9-4bd0-9780-a28bdbd7aeee
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
