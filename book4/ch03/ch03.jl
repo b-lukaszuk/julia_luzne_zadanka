@@ -32,7 +32,7 @@ PlutoUI.TableOfContents(depth=4)
 md"""## Utilities"""
 
 # ╔═╡ 9aa7b25e-c3b4-444b-ae4d-5327f0bee820
-md"""I don't know equivalente of empiricaldist library in julia so for now I will define my own functionality for that"""
+md"""I don't know equivalent of `empiricaldist` library in Julia so for now I will define my own functionality for that"""
 
 # ╔═╡ 0a458bec-9650-4e5e-9a13-90ac20f78ddf
 mutable struct Pmf
@@ -44,7 +44,7 @@ mutable struct Pmf
     posteriors::Vector{Float64}
     Pmf() = new(Vector{String}(undef, 1), zeros(1), zeros(1),
                 zeros(1), 0, zeros(1))
-    Pmf(n, p) = (length(n) != length(p) ) ?
+    Pmf(n, p) = (length(n) != length(p)) ?
         error("length(n) must be equal length(p)") :
         new(n, p, zeros(length(n)), zeros(length(n)), 0, zeros(length(n)))
 end
@@ -54,6 +54,8 @@ begin
 	function Base.show(io::IO, pmf::Pmf)
 		result = "names: $(join(pmf.names, ", "))\n"
 		result = result * "priors: $(join(map(x -> round(x, digits=3) |> string, pmf.priors), ", "))\n"
+		result = result * "likelihoods: $(join(map(x -> round(x, digits=3) |> string, pmf.likelihoods), ", "))\n"
+		result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, pmf.posteriors), ", "))\n"
 		print(io, result)
 	end
 
@@ -67,16 +69,49 @@ begin
 
 	function mk_pmf_from_seq(seq::Vector{String})::Pmf
 		counts::Dict{String, Int} = get_counts(seq)
-	    return Pmf(collect(keys(counts)), collect(values(counts)) ./ sum(values(counts)))
+		total::Int = sum(values(counts))
+		names::Vector{String} = sort(collect(keys(counts)))
+		priors::Vector{Float64} = [counts[n]/total for n in names]
+	    return Pmf(names, priors)
 	end
 
-	function get_prob(pmf::Pmf, name::String)::Float64
+	function get_prior(pmf::Pmf, name::String)::Float64
 	    ind = findfirst(x -> x == name, pmf.names)
 	    return isnothing(ind) ? 0 : pmf.priors[ind]
 	end
 
-	function get_prob(pmf::Pmf, names::Vector{String})::Vector{Float64}
-	    return [get_prob(pmf, n) for n in names]
+	function get_prior(pmf::Pmf, names::Vector{String})::Vector{Float64}
+	    return [get_prior(pmf, n) for n in names]
+	end
+end
+
+# ╔═╡ c594435a-8204-49a8-b98e-d341231a7708
+begin
+	function update!(pmf::Pmf)
+		pmf.unnorms = pmf.priors .* pmf.likelihoods
+		pmf.norm = sum(pmf.unnorms)
+		pmf.posteriors = pmf.unnorms ./ pmf.norm
+	end
+
+	function update!(pmf::Pmf, likelihoods::Vector{Float64})
+		pmf.likelihoods = likelihoods
+		pmf.unnorms = pmf.posteriors .* pmf.likelihoods
+		pmf.norm = sum(pmf.unnorms)
+		pmf.posteriors = pmf.unnorms ./ pmf.norm
+	end
+
+	function pmf2df(pmf::Pmf)
+		df = pd.DataFrame((;pmf.names, pmf.priors, pmf.likelihoods, pmf.posteriors))
+		return df
+	end
+
+	function get_posterior(pmf::Pmf, name::String)::Float64
+	    ind = findfirst(x -> x == name, pmf.names)
+	    return isnothing(ind) ? 0 : pmf.posteriors[ind]
+	end
+
+	function get_posterior(pmf::Pmf, names::Vector{String})::Vector{Float64}
+	    return [get_posterior(pmf, n) for n in names]
 	end
 end
 
@@ -105,13 +140,50 @@ begin
 end
 
 # ╔═╡ 5a621468-b527-4ece-b680-99f9fdfaccd6
-get_prob(letters, "s")
+get_prior(letters, "s")
 
 # ╔═╡ 776c9f3b-1a2a-4560-83a3-3265517af4e9
-get_prob(letters, "t")
+get_prior(letters, "t")
 
 # ╔═╡ 59ffb7c3-83de-4c7d-9a9c-1924d035e743
-get_prob(die, map(string, [1, 4, 7]))
+get_prior(die, map(string, [1, 4, 7]))
+
+# ╔═╡ 961b2d60-87cc-4538-baf7-9fbb1f69f9d8
+md"""### The Cookie Problem Revisited"""
+
+# ╔═╡ 38b5ea75-87f1-4fac-a982-5f523a9ce8e1
+cookie = mk_pmf_from_seq(["Bowl1", "Bowl2"])
+
+# ╔═╡ 9c0d4e36-c73c-47c2-ae16-bd4bf21a07f3
+begin
+	likelihood_vanilla = [0.75, 0.5]
+	cookie.likelihoods = likelihood_vanilla
+end
+
+# ╔═╡ 2259a3eb-a457-44bc-b16e-b451419db08d
+begin
+	update!(cookie)
+	pmf2df(cookie)
+end
+
+# ╔═╡ f327c817-11d1-4730-ba26-cf7d234bcbeb
+cookie.norm
+
+# ╔═╡ e92a8cd3-8b29-4d8e-bdc7-414b9bc69f58
+get_posterior(cookie, "Bowl1")
+
+# ╔═╡ ff1c90c4-1d95-49fd-9e89-688fde8175b2
+begin
+	update!(cookie, likelihood_vanilla)
+	pmf2df(cookie)
+end
+
+# ╔═╡ 502c1fec-5043-45c2-a3c3-89556c6c4255
+begin
+	likelihood_chocolate = [0.25, 0.5]
+	update!(cookie, likelihood_chocolate)
+	pmf2df(cookie)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -543,6 +615,7 @@ version = "17.4.0+0"
 # ╟─9aa7b25e-c3b4-444b-ae4d-5327f0bee820
 # ╠═0a458bec-9650-4e5e-9a13-90ac20f78ddf
 # ╠═18d8192d-0cc6-4f26-8f6c-3f947032924c
+# ╠═c594435a-8204-49a8-b98e-d341231a7708
 # ╟─ff5217ac-43b4-45f7-86f0-606482a3fcfa
 # ╟─3b93f318-c832-456a-985c-10ce6290dd98
 # ╠═6dfc9976-b851-447b-bb9b-5e8e8e446bcd
@@ -551,5 +624,13 @@ version = "17.4.0+0"
 # ╠═5a621468-b527-4ece-b680-99f9fdfaccd6
 # ╠═776c9f3b-1a2a-4560-83a3-3265517af4e9
 # ╠═59ffb7c3-83de-4c7d-9a9c-1924d035e743
+# ╟─961b2d60-87cc-4538-baf7-9fbb1f69f9d8
+# ╠═38b5ea75-87f1-4fac-a982-5f523a9ce8e1
+# ╠═9c0d4e36-c73c-47c2-ae16-bd4bf21a07f3
+# ╠═2259a3eb-a457-44bc-b16e-b451419db08d
+# ╠═f327c817-11d1-4730-ba26-cf7d234bcbeb
+# ╠═e92a8cd3-8b29-4d8e-bdc7-414b9bc69f58
+# ╠═ff1c90c4-1d95-49fd-9e89-688fde8175b2
+# ╠═502c1fec-5043-45c2-a3c3-89556c6c4255
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
