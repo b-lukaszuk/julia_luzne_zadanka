@@ -75,9 +75,13 @@ begin
 	    return Pmf(names, priors)
 	end
 
+	function get_field_vals_eq_name(pmf::Pmf, name::String, field_name::String, default)
+		ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
+		return isnothing(ind) ? default : getproperty(pmf, Symbol(field_name))[ind]
+	end
+
 	function get_prior(pmf::Pmf, name::String)::Float64
-	    ind = findfirst(x -> x == name, pmf.names)
-	    return isnothing(ind) ? 0 : pmf.priors[ind]
+	    return get_field_vals_eq_name(pmf, name, "priors", 0.0)
 	end
 
 	function get_prior(pmf::Pmf, names::Vector{String})::Vector{Float64}
@@ -87,17 +91,20 @@ end
 
 # ╔═╡ c594435a-8204-49a8-b98e-d341231a7708
 begin
-	function update!(pmf::Pmf)
-		pmf.unnorms = pmf.priors .* pmf.likelihoods
+	function normalize!(pmf::Pmf)
 		pmf.norm = sum(pmf.unnorms)
 		pmf.posteriors = pmf.unnorms ./ pmf.norm
+	end
+
+	function update!(pmf::Pmf)
+		pmf.unnorms = pmf.priors .* pmf.likelihoods
+		normalize!(pmf)
 	end
 
 	function update!(pmf::Pmf, likelihoods::Vector{Float64})
 		pmf.likelihoods = likelihoods
 		pmf.unnorms = pmf.posteriors .* pmf.likelihoods
-		pmf.norm = sum(pmf.unnorms)
-		pmf.posteriors = pmf.unnorms ./ pmf.norm
+		normalize!(pmf)
 	end
 
 	function pmf2df(pmf::Pmf)
@@ -106,8 +113,7 @@ begin
 	end
 
 	function get_posterior(pmf::Pmf, name::String)::Float64
-	    ind = findfirst(x -> x == name, pmf.names)
-	    return isnothing(ind) ? 0 : pmf.posteriors[ind]
+	    return get_field_vals_eq_name(pmf, name, "posteriors", 0.0)
 	end
 
 	function get_posterior(pmf::Pmf, names::Vector{String})::Vector{Float64}
@@ -135,7 +141,7 @@ end
 
 # ╔═╡ 55863157-2e41-48fd-bbc3-4f6554e81a23
 begin
-	letters = mk_pmf_from_seq(Vector{String}(split("mississippi", "")))
+	letters = mk_pmf_from_seq(Vector{String}(split("Mississippi", "")))
 	letters
 end
 
