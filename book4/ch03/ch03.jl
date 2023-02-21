@@ -237,13 +237,18 @@ begin
 	first(bowls.posteriors, 3)
 end
 
+# ╔═╡ d762636b-2c77-440b-9ada-ce4460883276
+function draw_posterior(pmf::Pmf{Int}, title::String, xlab::String, ylab::String)
+	plts.plot(pmf.names, pmf.posteriors,
+		linewidth=3, color="navy", label="posterior")
+	plts.title!(title)
+	plts.xlabel!(xlab)
+	plts.ylabel!(ylab)
+end
+
 # ╔═╡ ca79335b-9a87-455d-8014-ce0c3fdc1072
 begin
-	plts.plot(bowls.names, bowls.posteriors,
-		linewidth=3, color="navy", label="posterior")
-	plts.title!("Posterior after one vanilla cookie")
-	plts.xlabel!("Bowl #")
-	plts.ylabel!("PMF")
+	draw_posterior(bowls, "Posterior after one vanilla cookie", "Bowl #", "PMF")
 	plts.plot!(bowls.names, bowls.priors,
 		linewidth=3, color="gray", label="prior")
 end
@@ -253,11 +258,7 @@ update!(bowls, bowls_likelihood_vanilla);
 
 # ╔═╡ c3d7e49a-e5eb-4bec-9810-29921e8c7650
 begin
-	plts.plot(bowls.names, bowls.posteriors,
-			linewidth=3, color="navy", label="posterior")
-	plts.title!("Posterior after two vanilla cookies")
-	plts.xlabel!("Bowl #")
-	plts.ylabel!("PMF")
+	draw_posterior(bowls, "Posterior after two vanilla cookies", "Bowl #", "PMF")
 end
 
 # ╔═╡ 7065dcdc-ec7c-4375-b211-dc20a69c7474
@@ -268,11 +269,7 @@ end
 
 # ╔═╡ 6cbe04df-e10a-4b0c-b96f-ef2eea4b1645
 begin
-	plts.plot(bowls.names, bowls.posteriors,
-			linewidth=3, color="navy", label="posterior")
-	plts.title!("Posterior after 2 vanilla, 1 chocolate cookies")
-	plts.xlabel!("Bowl #")
-	plts.ylabel!("PMF")
+	draw_posterior(bowls, "Posterior after 2 vanilla and 1 chocolate cookie", "Bowl #", "PMF")
 end
 
 # ╔═╡ 82139678-5300-4259-b622-e5a42ce23928
@@ -1410,6 +1407,7 @@ version = "1.4.1+0"
 # ╠═1ebd9bed-b7b6-4284-883d-5f9c872c5165
 # ╠═f34d6381-0feb-4c2c-a042-c1165672e355
 # ╠═629a0960-afff-4d53-b023-7d0139652cd6
+# ╠═d762636b-2c77-440b-9ada-ce4460883276
 # ╠═ca79335b-9a87-455d-8014-ce0c3fdc1072
 # ╠═5deef537-752f-4c9f-874e-161428afb06d
 # ╠═c3d7e49a-e5eb-4bec-9810-29921e8c7650
