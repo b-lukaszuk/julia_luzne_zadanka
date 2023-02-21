@@ -42,14 +42,16 @@ mutable struct Pmf{T}
     unnorms::Vector{Float64}
     norm::Float64
     posteriors::Vector{Float64}
+	updated_before::Bool
 
     Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{Int}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)))
+        new{Int}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)),
+		false)
 
 	Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{String}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)))
+        new{String}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)), false)
 end
 
 # ╔═╡ 18d8192d-0cc6-4f26-8f6c-3f947032924c
@@ -96,10 +98,17 @@ end
 begin
 	function normalize!(pmf::Pmf)
 		pmf.norm = sum(pmf.unnorms)
-		pmf.posteriors = pmf.unnorms ./ pmf.norm
+		if (pmf.norm == 0)
+			pmf.posteriors = [0 for n in pmf.names]
+		else
+			pmf.posteriors = pmf.unnorms ./ pmf.norm
+		end
 	end
 
 	function update!(pmf::Pmf)
+		if !pmf.updated_before
+			pmf.updated_before = true
+		end
 		pmf.unnorms = pmf.priors .* pmf.likelihoods
 		normalize!(pmf)
 	end
@@ -290,6 +299,33 @@ begin
 	# I roll the die and get 7
 	update!(dice, [0, 1/8, 1/12])
 	dice
+end
+
+# ╔═╡ 205c92b3-6e3b-42cf-9062-e65432387553
+md"""### Updating Dice"""
+
+# ╔═╡ f940b03b-3e03-4b9f-876d-aaeddeac67c4
+function update_dice!(pmf::Pmf{Int}, num_rolled::Int)
+	num_of_die_sides::Vector{Int} = pmf.names
+	likelihood::Vector{Float64} = 1 ./ num_of_die_sides
+	impossible::Vector{Bool} = num_rolled .> num_of_die_sides
+	likelihood[impossible] .= 0
+	if pmf.updated_before
+		update!(pmf, likelihood)
+	else
+		pmf.likelihoods = likelihood
+		update!(pmf)
+	end
+end
+
+# ╔═╡ 42b88bf4-ec1c-4334-bc37-e10554ee43cd
+dice2 = mk_pmf_from_seq([6, 8, 12])
+
+# ╔═╡ aa17e2d3-e022-4cc9-95d9-d095e1f26158
+begin
+	update_dice!(dice2, 1)
+	update_dice!(dice2, 7)
+	dice2
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1384,5 +1420,9 @@ version = "1.4.1+0"
 # ╠═4c4ee0e6-3d6c-430c-925e-c84235cc2bd8
 # ╠═a2fa2f98-c873-4cc1-9dd1-da49350ff3aa
 # ╠═5026a6a0-bb05-4429-8e26-e408562b54c8
+# ╟─205c92b3-6e3b-42cf-9062-e65432387553
+# ╠═f940b03b-3e03-4b9f-876d-aaeddeac67c4
+# ╠═42b88bf4-ec1c-4334-bc37-e10554ee43cd
+# ╠═aa17e2d3-e022-4cc9-95d9-d095e1f26158
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
