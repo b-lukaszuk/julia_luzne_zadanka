@@ -42,9 +42,11 @@ mutable struct Pmf{T}
     unnorms::Vector{Float64}
     norm::Float64
     posteriors::Vector{Float64}
+
     Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Int}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)))
+
 	Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{String}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)))
@@ -64,8 +66,8 @@ begin
 	    result::Dict{T, Int} = Dict()
 		for elt in v
 	        result[elt] = get(result, elt, 0) + 1
-	    end
-	    return result
+		end
+		return result
 	end
 
 	function mk_pmf_from_seq(seq::Vector{T})::Pmf where T
@@ -73,7 +75,7 @@ begin
 		total::Int = sum(values(counts))
 		names::Vector{T} = unique(seq)
 		priors::Vector{Float64} = [counts[n]/total for n in names]
-	    return Pmf(names, priors)
+		return Pmf(names, priors)
 	end
 
 	function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, default) where T
@@ -119,6 +121,18 @@ begin
 
 	function get_posterior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
 	    return [get_posterior(pmf, n) for n in names]
+	end
+end
+
+# ╔═╡ b71e2afc-7959-4a71-af47-8c0f9fbc7415
+begin
+	function get_id_max_posterior(pmf::Pmf)::Int
+		max_prob::Float64 = max(pmf.posteriors...)
+		return findfirst(x->x==max_prob, pmf.posteriors)
+	end
+
+	function get_name_max_posterior(pmf::Pmf{T})::T where T
+		return pmf.names[get_id_max_posterior(pmf)]
 	end
 end
 
@@ -191,6 +205,69 @@ begin
 	update!(cookie, likelihood_chocolate)
 	pmf2df(cookie)
 end
+
+# ╔═╡ 7deba330-8071-4421-ac2c-1f4971913c6f
+md"""### 101 Bowls"""
+
+# ╔═╡ 1ebd9bed-b7b6-4284-883d-5f9c872c5165
+begin
+	bowls = mk_pmf_from_seq(collect(0:100));
+	first(bowls.priors, 3)
+end
+
+# ╔═╡ f34d6381-0feb-4c2c-a042-c1165672e355
+begin
+	bowls_likelihood_vanilla = bowls.names ./ 100
+	bowls_likelihood_vanilla[1:5]
+end
+
+# ╔═╡ 629a0960-afff-4d53-b023-7d0139652cd6
+begin
+	bowls.likelihoods = bowls_likelihood_vanilla
+	update!(bowls)
+	first(bowls.posteriors, 3)
+end
+
+# ╔═╡ ca79335b-9a87-455d-8014-ce0c3fdc1072
+begin
+	plts.plot(bowls.names, bowls.posteriors,
+		linewidth=3, color="navy", label="posterior")
+	plts.title!("Posterior after one vanilla cookie")
+	plts.xlabel!("Bowl #")
+	plts.ylabel!("PMF")
+	plts.plot!(bowls.names, bowls.priors,
+		linewidth=3, color="gray", label="prior")
+end
+
+# ╔═╡ 5deef537-752f-4c9f-874e-161428afb06d
+update!(bowls, bowls_likelihood_vanilla);
+
+# ╔═╡ c3d7e49a-e5eb-4bec-9810-29921e8c7650
+begin
+	plts.plot(bowls.names, bowls.posteriors,
+			linewidth=3, color="navy", label="posterior")
+	plts.title!("Posterior after two vanilla cookies")
+	plts.xlabel!("Bowl #")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ 7065dcdc-ec7c-4375-b211-dc20a69c7474
+begin
+	bowls_likelihood_chocolate = 1 .- bowls.names ./ 100
+	update!(bowls, bowls_likelihood_chocolate);
+end
+
+# ╔═╡ 6cbe04df-e10a-4b0c-b96f-ef2eea4b1645
+begin
+	plts.plot(bowls.names, bowls.posteriors,
+			linewidth=3, color="navy", label="posterior")
+	plts.title!("Posterior after 2 vanilla, 1 chocolate cookies")
+	plts.xlabel!("Bowl #")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ 82139678-5300-4259-b622-e5a42ce23928
+get_name_max_posterior(bowls)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1253,6 +1330,7 @@ version = "1.4.1+0"
 # ╠═0a458bec-9650-4e5e-9a13-90ac20f78ddf
 # ╠═18d8192d-0cc6-4f26-8f6c-3f947032924c
 # ╠═c594435a-8204-49a8-b98e-d341231a7708
+# ╠═b71e2afc-7959-4a71-af47-8c0f9fbc7415
 # ╟─ff5217ac-43b4-45f7-86f0-606482a3fcfa
 # ╟─3b93f318-c832-456a-985c-10ce6290dd98
 # ╠═6dfc9976-b851-447b-bb9b-5e8e8e446bcd
@@ -1269,5 +1347,15 @@ version = "1.4.1+0"
 # ╠═e92a8cd3-8b29-4d8e-bdc7-414b9bc69f58
 # ╠═ff1c90c4-1d95-49fd-9e89-688fde8175b2
 # ╠═502c1fec-5043-45c2-a3c3-89556c6c4255
+# ╟─7deba330-8071-4421-ac2c-1f4971913c6f
+# ╠═1ebd9bed-b7b6-4284-883d-5f9c872c5165
+# ╠═f34d6381-0feb-4c2c-a042-c1165672e355
+# ╠═629a0960-afff-4d53-b023-7d0139652cd6
+# ╠═ca79335b-9a87-455d-8014-ce0c3fdc1072
+# ╠═5deef537-752f-4c9f-874e-161428afb06d
+# ╠═c3d7e49a-e5eb-4bec-9810-29921e8c7650
+# ╠═7065dcdc-ec7c-4375-b211-dc20a69c7474
+# ╠═6cbe04df-e10a-4b0c-b96f-ef2eea4b1645
+# ╠═82139678-5300-4259-b622-e5a42ce23928
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
