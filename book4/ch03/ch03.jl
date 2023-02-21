@@ -344,6 +344,23 @@ begin
 	pmf2df(ex1_dice)
 end
 
+# ╔═╡ 75019e55-c672-4d2a-91ec-2f125b331ed1
+md"""### Exercise 2
+In the previous version of the dice problem, the prior probabilities are the same because the box contains one of each die. But suppose the box contains 1 die that is 4-sided, 2 dice that are 6-sided, 3 dice that are 8-sided, 4 dice that are 12-sided, and 5 dice that are 20-sided. I choose a die, roll it, and get a 7. What is the probability that I chose an 8-sided die?
+
+Hint: To make the prior distribution, call `Pmf` with two parameters.
+"""
+
+# ╔═╡ 2aa85d3c-009c-4f32-b8d2-01e29f933d28
+begin
+	ps_ex2 = [1, 2, 3, 4, 5]
+	qs_ex2 = [4, 6, 8, 12, 20]
+	ex2_dice = mk_pmf_from_seq(
+		vcat([repeat([q], p) for (p, q) in zip(ps_ex2, qs_ex2)]...))
+	update_dice!(ex2_dice, 7)
+	pmf2df(ex2_dice)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1444,5 +1461,7 @@ version = "1.4.1+0"
 # ╟─e8609f1b-b77c-4d88-9f25-310d21baf427
 # ╟─85303bb8-f80c-4676-a2ce-18edf819ceda
 # ╠═b520253f-4788-401f-b4d6-67c3f274b81f
+# ╟─75019e55-c672-4d2a-91ec-2f125b331ed1
+# ╠═2aa85d3c-009c-4f32-b8d2-01e29f933d28
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
