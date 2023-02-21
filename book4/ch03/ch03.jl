@@ -269,6 +269,29 @@ end
 # ╔═╡ 82139678-5300-4259-b622-e5a42ce23928
 get_name_max_posterior(bowls)
 
+# ╔═╡ 471a619a-d452-43f9-bed0-5c23308d1436
+md"""### The Dice Problem
+Suppose I have a box with a 6-sided die, an 8-sided die, and a 12-sided die. I choose one of the dice at random, roll it, and report that the outcome is a 1. What is the probability that I chose the 6-sided die?
+"""
+
+# ╔═╡ 4c4ee0e6-3d6c-430c-925e-c84235cc2bd8
+dice = mk_pmf_from_seq([6, 8, 12])
+
+# ╔═╡ a2fa2f98-c873-4cc1-9dd1-da49350ff3aa
+begin
+	# I roll a random die and get 1
+	dice.likelihoods = 1 ./ dice.names
+	update!(dice)
+	dice
+end
+
+# ╔═╡ 5026a6a0-bb05-4429-8e26-e408562b54c8
+begin
+	# I roll the die and get 7
+	update!(dice, [0, 1/8, 1/12])
+	dice
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1357,5 +1380,9 @@ version = "1.4.1+0"
 # ╠═7065dcdc-ec7c-4375-b211-dc20a69c7474
 # ╠═6cbe04df-e10a-4b0c-b96f-ef2eea4b1645
 # ╠═82139678-5300-4259-b622-e5a42ce23928
+# ╟─471a619a-d452-43f9-bed0-5c23308d1436
+# ╠═4c4ee0e6-3d6c-430c-925e-c84235cc2bd8
+# ╠═a2fa2f98-c873-4cc1-9dd1-da49350ff3aa
+# ╠═5026a6a0-bb05-4429-8e26-e408562b54c8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
