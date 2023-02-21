@@ -361,6 +361,41 @@ begin
 	pmf2df(ex2_dice)
 end
 
+# ╔═╡ b4b4c04d-8c17-4b5b-a948-096f8d1954bd
+md"""### Exercise 3
+Suppose I have two sock drawers. One contains equal numbers of black and white socks. The other contains equal numbers of red, green, and blue socks. Suppose I choose a drawer at random, choose two socks at random, and I tell you that I got a matching pair. What is the probability that the socks are white?
+
+For simplicity, let’s assume that there are so many socks in both drawers that removing one sock makes a negligible change to the proportions.
+"""
+
+# ╔═╡ a1ffc4ba-2477-4f30-afd6-6684cb96c3a4
+md"""
+**My thinking process:**
+
+The priors [P(H)] are 1/2 and 1/2 (I choose drawer at random)
+
+The likelihoods [P(D|H)] are (for a matching pair):
+- for drawer1 (black & white) p = 2/4 or 1/2 (bw, bb, wb, ww)
+- for drawer2 (red, green, blue), p = 3/9 or 1/3 (rg, rb, rr, gr, gb, gg, br, bg, bb)
+
+If there is a matching pair then the probability for two white socks is:
+- for drawer1 (black & white) p = 1/2 (bb, ww)
+- for drawer2 (red, green, blue) p = 0
+"""
+
+# ╔═╡ 9f546cc3-d966-4c3b-a2c3-834a3729db84
+begin
+	ex3_dice = Pmf(["drawer1", "drawer2"], [0.5, 0.5])
+	ex3_dice.likelihoods = [1/2, 1/3]
+	update!(ex3_dice)
+	pmf2df(ex3_dice)
+end
+
+# ╔═╡ 32a33e83-37eb-4317-b7b4-1ae352627709
+begin
+	get_posterior(ex3_dice, "drawer1") * 0.5
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1463,5 +1498,9 @@ version = "1.4.1+0"
 # ╠═b520253f-4788-401f-b4d6-67c3f274b81f
 # ╟─75019e55-c672-4d2a-91ec-2f125b331ed1
 # ╠═2aa85d3c-009c-4f32-b8d2-01e29f933d28
+# ╟─b4b4c04d-8c17-4b5b-a948-096f8d1954bd
+# ╟─a1ffc4ba-2477-4f30-afd6-6684cb96c3a4
+# ╠═9f546cc3-d966-4c3b-a2c3-834a3729db84
+# ╠═32a33e83-37eb-4317-b7b4-1ae352627709
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
