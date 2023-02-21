@@ -325,6 +325,25 @@ begin
 	dice2
 end
 
+# ╔═╡ e8609f1b-b77c-4d88-9f25-310d21baf427
+md"""## Exercises"""
+
+# ╔═╡ 85303bb8-f80c-4676-a2ce-18edf819ceda
+md"""### Exercise 1
+Suppose I have a box with a 6-sided die, an 8-sided die, and a 12-sided die. I choose one of the dice at random, roll it four times, and get 1, 3, 5, and 7. What is the probability that I chose the 8-sided die?
+
+You can use the `update_dice` function or do the update yourself.
+"""
+
+# ╔═╡ b520253f-4788-401f-b4d6-67c3f274b81f
+begin
+	ex1_dice = mk_pmf_from_seq([6, 8, 12])
+	for i in [1, 3, 5, 7]
+		update_dice!(ex1_dice, i)
+	end
+	pmf2df(ex1_dice)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -774,9 +793,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "0a1b7c2863e44523180fdb3146534e265a91870b"
+git-tree-sha1 = "071602a0be5af779066df0d7ef4e14945a010818"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.23"
+version = "0.3.22"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -1422,5 +1441,8 @@ version = "1.4.1+0"
 # ╠═f940b03b-3e03-4b9f-876d-aaeddeac67c4
 # ╠═42b88bf4-ec1c-4334-bc37-e10554ee43cd
 # ╠═aa17e2d3-e022-4cc9-95d9-d095e1f26158
+# ╟─e8609f1b-b77c-4d88-9f25-310d21baf427
+# ╟─85303bb8-f80c-4676-a2ce-18edf819ceda
+# ╠═b520253f-4788-401f-b4d6-67c3f274b81f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
