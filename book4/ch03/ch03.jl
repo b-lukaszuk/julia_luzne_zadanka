@@ -330,6 +330,7 @@ md"""## Exercises"""
 
 # ╔═╡ 85303bb8-f80c-4676-a2ce-18edf819ceda
 md"""### Exercise 1
+
 Suppose I have a box with a 6-sided die, an 8-sided die, and a 12-sided die. I choose one of the dice at random, roll it four times, and get 1, 3, 5, and 7. What is the probability that I chose the 8-sided die?
 
 You can use the `update_dice` function or do the update yourself.
@@ -346,6 +347,7 @@ end
 
 # ╔═╡ 75019e55-c672-4d2a-91ec-2f125b331ed1
 md"""### Exercise 2
+
 In the previous version of the dice problem, the prior probabilities are the same because the box contains one of each die. But suppose the box contains 1 die that is 4-sided, 2 dice that are 6-sided, 3 dice that are 8-sided, 4 dice that are 12-sided, and 5 dice that are 20-sided. I choose a die, roll it, and get a 7. What is the probability that I chose an 8-sided die?
 
 Hint: To make the prior distribution, call `Pmf` with two parameters.
@@ -363,6 +365,7 @@ end
 
 # ╔═╡ b4b4c04d-8c17-4b5b-a948-096f8d1954bd
 md"""### Exercise 3
+
 Suppose I have two sock drawers. One contains equal numbers of black and white socks. The other contains equal numbers of red, green, and blue socks. Suppose I choose a drawer at random, choose two socks at random, and I tell you that I got a matching pair. What is the probability that the socks are white?
 
 For simplicity, let’s assume that there are so many socks in both drawers that removing one sock makes a negligible change to the proportions.
@@ -394,6 +397,35 @@ end
 # ╔═╡ 32a33e83-37eb-4317-b7b4-1ae352627709
 begin
 	get_posterior(ex3_dice, "drawer1") * 0.5
+end
+
+# ╔═╡ 973295b0-1500-4b44-9aae-631b10b6773f
+md"""### Exercise 4
+
+Here’s a problem from [Bayesian Data Analysis](http://www.stat.columbia.edu/~gelman/book/):
+
+Elvis Presley had a twin brother (who died at birth). What is the probability that Elvis was an identical twin?
+
+Hint: In 1935, about 2/3 of twins were fraternal and 1/3 were identical.
+"""
+
+# ╔═╡ a4823d51-9d2b-4a9c-8748-95ab5bd08582
+md"""
+So priors [P(H)] are:
+- P(fraternal twin) = 2/3
+- P(identical twin) = 1/3
+
+Now what are the likelihoods [P(D|H)]:
+- P(boy-boy|fraternal twin) = 1/4 (g-g, g-b, b-g, b-b)
+- P(boy-boy|identical twin) = 1/2 (b-b or g-g)
+"""
+
+# ╔═╡ a29c0825-1c51-49de-8e60-6150cd4523d2
+begin
+	ex4_twin = Pmf(["fraternal", "identical"], [2/3, 1/3])
+	ex4_twin.likelihoods = [1/4, 1/2]
+	update!(ex4_twin)
+	pmf2df(ex4_twin)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1502,5 +1534,8 @@ version = "1.4.1+0"
 # ╟─a1ffc4ba-2477-4f30-afd6-6684cb96c3a4
 # ╠═9f546cc3-d966-4c3b-a2c3-834a3729db84
 # ╠═32a33e83-37eb-4317-b7b4-1ae352627709
+# ╟─973295b0-1500-4b44-9aae-631b10b6773f
+# ╟─a4823d51-9d2b-4a9c-8748-95ab5bd08582
+# ╠═a29c0825-1c51-49de-8e60-6150cd4523d2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
