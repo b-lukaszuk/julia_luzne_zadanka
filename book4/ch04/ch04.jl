@@ -4,8 +4,11 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 642c7899-f43b-4674-b93a-7ed9ba85654c
-using Pkg
+# ╔═╡ e59f34b1-44ef-498d-bd44-7a83985674bb
+begin
+	include("pmf.jl")
+	import .ProbabilityMassFunction as pmf
+end
 
 # ╔═╡ 846f457a-b205-11ed-0734-f92538cec098
 md"""# Chapter 4. Estimating Proportions
@@ -44,12 +47,70 @@ When spun on edge 250 times, a Belgian one-euro coin came up heads 140 times and
 “But [MacKay asks] do these data give evidence that the coin is biased rather than fair?”
 """
 
+# ╔═╡ 26638ef8-9134-45d2-b3c3-78e9b4adbad4
+md"""### The Binomial Distribution"""
+
+# ╔═╡ 8b62f85c-1986-43ba-9ba8-cf8c3dbad518
+md""" For example, if we flip a coin n=2 times and the probability of heads is p=0.5, here’s the probability of getting k=1 heads:"""
+
+# ╔═╡ ad3d3f07-0180-49ae-9207-b27f392327f0
+dst.pdf(dst.Binomial(2, 0.5), 1)
+
+# ╔═╡ 5cae0a0d-ed98-46e5-86e5-18ee09cf5280
+dst.pdf.(dst.Binomial(2, 0.5), 0:2)
+
+# ╔═╡ 6b5bb571-faf2-488e-804a-28593d922201
+pmf_k = pmf.Pmf(collect(0:2), dst.pdf.(dst.Binomial(2, 0.5), 0:2))
+
+# ╔═╡ 89446168-7147-45de-b969-3c6f72481f5b
+function mk_binomial_pmf(n::Int, p::Float64)::pmf.Pmf{Int}
+	ks::Vector{Int} = collect(0:n)
+	ps::Vector{Float64} = dst.pdf.(dst.Binomial(n, p), ks)
+	return pmf.Pmf(ks, ps)
+end
+
+# ╔═╡ 41e443ec-25ea-4d11-a710-8761b7bd2348
+pmf_ks = mk_binomial_pmf(250, 0.5);
+
+# ╔═╡ 26525042-1ddc-4d15-bba0-1243981f9ebc
+function draw_priors(pmf::pmf.Pmf{Int}, title::String, xlab::String, ylab::String, label::String)
+	plts.plot(pmf.names, pmf.priors,
+		linewidth=3, color="navy", label=label)
+	plts.title!(title)
+	plts.xlabel!(xlab)
+	plts.ylabel!(ylab)
+end
+
+# ╔═╡ 80b09ec3-bf83-422e-9fd5-fb5da4c482bb
+draw_priors(pmf_ks, "Binomial distribution", "Number of heads (k)", "PMF", "n=250, p=0.5")
+
+# ╔═╡ 4633828a-fd40-4d0e-ade8-ee7b2a93cd98
+findfirst(x -> x == max(pmf_ks.priors...), pmf_ks.priors)
+
+# ╔═╡ 25c0f8cf-4807-483c-83f6-b69e5504f4c4
+pmf_ks.names[126]
+
+# ╔═╡ efa1de01-9212-490c-ab9f-081d51afe072
+function get_prob_ge(pmf_binom::pmf.Pmf{Int}, threshold)::Float64
+	ge::Vector{Bool} = Vector{Bool}(pmf_binom.names .>= threshold)
+	prob::Float64 = sum(pmf_binom.priors[ge])
+	return prob
+end
+
+# ╔═╡ 2c17d76e-c062-4106-96c4-f64554603f6d
+get_prob_ge(pmf_ks, 140)
+
+# ╔═╡ 8924ac9d-4e1d-4798-8a3e-d1b8b64cc68a
+1 - dst.cdf(dst.Binomial(250, 0.5), 139)
+
+# ╔═╡ 3bc888f9-2f6e-4c52-a78c-c393afb7b47c
+dst.cdf(dst.Binomial(250, 0.5), 110)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
@@ -66,7 +127,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "a9538bfd5e431907d4a4807b54973113b34b4b1e"
+project_hash = "88ccaab2c9e087d9fcb28b6a79a4a5d940366c13"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1172,9 +1233,24 @@ version = "1.4.1+0"
 # ╟─eccd52d8-0b23-48cd-a5f4-3a2f137457a9
 # ╟─1d47567d-2ca1-41f5-a4e9-9be714c3c00b
 # ╠═4731f987-a9c3-4486-bda1-2af802a42a2c
+# ╠═e59f34b1-44ef-498d-bd44-7a83985674bb
 # ╠═732ecfa0-b3a2-4892-81ef-334dee711a9c
-# ╠═642c7899-f43b-4674-b93a-7ed9ba85654c
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
 # ╟─17e9f167-2027-444e-9d6b-596051a80931
+# ╟─26638ef8-9134-45d2-b3c3-78e9b4adbad4
+# ╟─8b62f85c-1986-43ba-9ba8-cf8c3dbad518
+# ╠═ad3d3f07-0180-49ae-9207-b27f392327f0
+# ╠═5cae0a0d-ed98-46e5-86e5-18ee09cf5280
+# ╠═6b5bb571-faf2-488e-804a-28593d922201
+# ╠═89446168-7147-45de-b969-3c6f72481f5b
+# ╠═41e443ec-25ea-4d11-a710-8761b7bd2348
+# ╠═26525042-1ddc-4d15-bba0-1243981f9ebc
+# ╠═80b09ec3-bf83-422e-9fd5-fb5da4c482bb
+# ╠═4633828a-fd40-4d0e-ade8-ee7b2a93cd98
+# ╠═25c0f8cf-4807-483c-83f6-b69e5504f4c4
+# ╠═efa1de01-9212-490c-ab9f-081d51afe072
+# ╠═2c17d76e-c062-4106-96c4-f64554603f6d
+# ╠═8924ac9d-4e1d-4798-8a3e-d1b8b64cc68a
+# ╠═3bc888f9-2f6e-4c52-a78c-c393afb7b47c
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
