@@ -106,6 +106,52 @@ get_prob_ge(pmf_ks, 140)
 # ╔═╡ 3bc888f9-2f6e-4c52-a78c-c393afb7b47c
 dst.cdf(dst.Binomial(250, 0.5), 110)
 
+# ╔═╡ eb11dfb0-35f0-4d52-8183-5ef817c18974
+range(0, 1, 101)
+
+# ╔═╡ 222ec2e7-852f-4ee7-994c-a9cc475e6078
+md"""### Bayesian Estimation"""
+
+# ╔═╡ c413439a-5b8d-43d7-b67b-2e63ca38fb4e
+# hypothesis of a true probability of a coin toss
+coins1 = pmf.Pmf(map(x->string(round(x, digits=2)), range(0,1,101)), collect(range(0,1,101)));
+
+# ╔═╡ c716c441-657f-4e20-8cd8-503e3cf3f8ac
+likelihood1 = Dict('h' => coins1.priors, 't' => 1 .- coins1.priors);
+
+# ╔═╡ 56fe4c22-f72c-49d0-a131-14595cb59d1b
+dataset = "h" ^ 140 * "t" ^ 110;
+
+# ╔═╡ 33d5e5ac-3a5b-434e-8202-2a1625a2355c
+function update_euro!(coins::pmf.Pmf{String}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}})
+	coins.likelihoods = prob_mapping[dataset[1]]
+	for data in dataset[2:end]
+		coins.likelihoods = coins.likelihoods .* prob_mapping[data]
+	end
+	pmf.update!(coins)
+end
+
+# ╔═╡ e71c3df3-8425-4ff8-b260-f26666080e6e
+function draw_posteriors(pmf::pmf.Pmf{String}, title::String, xlab::String, ylab::String, label::String)
+	plts.plot(map(x->parse(Float64, x), pmf.names), pmf.posteriors,
+		linewidth=3, color="navy", label=label)
+	plts.title!(title)
+	plts.xlabel!(xlab)
+	plts.ylabel!(ylab)
+end
+
+# ╔═╡ d96e4891-85e3-4878-869d-2da6e54e540c
+update_euro!(coins1, dataset, likelihood1);
+
+# ╔═╡ 0aa0bb75-8d1d-4e6a-a3d4-4e95e52db280
+draw_posteriors(coins1, "Posterior distribution of x", "Proportion of heads (x)", "Probability", "140 heads out of 250")
+
+# ╔═╡ fc9e5aa2-5025-499f-9792-9ff4d6334f46
+pmf.get_name_max_posterior(coins1)
+
+# ╔═╡ 121e49e2-0398-4f36-8dbe-ce3a81ee17ed
+140/250
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1252,5 +1298,16 @@ version = "1.4.1+0"
 # ╠═2c17d76e-c062-4106-96c4-f64554603f6d
 # ╠═8924ac9d-4e1d-4798-8a3e-d1b8b64cc68a
 # ╠═3bc888f9-2f6e-4c52-a78c-c393afb7b47c
+# ╠═eb11dfb0-35f0-4d52-8183-5ef817c18974
+# ╟─222ec2e7-852f-4ee7-994c-a9cc475e6078
+# ╠═c413439a-5b8d-43d7-b67b-2e63ca38fb4e
+# ╠═c716c441-657f-4e20-8cd8-503e3cf3f8ac
+# ╠═56fe4c22-f72c-49d0-a131-14595cb59d1b
+# ╠═33d5e5ac-3a5b-434e-8202-2a1625a2355c
+# ╠═e71c3df3-8425-4ff8-b260-f26666080e6e
+# ╠═d96e4891-85e3-4878-869d-2da6e54e540c
+# ╠═0aa0bb75-8d1d-4e6a-a3d4-4e95e52db280
+# ╠═fc9e5aa2-5025-499f-9792-9ff4d6334f46
+# ╠═121e49e2-0398-4f36-8dbe-ce3a81ee17ed
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
