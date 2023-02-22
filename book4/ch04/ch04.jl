@@ -194,6 +194,43 @@ begin
 	plts.xlabel!("Proportion of heads (x)")
 end
 
+# ╔═╡ 764ee994-39a3-487c-bf5d-88b0fac350e7
+md"""This is an example of **swamping the priors**: with enough data, people who start with different priors will tend to converge on the same posterior distribution."""
+
+# ╔═╡ f2055d07-eb1e-4d27-8b26-4df4b8b69264
+md"""### The Binomial Likelihood Function"""
+
+# ╔═╡ 99dabcd9-a997-421a-abf3-ea1629a5d8e8
+md"""A more efficient alternative is to compute the likelihood of the entire dataset at once."""
+
+# ╔═╡ b1b59921-e57a-4aad-b4f2-5d4a1d554338
+function update_binomial!(binom_pmf::pmf.Pmf, data::Tuple{Int, Int})
+	k, n = data
+	ps::Vector{Float64} = binom_pmf.priors
+	likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(n, ps), k)
+	pmf.update!(binom_pmf, likelihood)
+end
+
+# ╔═╡ df15825c-ec0b-45f6-9320-55eb5854c54d
+begin
+	uniform2 = pmf.Pmf(map(float2str, range(0,1,101)), range(0,1,101))
+	data2 = (140, 250)
+end
+
+# ╔═╡ 978b0c65-49f6-41f6-a032-6c8ecf78d706
+update_binomial!(uniform2, data2);
+
+# ╔═╡ 36ef0a78-bdd3-48d1-a8e2-20c869c6e19a
+begin
+	plts.plot(map(str2float, uniform2.names), uniform2.posteriors, color="blue", linewidth=2, label="uniform")
+	plts.title!("Uniform posterior distributions")
+	plts.ylabel!("Probability")
+	plts.xlabel!("Proportion of heads (x)")
+end
+
+# ╔═╡ ef4707a6-14fa-4cfe-a6b8-1e7c45eb9d85
+pmf.get_name_max_posterior(uniform2)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1359,5 +1396,13 @@ version = "1.4.1+0"
 # ╠═e890a219-514c-4a32-9c3b-a8b0e138d7ed
 # ╠═4958c343-dffe-4014-aaf8-9392e4bb2139
 # ╠═6c5f1c50-9b34-4533-99e9-79a8e5edd09b
+# ╟─764ee994-39a3-487c-bf5d-88b0fac350e7
+# ╟─f2055d07-eb1e-4d27-8b26-4df4b8b69264
+# ╟─99dabcd9-a997-421a-abf3-ea1629a5d8e8
+# ╠═b1b59921-e57a-4aad-b4f2-5d4a1d554338
+# ╠═df15825c-ec0b-45f6-9320-55eb5854c54d
+# ╠═978b0c65-49f6-41f6-a032-6c8ecf78d706
+# ╠═36ef0a78-bdd3-48d1-a8e2-20c869c6e19a
+# ╠═ef4707a6-14fa-4cfe-a6b8-1e7c45eb9d85
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
