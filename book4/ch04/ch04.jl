@@ -152,6 +152,52 @@ pmf.get_name_max_posterior(coins1)
 # ╔═╡ 121e49e2-0398-4f36-8dbe-ce3a81ee17ed
 140/250
 
+# ╔═╡ 1696b9c4-7563-4914-893a-53d753e6df99
+md"""### Triangle Prior"""
+
+# ╔═╡ 9ccacf41-764e-4cd9-905f-fd3fa26f6796
+function str2float(x::String)::Float64
+	return parse(Float64, x)
+end
+
+# ╔═╡ 99d2e684-676f-4c9b-8011-cf7421f8cff7
+function float2str(x::Float64)::String
+	return round(x, digits=2) |> string
+end
+
+# ╔═╡ 3560efdc-79c6-4f4f-8293-d5de26bfe86b
+uniform = pmf.mk_pmf_from_seq(map(float2str, range(0,1, 101)));
+
+# ╔═╡ d45f8b77-ffe3-4efd-9027-0572972a84c7
+a = vcat(0:1:49, 50:-1:0);
+
+# ╔═╡ 0cb11b14-69d1-4e66-8e63-749dfa206736
+triangle = pmf.Pmf(map(float2str, range(0, 1, 101)), a ./ sum(a));
+
+# ╔═╡ e890a219-514c-4a32-9c3b-a8b0e138d7ed
+begin
+	plts.plot(map(str2float, uniform.names), uniform.priors, color="blue", linewidth=3, label="uniform")
+	plts.plot!(map(str2float, triangle.names), triangle.priors, color="orange", linewidth=3, label="triangle")
+	plts.title!("Uniform and triangle prior distributions")
+	plts.ylabel!("Probability")
+	plts.xlabel!("Proportion of heads (x)")
+end
+
+# ╔═╡ 4958c343-dffe-4014-aaf8-9392e4bb2139
+begin
+	update_euro!(uniform, dataset, likelihood1)
+	update_euro!(triangle, dataset, likelihood1)
+end;
+
+# ╔═╡ 6c5f1c50-9b34-4533-99e9-79a8e5edd09b
+begin
+	plts.plot(map(str2float, triangle.names), triangle.posteriors, color="orange", linewidth=8, label="triangle")
+	plts.plot!(map(str2float, uniform.names), uniform.posteriors, color="blue", linewidth=2, label="uniform")
+	plts.title!("Uniform and triangle posterior distributions")
+	plts.ylabel!("Probability")
+	plts.xlabel!("Proportion of heads (x)")
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1309,5 +1355,14 @@ version = "1.4.1+0"
 # ╠═0aa0bb75-8d1d-4e6a-a3d4-4e95e52db280
 # ╠═fc9e5aa2-5025-499f-9792-9ff4d6334f46
 # ╠═121e49e2-0398-4f36-8dbe-ce3a81ee17ed
+# ╟─1696b9c4-7563-4914-893a-53d753e6df99
+# ╠═9ccacf41-764e-4cd9-905f-fd3fa26f6796
+# ╠═99d2e684-676f-4c9b-8011-cf7421f8cff7
+# ╠═3560efdc-79c6-4f4f-8293-d5de26bfe86b
+# ╠═d45f8b77-ffe3-4efd-9027-0572972a84c7
+# ╠═0cb11b14-69d1-4e66-8e63-749dfa206736
+# ╠═e890a219-514c-4a32-9c3b-a8b0e138d7ed
+# ╠═4958c343-dffe-4014-aaf8-9392e4bb2139
+# ╠═6c5f1c50-9b34-4533-99e9-79a8e5edd09b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
