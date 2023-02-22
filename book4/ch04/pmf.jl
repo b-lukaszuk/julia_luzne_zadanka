@@ -8,15 +8,14 @@ mutable struct Pmf{T}
     unnorms::Vector{Float64}
     norm::Float64
     posteriors::Vector{Float64}
-    updated_before::Bool
 
     Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{Int}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)), false)
+        new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
     Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{String}(ns, prs, zeros(length(ns)), zeros(length(ns)), 0, zeros(length(ns)), false)
+        new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 end
 
 function Base.show(io::IO, pmf::Pmf)
@@ -59,16 +58,13 @@ end
 function normalize!(pmf::Pmf)
     pmf.norm = sum(pmf.unnorms)
     if (pmf.norm == 0)
-        pmf.posteriors = [0 for n in pmf.names]
+        pmf.posteriors = [0 for _ in pmf.names]
     else
         pmf.posteriors = pmf.unnorms ./ pmf.norm
     end
 end
 
 function update!(pmf::Pmf)
-    if !pmf.updated_before
-        pmf.updated_before = true
-    end
     pmf.unnorms = pmf.priors .* pmf.likelihoods
     normalize!(pmf)
 end
