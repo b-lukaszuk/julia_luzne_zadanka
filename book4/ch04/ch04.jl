@@ -115,8 +115,8 @@ function str2float(x::String)::Float64
 end
 
 # ╔═╡ 99d2e684-676f-4c9b-8011-cf7421f8cff7
-function float2str(x::Float64)::String
-	return round(x, digits=2) |> string
+function float2str(x::Float64; digits=2)::String
+	return round(x, digits=digits) |> string
 end
 
 # ╔═╡ c413439a-5b8d-43d7-b67b-2e63ca38fb4e
@@ -230,6 +230,87 @@ end
 
 # ╔═╡ ef4707a6-14fa-4cfe-a6b8-1e7c45eb9d85
 pmf.get_name_max_posterior(uniform2)
+
+# ╔═╡ 2278a500-e310-4ac1-bf99-7a3d0115c8c1
+md"""## Exercises"""
+
+# ╔═╡ 96691ae6-9d1c-4917-a911-906ebfd88af2
+md"""### Exercise 1
+
+In Major League Baseball, most players have a batting average between .200 and .330, which means that their probability of getting a hit is between 0.2 and 0.33.
+
+Suppose a player appearing in their first game gets 3 hits out of 3 attempts. What is the posterior distribution for their probability of getting a hit?
+
+For this exercise, I’ll construct the prior distribution by starting with a uniform distribution and updating it with imaginary data until it has a shape that reflects my background knowledge of batting averages.
+
+Here’s the uniform prior:
+"""
+
+# ╔═╡ 9a6eb4c9-2639-4274-9199-0a289783301a
+ex1 = pmf.Pmf(map(x -> float2str(x, digits=3), range(0.1, 0.4, 101)), range(0.1, 0.4, 101));
+
+# ╔═╡ edc1712d-b664-464b-ac82-f2022d330bc8
+md"""And here is a dictionary of likelihoods, with Y for getting a hit and N for not getting a hit."""
+
+# ╔═╡ 9523608e-d370-4b3c-b973-debf5990d8f8
+ex1_likelihood = Dict('y' => ex1.priors, 'n' => 1 .- ex1.priors);
+
+# ╔═╡ 01943320-62d2-4efa-84e1-e0e3ff462562
+md"""Here’s a dataset that yields a reasonable prior distribution."""
+
+# ╔═╡ fd224396-9da8-4278-b3a2-255cb64321e3
+ex1_dataset = "y" ^ 25 * "n" ^ 75;
+
+# ╔═╡ d61c58e7-1dd2-45a5-a56b-37430367e76b
+md"""And here’s the update with the imaginary data."""
+
+# ╔═╡ be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
+update_euro!(ex1, ex1_dataset, ex1_likelihood);
+
+# ╔═╡ 9a54965c-7c3d-498d-a4f0-e8673c4c7c75
+ex1.priors = ex1.posteriors;
+
+# ╔═╡ 04b6560e-7054-4d81-a458-dee26ae84d84
+pmf.get_name_max_posterior(ex1)
+
+# ╔═╡ 03f43108-596d-4ac9-ad4f-e15ef5711ce6
+md"""Finally, here’s what the prior looks like."""
+
+# ╔═╡ 9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
+begin
+	plts.plot(map(str2float, ex1.names), ex1.priors, label="prior")
+	plts.xlabel!("Probability of getting a hit")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ b071ef4c-b8a1-427e-80a5-eaacf91b5be4
+md"""This distribution indicates that most players have a batting average near 250, with only a few players below 175 or above 350. I’m not sure how accurately this prior reflects the distribution of batting averages in Major League Baseball, but it is good enough for this exercise."""
+
+# ╔═╡ 06a556d1-e08d-4b69-9925-e638227c03f5
+md"""Now update this distribution with the data and plot the posterior. What is the most likely quantity in the posterior distribution?"""
+
+# ╔═╡ a911f540-2f7c-47ef-a0f2-d94c9c09e73a
+md"""So, I guess I need to update it for 3 hits out of 3 trials"""
+
+# ╔═╡ 75da2b5f-a8e1-455d-8676-5172db403088
+begin
+	for i in "yyy"
+		ex1.posteriors = ex1.posteriors .* ex1_likelihood[i]
+	end
+	ex1.posteriors = ex1.posteriors ./ sum(ex1.posteriors)
+end;
+
+# ╔═╡ df0f24a2-9be9-4057-92fd-ee80b8a274e7
+begin
+	plts.plot(map(str2float, ex1.names), ex1.priors, label="prior")
+	plts.plot!(map(str2float, ex1.names), ex1.posteriors, label="posterior")
+	plts.title!("Posterior after hitting 3/3")
+	plts.xlabel!("Probability of getting a hit")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ 569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
+pmf.get_name_max_posterior(ex1)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1404,5 +1485,24 @@ version = "1.4.1+0"
 # ╠═978b0c65-49f6-41f6-a032-6c8ecf78d706
 # ╠═36ef0a78-bdd3-48d1-a8e2-20c869c6e19a
 # ╠═ef4707a6-14fa-4cfe-a6b8-1e7c45eb9d85
+# ╟─2278a500-e310-4ac1-bf99-7a3d0115c8c1
+# ╟─96691ae6-9d1c-4917-a911-906ebfd88af2
+# ╠═9a6eb4c9-2639-4274-9199-0a289783301a
+# ╟─edc1712d-b664-464b-ac82-f2022d330bc8
+# ╠═9523608e-d370-4b3c-b973-debf5990d8f8
+# ╟─01943320-62d2-4efa-84e1-e0e3ff462562
+# ╠═fd224396-9da8-4278-b3a2-255cb64321e3
+# ╟─d61c58e7-1dd2-45a5-a56b-37430367e76b
+# ╠═be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
+# ╠═9a54965c-7c3d-498d-a4f0-e8673c4c7c75
+# ╠═04b6560e-7054-4d81-a458-dee26ae84d84
+# ╟─03f43108-596d-4ac9-ad4f-e15ef5711ce6
+# ╠═9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
+# ╟─b071ef4c-b8a1-427e-80a5-eaacf91b5be4
+# ╟─06a556d1-e08d-4b69-9925-e638227c03f5
+# ╟─a911f540-2f7c-47ef-a0f2-d94c9c09e73a
+# ╠═75da2b5f-a8e1-455d-8676-5172db403088
+# ╠═df0f24a2-9be9-4057-92fd-ee80b8a274e7
+# ╠═569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
