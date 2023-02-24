@@ -332,18 +332,19 @@ ex2 = pmf.Pmf(map(x -> float2str(x, digits=3), range(0,1,101)), range(0,1,101));
 
 # ╔═╡ fb9c3f49-4984-41ed-8350-4658b8297b1f
 md"""
-The number of true YES is:
-- half of total answers, plus
+The number of YES is:
+- half of total answers (because the coin 'said' so), plus
 - x * the other half (x is the true YES proportion)
 
-So, the likelihood probability of YES is:
+So, the likelihood (the probability of getting YES in survey) is:
 - 0.5 + x*0.5 (x is the true YES proportion)
 
 The number of true NO is:
-- y * half of total answers (the freely answered answers, y - true proportion of NO in population)
+- y * half of total answers (the freely answered questions, y - true proportion of NO in population), plus
+- the equal amount hidden by coin YESes, so: y * other half of answers
 
-So, the likelihood probability of NO is:
-- y * 0.5 (y - true proportion of NO in population)
+So, the likelihood (the probability of getting NO in survey) is:
+- y * 0.5 (y - true proportion of NO in population) [we don't add the other half because it is hidden by coin YESes (so, we would have to add y * 0.5 * 0, hence 0)]
 """
 
 # ╔═╡ a4609d0c-a05d-42b8-bfda-7e543db4e12a
