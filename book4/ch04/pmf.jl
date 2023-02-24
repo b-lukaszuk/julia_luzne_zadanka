@@ -1,5 +1,6 @@
-import DataFrames as pd
 module ProbabilityMassFunction
+
+import DataFrames as pd
 
 mutable struct Pmf{T}
     names::Vector{T}
