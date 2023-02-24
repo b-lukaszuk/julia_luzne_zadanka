@@ -312,6 +312,61 @@ end
 # ╔═╡ 569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
 pmf.get_name_max_posterior(ex1)
 
+# ╔═╡ 6f3aa618-c264-412b-91f2-d768e25fe839
+md"""### Exercise 2
+
+Whenever you survey people about sensitive issues, you have to deal with [social desirability bias](https://en.wikipedia.org/wiki/Social-desirability_bias), which is the tendency of people to adjust their answers to show themselves in the most positive light. One way to improve the accuracy of the results is [randomized response](https://en.wikipedia.org/wiki/Randomized_response).
+
+As an example, suppose you want to know how many people cheat on their taxes. If you ask them directly, it is likely that some of the cheaters will lie. You can get a more accurate estimate if you ask them indirectly, like this: Ask each person to flip a coin and, without revealing the outcome,
+
+- If they get heads, they report YES.
+- If they get tails, they honestly answer the question “Do you cheat on your taxes?”
+
+If someone says YES, we don’t know whether they actually cheat on their taxes; they might have flipped heads. Knowing this, people might be more willing to answer honestly.
+
+Suppose you survey 100 people this way and get 80 YESes and 20 NOs. Based on this data, what is the posterior distribution for the fraction of people who cheat on their taxes? What is the most likely quantity in the posterior distribution?
+"""
+
+# ╔═╡ 5c8f6b64-cd02-43ff-b96a-ecaa82197071
+ex2 = pmf.Pmf(map(x -> float2str(x, digits=3), range(0,1,101)), range(0,1,101));
+
+# ╔═╡ fb9c3f49-4984-41ed-8350-4658b8297b1f
+md"""
+The number of true YES is:
+- half of total answers, plus
+- x * the other half (x is the true YES proportion)
+
+So, the likelihood probability of YES is:
+- 0.5 + x*0.5 (x is the true YES proportion)
+
+The number of true NO is:
+- y * half of total answers (the freely answered answers, y - true proportion of NO in population)
+
+So, the likelihood probability of NO is:
+- y * 0.5 (y - true proportion of NO in population)
+"""
+
+# ╔═╡ a4609d0c-a05d-42b8-bfda-7e543db4e12a
+ex2_likelihood = Dict('y' => 0.5 .+ ex2.priors .* 0.5, 'n' => (1 .- ex2.priors) .* 0.5);
+
+# ╔═╡ 5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
+begin
+	ex2_dataset = "y" ^ 80 * "n" ^ 20
+	update_euro!(ex2, ex2_dataset, ex2_likelihood)
+	pmf.pmf2df(ex2)
+end
+
+# ╔═╡ af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
+begin
+	plts.plot(map(str2float, ex2.names), ex2.posteriors, label="posterior")
+	plts.xlabel!("Prior probability")
+	plts.ylabel!("Posterior probability")
+	plts.title!("Posterior probability of people cheating on taxes")
+end
+
+# ╔═╡ 15c8fbb2-adc5-426e-806b-a74b2f898843
+pmf.get_name_max_posterior(ex2)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1504,5 +1559,12 @@ version = "1.4.1+0"
 # ╠═75da2b5f-a8e1-455d-8676-5172db403088
 # ╠═df0f24a2-9be9-4057-92fd-ee80b8a274e7
 # ╠═569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
+# ╟─6f3aa618-c264-412b-91f2-d768e25fe839
+# ╠═5c8f6b64-cd02-43ff-b96a-ecaa82197071
+# ╟─fb9c3f49-4984-41ed-8350-4658b8297b1f
+# ╠═a4609d0c-a05d-42b8-bfda-7e543db4e12a
+# ╠═5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
+# ╠═af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
+# ╠═15c8fbb2-adc5-426e-806b-a74b2f898843
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
