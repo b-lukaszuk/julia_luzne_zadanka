@@ -348,7 +348,7 @@ So, the likelihood (the probability of getting NO in survey) is:
 """
 
 # ╔═╡ a4609d0c-a05d-42b8-bfda-7e543db4e12a
-ex2_likelihood = Dict('y' => 0.5 .+ ex2.priors .* 0.5, 'n' => (1 .- ex2.priors) .* 0.5);
+ex2_likelihood = Dict('y' => 0.5 .+ ex2.priors ./ 2, 'n' => (1 .- ex2.priors) ./ 2);
 
 # ╔═╡ 5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
 begin
@@ -367,6 +367,16 @@ end
 
 # ╔═╡ 15c8fbb2-adc5-426e-806b-a74b2f898843
 pmf.get_name_max_posterior(ex2)
+
+# ╔═╡ 41993625-5020-45dd-b516-e81cc8d80534
+md"""### Exercise 3
+
+Suppose you want to test whether a coin is fair, but you don’t want to spin it hundreds of times. So you make a machine that spins the coin automatically and uses computer vision to determine the outcome.
+
+However, you discover that the machine is not always accurate. Specifically, suppose the probability is `y=0.2` that an actual heads is reported as tails, or actual tails reported as heads.
+
+If we spin a coin 250 times and the machine reports 140 heads, what is the posterior distribution of `x`? What happens as you vary the value of `y`?
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1567,5 +1577,6 @@ version = "1.4.1+0"
 # ╠═5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
 # ╠═af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 # ╠═15c8fbb2-adc5-426e-806b-a74b2f898843
+# ╟─41993625-5020-45dd-b516-e81cc8d80534
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
