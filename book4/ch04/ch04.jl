@@ -4,6 +4,16 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
 # ╔═╡ e59f34b1-44ef-498d-bd44-7a83985674bb
 begin
 	include("pmf.jl")
@@ -341,7 +351,7 @@ Binomial(n=50 * 2, k=(50-20) * 2)
 begin
 	update_binomial!(ex2, Dict("n" => 50*2, "k" => (50-20)*2))
 	pmf.pmf2df(ex2)
-end
+end;
 
 # ╔═╡ af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 begin
@@ -363,6 +373,73 @@ However, you discover that the machine is not always accurate. Specifically, sup
 
 If we spin a coin 250 times and the machine reports 140 heads, what is the posterior distribution of `x`? What happens as you vary the value of `y`?
 """
+
+# ╔═╡ 3bfc52ee-4ca8-40f3-8f3a-625883468cb1
+md"""#### Ex3. Reasoning
+
+If the true probability of obtaining the head is `p` then what is the probability of obtaining the head with some error rate `y`?
+
+Let's say `p` = 0.8, then on average i would get 800 heads and 200 tails (out of 1000 tosses).
+
+Since the error rate is 0.2, then out of those 800 heads on average 20% would be (erronously) classified as tails (so 160 false tails).
+
+Since the error rate is 0.2, then out of those 200 tails on average 20% would be (erronously) classified as heads (so 40 false heads)
+
+So, I would have:
+- 640 true heads + 160 false tails + 160 true tails + 40 false heads.
+In total observed 680 heads and 320 observed tails (680 + 320 = 1'000).
+
+So, it seems the probability of observing heads is:
+- 0.8 [P(true heads)] - 0.2 * 0.8 [P(error) times P(true heads)] + 0.2 * 0.2 [P(error) times P(true tails)] = 0.68
+
+So, it seems the probability of observing tails is:
+- 0.2 * 0.8 [P(error) times P(true heads)] + 0.2 [P(true tails)] - 0.2 * 0.2 [P(error) times P(true tails)]
+"""
+
+# ╔═╡ 139a2c39-56f3-4461-9bd1-805d45127a1e
+md"""#### Ex3. Interactive Solution
+
+*Note probabilities may be incorrect, e.g. due to rounding error in float multiplication*
+"""
+
+# ╔═╡ 5028d50d-fb8c-42f4-867a-97ac9d78b328
+md"Move the slider below to change the probability of error (misclassification)"
+
+# ╔═╡ ec64408b-5aa5-4b34-b48b-1cd93b36d338
+@bind ex3_y PlutoUI.Slider(0:0.05:1, default=0.2)
+
+# ╔═╡ 0e3ea117-96ed-46a7-b238-61e45ed07642
+md"P(error) = $ex3_y"
+
+# ╔═╡ 5ef1223c-c8b8-4266-bf43-8b0119d9523e
+begin
+	ex3 = pmf.Pmf(collect(range(0, 1, 101)), range(0, 1, 101));
+	ex3_likelihood = Dict(
+		'h' => ex3.priors .- ex3_y .* ex3.priors .+ ex3_y .* (1 .- ex3.priors),
+		't' => ex3_y .* ex3.priors .+ (1 .- ex3.priors) .- ex3_y .* (1 .- ex3.priors)
+	)
+end;
+
+# ╔═╡ 68b2c802-cec5-416d-8e32-143101c5b141
+ex3_data = "h" ^ 140 * "t" ^ (250-140);
+
+# ╔═╡ 07f1841e-8a92-431e-b002-bf23e0ca6f37
+update_euro!(ex3, ex3_data, ex3_likelihood);
+
+# ╔═╡ b8675037-e444-4635-bfa3-fcc157bd37ad
+begin
+	plts.plot(coins1.names, coins1.posteriors, label="P(error) = 0.0")
+	plts.plot!(ex3.names, ex3.posteriors, label="P(error) = $ex3_y")
+	plts.title!("Probability distributions, 140 heads out of 250 tosses")
+	plts.xlabel!("Priors")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ daf898c8-e20d-4cb6-a448-0ea08fcb71f3
+pmf.get_name_max_posterior(coins1)
+
+# ╔═╡ e7677a47-0ea4-41b3-971f-bc60902842df
+pmf.get_name_max_posterior(ex3)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1560,5 +1637,16 @@ version = "1.4.1+0"
 # ╠═af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 # ╠═15c8fbb2-adc5-426e-806b-a74b2f898843
 # ╟─41993625-5020-45dd-b516-e81cc8d80534
+# ╟─3bfc52ee-4ca8-40f3-8f3a-625883468cb1
+# ╟─139a2c39-56f3-4461-9bd1-805d45127a1e
+# ╟─5028d50d-fb8c-42f4-867a-97ac9d78b328
+# ╟─ec64408b-5aa5-4b34-b48b-1cd93b36d338
+# ╟─0e3ea117-96ed-46a7-b238-61e45ed07642
+# ╠═5ef1223c-c8b8-4266-bf43-8b0119d9523e
+# ╠═68b2c802-cec5-416d-8e32-143101c5b141
+# ╠═07f1841e-8a92-431e-b002-bf23e0ca6f37
+# ╠═b8675037-e444-4635-bfa3-fcc157bd37ad
+# ╠═daf898c8-e20d-4cb6-a448-0ea08fcb71f3
+# ╠═e7677a47-0ea4-41b3-971f-bc60902842df
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
