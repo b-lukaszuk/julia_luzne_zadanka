@@ -54,6 +54,7 @@ md"""### The Binomial Distribution"""
 md""" For example, if we flip a coin n=2 times and the probability of heads is p=0.5, here’s the probability of getting k=1 heads:"""
 
 # ╔═╡ ad3d3f07-0180-49ae-9207-b27f392327f0
+# imprecision due to Float arithmetic, should be 0.5 not 0.49999..., etc.
 dst.pdf(dst.Binomial(2, 0.5), 1)
 
 # ╔═╡ 5cae0a0d-ed98-46e5-86e5-18ee09cf5280
@@ -109,16 +110,6 @@ dst.cdf(dst.Binomial(250, 0.5), 110)
 # ╔═╡ 222ec2e7-852f-4ee7-994c-a9cc475e6078
 md"""### Bayesian Estimation"""
 
-# ╔═╡ 9ccacf41-764e-4cd9-905f-fd3fa26f6796
-function str2float(x::String)::Float64
-	return parse(Float64, x)
-end
-
-# ╔═╡ 99d2e684-676f-4c9b-8011-cf7421f8cff7
-function float2str(x::Float64; digits=2)::String
-	return round(x, digits=digits) |> string
-end
-
 # ╔═╡ c413439a-5b8d-43d7-b67b-2e63ca38fb4e
 # hypothesis of a true probability of a coin toss
 coins1 = pmf.Pmf(map(x->round(x, digits=2), range(0,1,101)), collect(range(0,1,101)));
@@ -161,18 +152,18 @@ pmf.get_name_max_posterior(coins1)
 md"""### Triangle Prior"""
 
 # ╔═╡ 3560efdc-79c6-4f4f-8293-d5de26bfe86b
-uniform = pmf.mk_pmf_from_seq(map(float2str, range(0,1, 101)));
+uniform = pmf.mk_pmf_from_seq(collect(range(0,1, 101)));
 
 # ╔═╡ d45f8b77-ffe3-4efd-9027-0572972a84c7
 a = vcat(0:1:49, 50:-1:0);
 
 # ╔═╡ 0cb11b14-69d1-4e66-8e63-749dfa206736
-triangle = pmf.Pmf(map(float2str, range(0, 1, 101)), a ./ sum(a));
+triangle = pmf.Pmf(collect(range(0, 1, 101)), a ./ sum(a));
 
 # ╔═╡ e890a219-514c-4a32-9c3b-a8b0e138d7ed
 begin
-	plts.plot(map(str2float, uniform.names), uniform.priors, color="blue", linewidth=3, label="uniform")
-	plts.plot!(map(str2float, triangle.names), triangle.priors, color="orange", linewidth=3, label="triangle")
+	plts.plot(uniform.names, uniform.priors, color="blue", linewidth=3, label="uniform")
+	plts.plot!(triangle.names, triangle.priors, color="orange", linewidth=3, label="triangle")
 	plts.title!("Uniform and triangle prior distributions")
 	plts.ylabel!("Probability")
 	plts.xlabel!("Proportion of heads (x)")
@@ -186,8 +177,8 @@ end;
 
 # ╔═╡ 6c5f1c50-9b34-4533-99e9-79a8e5edd09b
 begin
-	plts.plot(map(str2float, triangle.names), triangle.posteriors, color="orange", linewidth=8, label="triangle")
-	plts.plot!(map(str2float, uniform.names), uniform.posteriors, color="blue", linewidth=2, label="uniform")
+	plts.plot(triangle.names, triangle.posteriors, color="orange", linewidth=8, label="triangle")
+	plts.plot!(uniform.names, uniform.posteriors, color="blue", linewidth=2, label="uniform")
 	plts.title!("Uniform and triangle posterior distributions")
 	plts.ylabel!("Probability")
 	plts.xlabel!("Proportion of heads (x)")
@@ -203,17 +194,16 @@ md"""### The Binomial Likelihood Function"""
 md"""A more efficient alternative is to compute the likelihood of the entire dataset at once."""
 
 # ╔═╡ b1b59921-e57a-4aad-b4f2-5d4a1d554338
-function update_binomial!(binom_pmf::pmf.Pmf, data::Tuple{Int, Int})
-	k, n = data
+function update_binomial!(binom_pmf::pmf.Pmf{T}, data::Dict{String, Int}) where T<:Union{Int, String, Float64}
 	ps::Vector{Float64} = binom_pmf.priors
-	likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(n, ps), k)
+	likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
 	pmf.update!(binom_pmf, likelihood)
 end
 
 # ╔═╡ df15825c-ec0b-45f6-9320-55eb5854c54d
 begin
 	uniform2 = pmf.Pmf(map(x->round(x, digits=2), range(0,1,101)), range(0,1,101))
-	data2 = (140, 250)
+	data2 = Dict("n" => 250, "k" => 140)
 end
 
 # ╔═╡ 978b0c65-49f6-41f6-a032-6c8ecf78d706
@@ -251,20 +241,20 @@ ex1 = pmf.Pmf(collect(range(0.1, 0.4, 101)), range(0.1, 0.4, 101));
 # ╔═╡ edc1712d-b664-464b-ac82-f2022d330bc8
 md"""And here is a dictionary of likelihoods, with Y for getting a hit and N for not getting a hit."""
 
-# ╔═╡ 9523608e-d370-4b3c-b973-debf5990d8f8
+# ╔═╡ 88e1a14d-7a4d-4b46-a08e-867243f9f773
 ex1_likelihood = Dict('y' => ex1.priors, 'n' => 1 .- ex1.priors);
 
 # ╔═╡ 01943320-62d2-4efa-84e1-e0e3ff462562
 md"""Here’s a dataset that yields a reasonable prior distribution."""
 
-# ╔═╡ fd224396-9da8-4278-b3a2-255cb64321e3
+# ╔═╡ be77ce18-e161-4c80-88f5-aa5db0e2e7e1
 ex1_dataset = "y" ^ 25 * "n" ^ 75;
 
 # ╔═╡ d61c58e7-1dd2-45a5-a56b-37430367e76b
 md"""And here’s the update with the imaginary data."""
 
-# ╔═╡ be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
-update_euro!(ex1, ex1_dataset, ex1_likelihood);
+# ╔═╡ a3799d89-8796-4b0e-af12-da5cc2d619f9
+update_binomial!(ex1, Dict("n" => 100, "k" => 25));
 
 # ╔═╡ 04b6560e-7054-4d81-a458-dee26ae84d84
 pmf.get_name_max_posterior(ex1)
@@ -274,7 +264,7 @@ md"""Finally, here’s what the prior looks like."""
 
 # ╔═╡ 9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
 begin
-	plts.plot(ex1.names, ex1.priors, label="prior")
+	plts.plot(ex1.names, ex1.posteriors, label="prior")
 	plts.xlabel!("Probability of getting a hit")
 	plts.ylabel!("PMF")
 end
@@ -288,25 +278,22 @@ md"""Now update this distribution with the data and plot the posterior. What is 
 # ╔═╡ a911f540-2f7c-47ef-a0f2-d94c9c09e73a
 md"""So, I guess I need to update it for 3 hits out of 3 trials"""
 
-# ╔═╡ 75da2b5f-a8e1-455d-8676-5172db403088
+# ╔═╡ ea70b376-4c9b-4884-a070-6dd1a6dfc0ba
 begin
-	for i in "yyy"
-		ex1.posteriors = ex1.posteriors .* ex1_likelihood[i]
-	end
-	ex1.posteriors = ex1.posteriors ./ sum(ex1.posteriors)
+	ex11 = pmf.Pmf(ex1.names, ex1.posteriors)
+	update_euro!(ex11, "yyy", ex1_likelihood)
 end;
 
-# ╔═╡ df0f24a2-9be9-4057-92fd-ee80b8a274e7
+# ╔═╡ 75da2b5f-a8e1-455d-8676-5172db403088
 begin
-	plts.plot(ex1.names, ex1.priors, label="prior")
-	plts.plot!(ex1.names, ex1.posteriors, label="posterior")
-	plts.title!("Posterior after hitting 3/3")
-	plts.xlabel!("Probability of getting a hit")
+	plts.plot(ex1.names, ex1.posteriors, label="prior")
+	plts.plot!(ex11.names, ex11.posteriors, label="posterior")
+	plts.xlabel!("Posterior after hittin 3/3")
 	plts.ylabel!("PMF")
 end
 
 # ╔═╡ 569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
-pmf.get_name_max_posterior(ex1)
+pmf.get_name_max_posterior(ex11)
 
 # ╔═╡ 6f3aa618-c264-412b-91f2-d768e25fe839
 md"""### Exercise 2
@@ -324,7 +311,7 @@ Suppose you survey 100 people this way and get 80 YESes and 20 NOs. Based on thi
 """
 
 # ╔═╡ 5c8f6b64-cd02-43ff-b96a-ecaa82197071
-ex2 = pmf.Pmf(collect(range(0,1,101)), collect(range(0,1,101)));
+ex2 = pmf.Pmf(collect(range(0,1,101)), range(0,1,101));
 
 # ╔═╡ fb9c3f49-4984-41ed-8350-4658b8297b1f
 md"""
@@ -335,21 +322,24 @@ The number of YES is:
 So, the likelihood (the probability of getting YES in survey) is:
 - 0.5 + x*0.5 (x is the true YES proportion)
 
+The number of true YES is:
+- (50 - 20) * 2
+
 The number of true NO is:
 - y * half of total answers (the freely answered questions, y - true proportion of NO in population), plus
 - the equal amount hidden by coin YESes, so: y * other half of answers
 
 So, the likelihood (the probability of getting NO in survey) is:
 - y * 0.5 (y - true proportion of NO in population) [we don't add the other half because it is hidden by coin YESes (so, we would have to add y * 0.5 * 0, hence 0)]
-"""
 
-# ╔═╡ a4609d0c-a05d-42b8-bfda-7e543db4e12a
-ex2_likelihood = Dict('y' => 0.5 .+ ex2.priors ./ 2, 'n' => (1 .- ex2.priors) ./ 2);
+The binormial distribution is:
+
+Binomial(n=50 * 2, k=(50-20) * 2)
+"""
 
 # ╔═╡ 5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
 begin
-	ex2_dataset = "y" ^ 80 * "n" ^ 20
-	update_euro!(ex2, ex2_dataset, ex2_likelihood)
+	update_binomial!(ex2, Dict("n" => 50*2, "k" => (50-20)*2))
 	pmf.pmf2df(ex2)
 end
 
@@ -1521,8 +1511,6 @@ version = "1.4.1+0"
 # ╠═8924ac9d-4e1d-4798-8a3e-d1b8b64cc68a
 # ╠═3bc888f9-2f6e-4c52-a78c-c393afb7b47c
 # ╟─222ec2e7-852f-4ee7-994c-a9cc475e6078
-# ╠═9ccacf41-764e-4cd9-905f-fd3fa26f6796
-# ╠═99d2e684-676f-4c9b-8011-cf7421f8cff7
 # ╠═c413439a-5b8d-43d7-b67b-2e63ca38fb4e
 # ╠═c716c441-657f-4e20-8cd8-503e3cf3f8ac
 # ╠═56fe4c22-f72c-49d0-a131-14595cb59d1b
@@ -1551,24 +1539,23 @@ version = "1.4.1+0"
 # ╟─96691ae6-9d1c-4917-a911-906ebfd88af2
 # ╠═9a6eb4c9-2639-4274-9199-0a289783301a
 # ╟─edc1712d-b664-464b-ac82-f2022d330bc8
-# ╠═9523608e-d370-4b3c-b973-debf5990d8f8
+# ╠═88e1a14d-7a4d-4b46-a08e-867243f9f773
 # ╟─01943320-62d2-4efa-84e1-e0e3ff462562
-# ╠═fd224396-9da8-4278-b3a2-255cb64321e3
+# ╠═be77ce18-e161-4c80-88f5-aa5db0e2e7e1
 # ╟─d61c58e7-1dd2-45a5-a56b-37430367e76b
-# ╠═be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
+# ╠═a3799d89-8796-4b0e-af12-da5cc2d619f9
 # ╠═04b6560e-7054-4d81-a458-dee26ae84d84
 # ╟─03f43108-596d-4ac9-ad4f-e15ef5711ce6
 # ╠═9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
 # ╟─b071ef4c-b8a1-427e-80a5-eaacf91b5be4
 # ╟─06a556d1-e08d-4b69-9925-e638227c03f5
 # ╟─a911f540-2f7c-47ef-a0f2-d94c9c09e73a
+# ╠═ea70b376-4c9b-4884-a070-6dd1a6dfc0ba
 # ╠═75da2b5f-a8e1-455d-8676-5172db403088
-# ╠═df0f24a2-9be9-4057-92fd-ee80b8a274e7
 # ╠═569edd9e-1c8d-49e2-84fd-a3d62f20c4a4
 # ╟─6f3aa618-c264-412b-91f2-d768e25fe839
 # ╠═5c8f6b64-cd02-43ff-b96a-ecaa82197071
 # ╟─fb9c3f49-4984-41ed-8350-4658b8297b1f
-# ╠═a4609d0c-a05d-42b8-bfda-7e543db4e12a
 # ╠═5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
 # ╠═af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 # ╠═15c8fbb2-adc5-426e-806b-a74b2f898843
