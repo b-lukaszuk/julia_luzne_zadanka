@@ -14,6 +14,10 @@ mutable struct Pmf{T}
         error("length(names) must be equal length(priors)") :
         new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
+    Pmf(ns::Vector{Float64}, prs) = (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+
     Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
@@ -48,7 +52,7 @@ function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, defaul
     return isnothing(ind) ? default : getproperty(pmf, Symbol(field_name))[ind]
 end
 
-function get_prior(pmf::Pmf, name::Union{Int, String})::Float64
+function get_prior(pmf::Pmf, name::Union{Int, String, Float64})::Float64
     return get_field_vals_eq_name(pmf, name, "priors", 0.0)
 end
 

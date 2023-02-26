@@ -73,7 +73,7 @@ end
 pmf_ks = mk_binomial_pmf(250, 0.5);
 
 # ╔═╡ 26525042-1ddc-4d15-bba0-1243981f9ebc
-function draw_priors(pmf::pmf.Pmf{Int}, title::String, xlab::String, ylab::String, label::String)
+function draw_priors(pmf::pmf.Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
 	plts.plot(pmf.names, pmf.priors,
 		linewidth=3, color="navy", label=label)
 	plts.title!(title)
@@ -91,7 +91,7 @@ findfirst(x -> x == max(pmf_ks.priors...), pmf_ks.priors)
 pmf_ks.names[126]
 
 # ╔═╡ efa1de01-9212-490c-ab9f-081d51afe072
-function get_prob_ge(pmf_binom::pmf.Pmf{Int}, threshold)::Float64
+function get_prob_ge(pmf_binom::pmf.Pmf{T}, threshold)::Float64 where T<:Union{Int, Float64}
 	ge::Vector{Bool} = Vector{Bool}(pmf_binom.names .>= threshold)
 	prob::Float64 = sum(pmf_binom.priors[ge])
 	return prob
@@ -121,7 +121,7 @@ end
 
 # ╔═╡ c413439a-5b8d-43d7-b67b-2e63ca38fb4e
 # hypothesis of a true probability of a coin toss
-coins1 = pmf.Pmf(map(float2str, range(0,1,101)), collect(range(0,1,101)));
+coins1 = pmf.Pmf(map(x->round(x, digits=2), range(0,1,101)), collect(range(0,1,101)));
 
 # ╔═╡ c716c441-657f-4e20-8cd8-503e3cf3f8ac
 likelihood1 = Dict('h' => coins1.priors, 't' => 1 .- coins1.priors);
@@ -130,7 +130,7 @@ likelihood1 = Dict('h' => coins1.priors, 't' => 1 .- coins1.priors);
 dataset = "h" ^ 140 * "t" ^ 110;
 
 # ╔═╡ 33d5e5ac-3a5b-434e-8202-2a1625a2355c
-function update_euro!(coins::pmf.Pmf{String}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}})
+function update_euro!(coins::pmf.Pmf{T}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
 	for data in dataset
 		coins.likelihoods = coins.likelihoods .* prob_mapping[data]
 	end
@@ -138,9 +138,8 @@ function update_euro!(coins::pmf.Pmf{String}, dataset::String, prob_mapping::Dic
 end
 
 # ╔═╡ e71c3df3-8425-4ff8-b260-f26666080e6e
-function draw_posteriors(pmf::pmf.Pmf{String}, title::String, xlab::String, ylab::String, label::String)
-	plts.plot(map(str2float, pmf.names), pmf.posteriors,
-		linewidth=3, color="navy", label=label)
+function draw_posteriors(pmf::pmf.Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
+	plts.plot(pmf.names, pmf.posteriors, linewidth=3, color="navy", label=label)
 	plts.title!(title)
 	plts.xlabel!(xlab)
 	plts.ylabel!(ylab)
@@ -213,7 +212,7 @@ end
 
 # ╔═╡ df15825c-ec0b-45f6-9320-55eb5854c54d
 begin
-	uniform2 = pmf.Pmf(map(float2str, range(0,1,101)), range(0,1,101))
+	uniform2 = pmf.Pmf(map(x->round(x, digits=2), range(0,1,101)), range(0,1,101))
 	data2 = (140, 250)
 end
 
@@ -222,7 +221,7 @@ update_binomial!(uniform2, data2);
 
 # ╔═╡ 36ef0a78-bdd3-48d1-a8e2-20c869c6e19a
 begin
-	plts.plot(map(str2float, uniform2.names), uniform2.posteriors, color="blue", linewidth=2, label="uniform")
+	plts.plot(uniform2.names, uniform2.posteriors, color="blue", linewidth=2, label="uniform")
 	plts.title!("Uniform posterior distributions")
 	plts.ylabel!("Probability")
 	plts.xlabel!("Proportion of heads (x)")
@@ -247,7 +246,7 @@ Here’s the uniform prior:
 """
 
 # ╔═╡ 9a6eb4c9-2639-4274-9199-0a289783301a
-ex1 = pmf.Pmf(map(x -> float2str(x, digits=3), range(0.1, 0.4, 101)), range(0.1, 0.4, 101));
+ex1 = pmf.Pmf(collect(range(0.1, 0.4, 101)), range(0.1, 0.4, 101));
 
 # ╔═╡ edc1712d-b664-464b-ac82-f2022d330bc8
 md"""And here is a dictionary of likelihoods, with Y for getting a hit and N for not getting a hit."""
@@ -267,9 +266,6 @@ md"""And here’s the update with the imaginary data."""
 # ╔═╡ be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
 update_euro!(ex1, ex1_dataset, ex1_likelihood);
 
-# ╔═╡ 9a54965c-7c3d-498d-a4f0-e8673c4c7c75
-ex1.priors = ex1.posteriors;
-
 # ╔═╡ 04b6560e-7054-4d81-a458-dee26ae84d84
 pmf.get_name_max_posterior(ex1)
 
@@ -278,7 +274,7 @@ md"""Finally, here’s what the prior looks like."""
 
 # ╔═╡ 9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
 begin
-	plts.plot(map(str2float, ex1.names), ex1.priors, label="prior")
+	plts.plot(ex1.names, ex1.priors, label="prior")
 	plts.xlabel!("Probability of getting a hit")
 	plts.ylabel!("PMF")
 end
@@ -302,8 +298,8 @@ end;
 
 # ╔═╡ df0f24a2-9be9-4057-92fd-ee80b8a274e7
 begin
-	plts.plot(map(str2float, ex1.names), ex1.priors, label="prior")
-	plts.plot!(map(str2float, ex1.names), ex1.posteriors, label="posterior")
+	plts.plot(ex1.names, ex1.priors, label="prior")
+	plts.plot!(ex1.names, ex1.posteriors, label="posterior")
 	plts.title!("Posterior after hitting 3/3")
 	plts.xlabel!("Probability of getting a hit")
 	plts.ylabel!("PMF")
@@ -328,7 +324,7 @@ Suppose you survey 100 people this way and get 80 YESes and 20 NOs. Based on thi
 """
 
 # ╔═╡ 5c8f6b64-cd02-43ff-b96a-ecaa82197071
-ex2 = pmf.Pmf(map(x -> float2str(x, digits=3), range(0,1,101)), range(0,1,101));
+ex2 = pmf.Pmf(collect(range(0,1,101)), collect(range(0,1,101)));
 
 # ╔═╡ fb9c3f49-4984-41ed-8350-4658b8297b1f
 md"""
@@ -359,7 +355,7 @@ end
 
 # ╔═╡ af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 begin
-	plts.plot(map(str2float, ex2.names), ex2.posteriors, label="posterior")
+	plts.plot(ex2.names, ex2.posteriors, label="posterior")
 	plts.xlabel!("Prior probability")
 	plts.ylabel!("Posterior probability")
 	plts.title!("Posterior probability of people cheating on taxes")
@@ -1560,7 +1556,6 @@ version = "1.4.1+0"
 # ╠═fd224396-9da8-4278-b3a2-255cb64321e3
 # ╟─d61c58e7-1dd2-45a5-a56b-37430367e76b
 # ╠═be6e290a-c6fd-4ba2-a4a1-5ad25d486a0b
-# ╠═9a54965c-7c3d-498d-a4f0-e8673c4c7c75
 # ╠═04b6560e-7054-4d81-a458-dee26ae84d84
 # ╟─03f43108-596d-4ac9-ad4f-e15ef5711ce6
 # ╠═9e6795db-5e67-4f9a-b21f-b9969dc6c1ca
