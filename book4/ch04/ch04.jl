@@ -441,6 +441,20 @@ pmf.get_name_max_posterior(coins1)
 # ╔═╡ e7677a47-0ea4-41b3-971f-bc60902842df
 pmf.get_name_max_posterior(ex3)
 
+# ╔═╡ da1c7206-5f55-4a1f-bbe7-667f3cce1b80
+md"""### Exercise 4
+
+In preparation for an alien invasion, the Earth Defense League (EDL) has been working on new missiles to shoot down space invaders. Of course, some missile designs are better than others; let’s assume that each design has some probability of hitting an alien ship, `x`.
+
+Based on previous tests, the distribution of `x` in the population of designs is approximately uniform between 0.1 and 0.4.
+
+Now suppose the new ultra-secret Alien Blaster 9000 is being tested. In a press conference, an EDL general reports that the new design has been tested twice, taking two shots during each test. The results of the test are confidential, so the general won’t say how many targets were hit, but they report: “The same number of targets were hit in the two tests, so we have reason to think this new design is consistent.”
+
+Is this data good or bad? That is, does it increase or decrease your estimate of `x` for the Alien Blaster 9000?
+
+**Hint:** If If the probability of hitting each target is `x`, the probability of hitting one target in both tests is $[2x*(1 - x)]^2$
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1648,5 +1662,6 @@ version = "1.4.1+0"
 # ╠═b8675037-e444-4635-bfa3-fcc157bd37ad
 # ╠═daf898c8-e20d-4cb6-a448-0ea08fcb71f3
 # ╠═e7677a47-0ea4-41b3-971f-bc60902842df
+# ╟─da1c7206-5f55-4a1f-bbe7-667f3cce1b80
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
