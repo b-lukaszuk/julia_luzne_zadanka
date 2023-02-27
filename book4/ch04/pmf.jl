@@ -10,14 +10,17 @@ mutable struct Pmf{T}
     norm::Float64
     posteriors::Vector{Float64}
 
+    # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
+    # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{Float64}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
+    # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
@@ -60,6 +63,7 @@ function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
     return [get_prior(pmf, n) for n in names]
 end
 
+# normalizes unnorms (unnormalized posteriors) and puts them into posteriors (normalized posteriors, they add up to 1)
 function normalize!(pmf::Pmf)
     pmf.norm = sum(pmf.unnorms)
     if (pmf.norm == 0)
@@ -69,11 +73,17 @@ function normalize!(pmf::Pmf)
     end
 end
 
+# calculates posteriors for created priors and likelihoods
+# if likelihoods were not set since struct creation then posteriors are equal priors
+# consider renaming it to calculate_posteriors!(pmf)
 function update!(pmf::Pmf)
     pmf.unnorms = pmf.priors .* pmf.likelihoods
     normalize!(pmf)
 end
 
+# updates posterior that was once calculated by likelihoods
+# if posteriors were not updated before then the distribution of posteriors is uniform
+# consider renaming it to: update posteriors(pmf, new_likelihoods)
 function update!(pmf::Pmf, likelihoods::Vector{Float64})
     pmf.likelihoods = likelihoods
     pmf.unnorms = pmf.posteriors .* pmf.likelihoods
