@@ -355,7 +355,7 @@ end;
 
 # ╔═╡ af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 begin
-	plts.plot(ex2.names, ex2.posteriors, label="posterior")
+	plts.plot(ex2.names, ex2.posteriors, label="80 YES, 20 NO")
 	plts.xlabel!("Prior probability")
 	plts.ylabel!("Posterior probability")
 	plts.title!("Posterior probability of people cheating on taxes")
@@ -377,7 +377,7 @@ If we spin a coin 250 times and the machine reports 140 heads, what is the poste
 # ╔═╡ 3bfc52ee-4ca8-40f3-8f3a-625883468cb1
 md"""#### Ex3. Reasoning
 
-If the true probability of obtaining the head is `p` then what is the probability of obtaining the head with some error rate `y`?
+If the true probability of obtaining the head is `p` then what is the probability of obtaining the head with some error rate `y` (here probability of error = 0.2)?
 
 Let's say `p` = 0.8, then on average i would get 800 heads and 200 tails (out of 1000 tosses).
 
@@ -454,6 +454,69 @@ Is this data good or bad? That is, does it increase or decrease your estimate of
 
 **Hint:** If If the probability of hitting each target is `x`, the probability of hitting one target in both tests is $[2x*(1 - x)]^2$
 """
+
+# ╔═╡ a4306fad-3124-4556-81da-7912e858f512
+md"""#### Ex4. Reasoning
+
+We got two tests each composed of 2 shots. So, we can have 0 and 0 hits, 1 and 1 hit, 2 hits and 2 hits. We have x - probability of hit, y - probability of miss (1-x)
+
+The probability of hitting zero and zero targets is:
+- for first test with two shots: y * y
+- for second test with two shots: y * y
+So, in total $P(0h, 0h) = y * y * y * y = y^4 = (1-x)^4$
+
+The probability of hitting 1 and 1 targets is:
+- for first test with two shots: (x * y) + (y * x) => 2 * x * y
+- for second test with two shots the result will be the same as for the first, so: 2 * x * y
+So, in total $P(1h, 1h) = (2*x*y) * (2*x*y) = 4*x^2*y^2 = 4*x^2*(1-x)^2$ (compare with the hint above)
+
+The probability of hitting 2 and 2 targets is:
+- for first test with two shots: x * x
+- for second test with two shots: x * x
+So, in total $P(2h, 2h) = x * x * x * x = x^4$
+
+So, the probability of getting the same result is:
+
+$P(sameRes2tests) = P(0h, 0h) + P(1h, 1h) + P(2h, 2h)$
+
+$P(sameRes2tests) = [(1-x)^4] + [4*x^2*(1-x)^2] + [x^4]$
+"""
+
+# ╔═╡ a4083054-40fc-49ca-a4ef-41baa947c16b
+md"""#### Ex4. Solution"""
+
+# ╔═╡ 306032b3-8e9e-4574-882c-7ba9cc7f702d
+function ex4_get_likelihood(x::Float64, hits_in_each_group::Int)::Float64
+	@assert 0 <= x <= 1
+	@assert 0 <= hits_in_each_group <= 2
+	if (hits_in_each_group == 0)
+		return (1-x)^4
+	elseif (hits_in_each_group == 1)
+		return 4*(x^2)*((1-x)^2)
+	else
+		return x^4
+	end
+end
+
+# ╔═╡ 8f25aa64-c504-41bb-bd95-08fa148193c5
+function ex4_get_likelihood(x::Float64)::Float64
+	@assert 0 <= x <= 1
+	return sum([ex4_get_likelihood(x, i) for i in 0:1:2])
+end
+
+# ╔═╡ 61dec2db-833a-4851-bd46-266130c42616
+begin
+	ex4 = pmf.Pmf(collect(range(0.1, 0.4, 101)), range(0.1, 0.4, 101))
+	pmf.update!(ex4, map(ex4_get_likelihood, ex4.priors))
+end;
+
+# ╔═╡ 52789fed-64c2-460d-8e97-135f98d599f2
+begin
+	plts.plot(ex4.priors, ex4.posteriors, label="posterior")
+	plts.title!("Posterior distribution\nthe same results of 2 tests 2 shots each")
+	plts.xlabel!("Prior probability of hitting the target")
+	plts.ylabel!("PMF")
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1648,7 +1711,7 @@ version = "1.4.1+0"
 # ╠═5c8f6b64-cd02-43ff-b96a-ecaa82197071
 # ╟─fb9c3f49-4984-41ed-8350-4658b8297b1f
 # ╠═5a4cbbf9-2293-44de-8dbc-3dca1a69ef51
-# ╠═af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
+# ╟─af9e6386-7dc0-4ab0-a1bd-b11a7be2c8e4
 # ╠═15c8fbb2-adc5-426e-806b-a74b2f898843
 # ╟─41993625-5020-45dd-b516-e81cc8d80534
 # ╟─3bfc52ee-4ca8-40f3-8f3a-625883468cb1
@@ -1663,5 +1726,11 @@ version = "1.4.1+0"
 # ╠═daf898c8-e20d-4cb6-a448-0ea08fcb71f3
 # ╠═e7677a47-0ea4-41b3-971f-bc60902842df
 # ╟─da1c7206-5f55-4a1f-bbe7-667f3cce1b80
+# ╟─a4306fad-3124-4556-81da-7912e858f512
+# ╟─a4083054-40fc-49ca-a4ef-41baa947c16b
+# ╠═306032b3-8e9e-4574-882c-7ba9cc7f702d
+# ╠═8f25aa64-c504-41bb-bd95-08fa148193c5
+# ╠═61dec2db-833a-4851-bd46-266130c42616
+# ╠═52789fed-64c2-460d-8e97-135f98d599f2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
