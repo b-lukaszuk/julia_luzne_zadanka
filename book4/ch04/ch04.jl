@@ -483,7 +483,21 @@ $P(sameRes2tests) = [(1-x)^4] + [4*x^2*(1-x)^2] + [x^4]$
 """
 
 # ╔═╡ a4083054-40fc-49ca-a4ef-41baa947c16b
-md"""#### Ex4. Solution"""
+md"""#### Ex4. Interactive Solution"""
+
+# ╔═╡ 927afeec-6317-44cb-9570-0bf938d0beb5
+md"There were 2 tests performed 2 shots each.
+
+Choose the number of hits per test
+
+(default: the same number of hits in both tests, so 0, 1, and 2 are marked):
+"
+
+# ╔═╡ fb865ba4-5f46-4469-b4d0-18e30f33f589
+@bind hits_per_test PlutoUI.MultiCheckBox([
+	0 => "0 hits per test",
+	1 => "1 hit per test",
+	2 => "2 hits per test"], default=[0, 1, 2])
 
 # ╔═╡ 306032b3-8e9e-4574-882c-7ba9cc7f702d
 function ex4_get_likelihood(x::Float64, hits_in_each_group::Int)::Float64
@@ -498,21 +512,21 @@ function ex4_get_likelihood(x::Float64, hits_in_each_group::Int)::Float64
 	end
 end
 
-# ╔═╡ 8f25aa64-c504-41bb-bd95-08fa148193c5
-function ex4_get_likelihood(x::Float64)::Float64
-	@assert 0 <= x <= 1
-	return sum([ex4_get_likelihood(x, i) for i in 0:1:2])
+# ╔═╡ 43d99437-1be5-4976-8c4d-3a5c708a02a9
+function ex4_get_likelihood(x::Float64, hits_in_each_group::Vector{Int})::Float64
+	return sum([ex4_get_likelihood(x, i) for i in hits_in_each_group])
 end
 
 # ╔═╡ 61dec2db-833a-4851-bd46-266130c42616
 begin
 	ex4 = pmf.Pmf(collect(range(0.1, 0.4, 101)), range(0.1, 0.4, 101))
-	pmf.update!(ex4, map(ex4_get_likelihood, ex4.priors))
+	pmf.update!(ex4, map(x -> ex4_get_likelihood(x, hits_per_test), ex4.priors))
 end;
 
 # ╔═╡ 52789fed-64c2-460d-8e97-135f98d599f2
 begin
-	plts.plot(ex4.priors, ex4.posteriors, label="posterior")
+	plts.plot(ex4.priors, ex4.posteriors,
+		label="Hits per test $(join(hits_per_test, ", ", ", or "))")
 	plts.title!("Posterior distribution\nthe same results of 2 tests 2 shots each")
 	plts.xlabel!("Prior probability of hitting the target")
 	plts.ylabel!("PMF")
@@ -1728,8 +1742,10 @@ version = "1.4.1+0"
 # ╟─da1c7206-5f55-4a1f-bbe7-667f3cce1b80
 # ╟─a4306fad-3124-4556-81da-7912e858f512
 # ╟─a4083054-40fc-49ca-a4ef-41baa947c16b
-# ╠═306032b3-8e9e-4574-882c-7ba9cc7f702d
-# ╠═8f25aa64-c504-41bb-bd95-08fa148193c5
+# ╟─927afeec-6317-44cb-9570-0bf938d0beb5
+# ╟─fb865ba4-5f46-4469-b4d0-18e30f33f589
+# ╟─306032b3-8e9e-4574-882c-7ba9cc7f702d
+# ╟─43d99437-1be5-4976-8c4d-3a5c708a02a9
 # ╠═61dec2db-833a-4851-bd46-266130c42616
 # ╠═52789fed-64c2-460d-8e97-135f98d599f2
 # ╟─00000000-0000-0000-0000-000000000001
