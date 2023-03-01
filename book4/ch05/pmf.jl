@@ -107,7 +107,7 @@ Updates posteriors (old posteriors * new likelihoods) and normalizes them
 if posteriors were not updated before then the distribution of posteriors is uniform
 """
 function update_posteriors!(pmf::Pmf, new_likelihoods::Vector{Float64})
-    pmf.likelihoods = likelihoods
+    pmf.likelihoods = new_likelihoods
     pmf.unnorms = pmf.posteriors .* pmf.likelihoods
     normalize!(pmf)
 end
@@ -139,9 +139,9 @@ Creates a Pmf struct for a binomial with names
 0:n and their coresponding probabilities as priors
 """
 function mk_binomial_pmf(n::Int, p::Float64)::Pmf{Int}
-	ks::Vector{Int} = collect(0:n)
-	ps::Vector{Float64} = dst.pdf.(dst.Binomial(n, p), ks)
-	return Pmf(ks, ps)
+    ks::Vector{Int} = collect(0:n)
+    ps::Vector{Float64} = dst.pdf.(dst.Binomial(n, p), ks)
+    return Pmf(ks, ps)
 end
 
 """
@@ -149,10 +149,10 @@ Reads data from dataset, updates likelihood based on prob_mapping,
 then calculates and updates posteriors (old posteriors are discarded)
 """
 function calculate_posteriors!(pmf::Pmf{T}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
-	for datum in dataset
-		pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
-	end
-	calculate_posteriors!(pmf)
+    for datum in dataset
+        pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
+    end
+    calculate_posteriors!(pmf)
 end
 
 """
@@ -160,19 +160,19 @@ Calculates likelihoods for binomial with n trials, k successes, p - prob. of suc
 then it updates posteriors (old posteriors * new likelihoods) and normalizes them
 """
 function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String, Int}) where T<:Union{Int, String, Float64}
-	ps::Vector{Float64} = binom_pmf.priors
-	likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
-	update_posteriors!(binom_pmf, likelihood)
+    ps::Vector{Float64} = binom_pmf.priors
+    likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
+    update_posteriors!(binom_pmf, likelihood)
 end
 
 """
 Draws posteriors (Y-axis) and names (X-axis) if they are numeric, uses Plots
 """
 function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
-	plts.plot(pmf.names, pmf.posteriors, label=label)
-	plts.title!(title)
-	plts.xlabel!(xlab)
-	plts.ylabel!(ylab)
+    plts.plot(pmf.names, pmf.posteriors, label=label)
+    plts.title!(title)
+    plts.xlabel!(xlab)
+    plts.ylabel!(ylab)
 end
 
 end
