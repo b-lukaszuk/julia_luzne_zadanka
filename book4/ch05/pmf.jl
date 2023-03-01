@@ -1,6 +1,8 @@
 module ProbabilityMassFunction
 
 import DataFrames as pd
+import Distributions as dst
+import Plots as plts
 
 """
 Pmf - probability mass function object with functionality similar to Python's empiricaldist's (library) Pmf
@@ -80,7 +82,7 @@ function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
     return [get_prior(pmf, n) for n in names]
 end
 
-""""normalizes Pmf.unnorms (unnormalized posteriors) and puts them into Pmf.posteriors
+""""Normalizes Pmf.unnorms (unnormalized posteriors) and puts them into Pmf.posteriors
 (normalized posteriors, they add up to 1)"""
 function normalize!(pmf::Pmf)
     pmf.norm = sum(pmf.unnorms)
@@ -92,7 +94,7 @@ function normalize!(pmf::Pmf)
 end
 
 """
-calculates posteriors from priors and likelihoods (priors * likelihoods)
+Calculates posteriors from priors and likelihoods (priors * likelihoods)
 if likelihoods were not set since struct creation then posteriors will be equal priors
 """
 function calculate_posteriors!(pmf::Pmf)
@@ -101,7 +103,7 @@ function calculate_posteriors!(pmf::Pmf)
 end
 
 """
-updates posteriors (old posteriors * new likelihoods) and normalizes them
+Updates posteriors (old posteriors * new likelihoods) and normalizes them
 if posteriors were not updated before then the distribution of posteriors is uniform
 """
 function update_posteriors!(pmf::Pmf, new_likelihoods::Vector{Float64})
@@ -130,6 +132,47 @@ end
 
 function get_name_max_posterior(pmf::Pmf{T})::T where T
     return pmf.names[get_id_max_posterior(pmf)]
+end
+
+"""
+Creates a Pmf struct for a binomial with names
+0:n and their coresponding probabilities as priors
+"""
+function mk_binomial_pmf(n::Int, p::Float64)::Pmf{Int}
+	ks::Vector{Int} = collect(0:n)
+	ps::Vector{Float64} = dst.pdf.(dst.Binomial(n, p), ks)
+	return Pmf(ks, ps)
+end
+
+"""
+Reads data from dataset, updates likelihood based on prob_mapping,
+then calculates and updates posteriors (old posteriors are discarded)
+"""
+function calculate_posteriors!(pmf::Pmf{T}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
+	for datum in dataset
+		pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
+	end
+	calculate_posteriors!(pmf)
+end
+
+"""
+Calculates likelihoods for binomial with n trials, k successes, p - prob. of success (taken from priors)
+then it updates posteriors (old posteriors * new likelihoods) and normalizes them
+"""
+function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String, Int}) where T<:Union{Int, String, Float64}
+	ps::Vector{Float64} = binom_pmf.priors
+	likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
+	update_posteriors!(binom_pmf, likelihood)
+end
+
+"""
+Draws posteriors (Y-axis) and names (X-axis) if they are numeric, uses Plots
+"""
+function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
+	plts.plot(pmf.names, pmf.posteriors, label=label)
+	plts.title!(title)
+	plts.xlabel!(xlab)
+	plts.ylabel!(ylab)
 end
 
 end
