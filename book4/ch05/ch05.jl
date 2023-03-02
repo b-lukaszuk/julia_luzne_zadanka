@@ -37,6 +37,49 @@ PlutoUI.TableOfContents(depth=4)
 # ╔═╡ 5da35a4b-bc8c-412c-89c8-16e46fd7f067
 md"""## Code from chapter"""
 
+# ╔═╡ 974927a3-d876-459e-b2a0-9db0def9e4f9
+md"""### The Train Problem
+
+...the train problem in Frederick Mosteller’s, [Fifty Challenging Problems in Probability with Solutions](https://store.doverpublications.com/0486653552.html):
+
+'A railroad numbers its locomotives in order 1..N. One day you see a locomotive with the number 60. Estimate how many locomotives the railroad has.'
+
+To apply Bayesian reasoning, we can break this problem into two steps:
+- What did we know about  before we saw the data?
+- For any given value of , what is the likelihood of seeing the data (a locomotive with number 60)?
+
+The answer to the first question is the prior. The answer to the second is the likelihood.
+"""
+
+# ╔═╡ ac9a468e-338c-4e7f-a62b-939eee7e4ff4
+train = pmf.Pmf(Vector{Int}(1:1000), repeat([1/1000], 1000));
+
+# ╔═╡ 897422c5-9e8c-420f-827b-dca40bca8f3d
+function update_train!(train::pmf.Pmf{Int}, data::Int)
+	hypos = train.names
+	likelihood = 1 ./ hypos
+	impossible = (data .> hypos)
+	likelihood[impossible] .= 0
+	train.likelihoods = likelihood
+	pmf.calculate_posteriors!(train)
+end
+
+# ╔═╡ 897f4955-5c66-43be-acb1-bd4ac4f65d11
+begin
+	no_of_locomotive = 60
+	update_train!(train, no_of_locomotive)
+end;
+
+# ╔═╡ 3417113f-e5ca-4303-a996-782e23e20d9c
+pmf.draw_posteriors(train, "Posterior distribution no of locomotives",
+	"Number of trains", "PMF", "Posterior after spotting train 60")
+
+# ╔═╡ d7fc0874-bdcc-44b4-a5d6-84a1bcf7c5a7
+pmf.get_name_max_posterior(train)
+
+# ╔═╡ 69fedbfe-2a46-4bdf-af0f-4e1bc0f6f758
+sum(train.posteriors .* train.names)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1167,5 +1210,12 @@ version = "1.4.1+0"
 # ╠═e59f34b1-44ef-498d-bd44-7a83985674bb
 # ╠═732ecfa0-b3a2-4892-81ef-334dee711a9c
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
+# ╟─974927a3-d876-459e-b2a0-9db0def9e4f9
+# ╠═ac9a468e-338c-4e7f-a62b-939eee7e4ff4
+# ╠═897422c5-9e8c-420f-827b-dca40bca8f3d
+# ╠═897f4955-5c66-43be-acb1-bd4ac4f65d11
+# ╠═3417113f-e5ca-4303-a996-782e23e20d9c
+# ╠═d7fc0874-bdcc-44b4-a5d6-84a1bcf7c5a7
+# ╠═69fedbfe-2a46-4bdf-af0f-4e1bc0f6f758
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
