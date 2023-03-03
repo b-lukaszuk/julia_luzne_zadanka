@@ -60,7 +60,7 @@ function update_train!(train::pmf.Pmf{Int}, data::Int)
 	likelihood = 1 ./ hypos
 	impossible = (data .> hypos)
 	likelihood[impossible] .= 0
-	train.likelihoods = likelihood
+	train.likelihoods .*= likelihood
 	pmf.calculate_posteriors!(train)
 end
 
@@ -77,8 +77,53 @@ pmf.draw_posteriors(train, "Posterior distribution no of locomotives",
 # ╔═╡ d7fc0874-bdcc-44b4-a5d6-84a1bcf7c5a7
 pmf.get_name_max_posterior(train)
 
+# ╔═╡ 520e0520-4b6a-4ada-b792-3fe30a4c932e
+function get_mean_posterior(pmf_struct::pmf.Pmf{<:Union{Int, Float64}})::Float64
+	return sum(pmf_struct.posteriors .* pmf_struct.names)
+end
+
 # ╔═╡ 69fedbfe-2a46-4bdf-af0f-4e1bc0f6f758
-sum(train.posteriors .* train.names)
+get_mean_posterior(train)
+
+# ╔═╡ f8289553-3628-47db-9158-b07b5a4d04d7
+md"""### Sensitivity to the Prior"""
+
+# ╔═╡ 9c75478f-721f-4f7c-b793-d98abd7c46ac
+begin
+	upper_bounds1 = [500, 1000, 2000]
+	mean_posteriors1 = []
+
+	for high in upper_bounds1
+		t1 = pmf.Pmf(collect(1:high), repeat([1/high], high))
+		update_train!(t1, 60)
+		push!(mean_posteriors1, get_mean_posterior(t1))
+	end
+
+	pd.DataFrame((;upper_bounds1, mean_posteriors1))
+end
+
+# ╔═╡ ac0043ac-6ba0-4976-85c8-99bbd473e50e
+md"When the posterior is sensitive to the prior, there are two ways to proceed:
+- Get more data.
+- Get more background information and choose a better prior.
+"
+
+# ╔═╡ 41384ccf-81b3-4c2a-ac4b-73b672271a53
+begin
+	dataset2 = [30, 60, 90]
+	upper_bounds2 = [500, 1000, 2000]
+	mean_posteriors2 = []
+
+	for high in upper_bounds2
+		t2 = pmf.Pmf(collect(1:high), repeat([1/high], high))
+		for d in dataset2
+			update_train!(t2, d)
+		end
+		push!(mean_posteriors2, get_mean_posterior(t2))
+	end
+
+	pd.DataFrame((;upper_bounds2, mean_posteriors2))
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1216,6 +1261,11 @@ version = "1.4.1+0"
 # ╠═897f4955-5c66-43be-acb1-bd4ac4f65d11
 # ╠═3417113f-e5ca-4303-a996-782e23e20d9c
 # ╠═d7fc0874-bdcc-44b4-a5d6-84a1bcf7c5a7
+# ╠═520e0520-4b6a-4ada-b792-3fe30a4c932e
 # ╠═69fedbfe-2a46-4bdf-af0f-4e1bc0f6f758
+# ╟─f8289553-3628-47db-9158-b07b5a4d04d7
+# ╠═9c75478f-721f-4f7c-b793-d98abd7c46ac
+# ╟─ac0043ac-6ba0-4976-85c8-99bbd473e50e
+# ╠═41384ccf-81b3-4c2a-ac4b-73b672271a53
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
