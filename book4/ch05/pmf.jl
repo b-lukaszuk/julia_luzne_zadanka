@@ -175,4 +175,14 @@ function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String,
     plts.ylabel!(ylab)
 end
 
+"""
+Draws priors (Y-axis) and names (X-axis) if they are numeric, uses Plots
+"""
+function draw_priors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
+    plts.plot(pmf.names, pmf.priors, label=label)
+    plts.title!(title)
+    plts.xlabel!(xlab)
+    plts.ylabel!(ylab)
+end
+
 end
