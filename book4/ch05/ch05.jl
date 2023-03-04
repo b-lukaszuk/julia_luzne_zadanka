@@ -125,6 +125,59 @@ begin
 	pd.DataFrame((;upper_bounds2, mean_posteriors2))
 end
 
+# ╔═╡ 3b4e907b-b971-4760-927c-eb34d1b76921
+md"""### Power Law Prior
+
+This law suggests that if there are 1000 companies with fewer than 10 locomotives, there might be 100 companies with 100 locomotives, 10 companies with 1000, and possibly one company with 10,000 locomotives.
+
+Mathematically, a power law means that the number of companies with a given size, `N`, is proportional to $(1/N)^{\alpha}$, where $\alpha$ is a parameter that is often near 1.
+"""
+
+# ╔═╡ f644bb99-04c9-4f34-ae62-5a9436695873
+function get_no_of_companies_by_power_law(hypos::Vector{Int}; alpha::Float64=1.0)::Vector{Float64}
+	return 1 ./ hypos .^(alpha)
+end
+
+# ╔═╡ 911b3f25-572c-4e59-b027-0bdd825426d7
+begin
+	priors2 = get_no_of_companies_by_power_law(collect(1:1000))
+	priors2 = priors2 ./ sum(priors2)
+	train2 = pmf.Pmf(collect(1:1000), priors2)
+end;
+
+# ╔═╡ 8f3868aa-beb6-4a3c-ad74-a78a42aadcbd
+begin
+	pmf.draw_priors(train, "Prior distributions", "Number of trains", "PMF", "uniform dist")
+	plts.plot!(train2.names, train2.priors, label="power law")
+end
+
+# ╔═╡ c3da9f04-192c-4b3b-ac96-fda61e13c071
+update_train!(train2, no_of_locomotive);
+
+# ╔═╡ 155c2bcc-344a-4f30-82b0-accf62f8d381
+begin
+	pmf.draw_posteriors(train, "Posterior distributions\nafter seeing locomotive no. 60", "Number of trains", "PMF", "uniform priors")
+	plts.plot!(train2.names, train2.posteriors, label="power law priors")
+end
+
+# ╔═╡ 8da26b37-47b9-42df-9bee-716bfe4528f1
+begin
+	dataset3 = [30, 60, 90]
+	upper_bounds3 = [500, 1000, 2000]
+	mean_posteriors3 = []
+
+	for high in upper_bounds3
+		posteriors3 = get_no_of_companies_by_power_law(collect(1:high))
+		t3 = pmf.Pmf(collect(1:high), posteriors3 ./ sum(posteriors3))
+		for d in dataset3
+			update_train!(t3, d)
+		end
+		push!(mean_posteriors3, get_mean_posterior(t3))
+	end
+
+	pd.DataFrame((;upper_bounds3, mean_posteriors3))
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1267,5 +1320,12 @@ version = "1.4.1+0"
 # ╠═9c75478f-721f-4f7c-b793-d98abd7c46ac
 # ╟─ac0043ac-6ba0-4976-85c8-99bbd473e50e
 # ╠═41384ccf-81b3-4c2a-ac4b-73b672271a53
+# ╟─3b4e907b-b971-4760-927c-eb34d1b76921
+# ╠═f644bb99-04c9-4f34-ae62-5a9436695873
+# ╠═911b3f25-572c-4e59-b027-0bdd825426d7
+# ╠═8f3868aa-beb6-4a3c-ad74-a78a42aadcbd
+# ╠═c3da9f04-192c-4b3b-ac96-fda61e13c071
+# ╠═155c2bcc-344a-4f30-82b0-accf62f8d381
+# ╠═8da26b37-47b9-42df-9bee-716bfe4528f1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
