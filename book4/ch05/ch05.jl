@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.17.5
 
 using Markdown
 using InteractiveUtils
@@ -165,6 +165,7 @@ begin
 	dataset3 = [30, 60, 90]
 	upper_bounds3 = [500, 1000, 2000]
 	mean_posteriors3 = []
+	t3 = pmf.Pmf(collect(1:100), 1:100)
 
 	for high in upper_bounds3
 		posteriors3 = get_no_of_companies_by_power_law(collect(1:high))
@@ -177,6 +178,46 @@ begin
 
 	pd.DataFrame((;upper_bounds3, mean_posteriors3))
 end
+
+# ╔═╡ fae71039-91c3-43c1-b705-55b7579f3639
+md"""### Credible Intervals"""
+
+# ╔═╡ d06e3ee1-ac43-4405-b141-d1aee99483ac
+function get_name_for_quantile(pmf_struct::pmf.Pmf{<:Union{Int, Float64}}, cum_posterior_prob::Float64)::Union{Int, Float64}
+	@assert (0 <= cum_posterior_prob <= 1)
+	total::Float64 = 0
+	for i in eachindex(pmf_struct.names)
+		total += pmf_struct.posteriors[i]
+		if total >= cum_posterior_prob
+			return pmf_struct.names[i]
+		end
+	end
+	return nothing
+end
+
+# ╔═╡ 8ec8c7c1-b2b5-4072-9bd7-b8a5c372e521
+function get_name_for_quantile(pmf_struct::pmf.Pmf{<:Union{Int, Float64}}, cum_posterior_probs::Vector{Float64})::Vector{<:Union{Int, Float64}}
+	return [get_name_for_quantile(pmf_struct, p) for p in cum_posterior_probs]
+end
+
+# ╔═╡ af56f241-4077-43c8-902e-6cab28bff929
+get_name_for_quantile(t3, 0.5)
+
+# ╔═╡ c2c4f8ab-ada0-4b7c-9c8a-8befb22f23fe
+get_name_for_quantile(t3, [0.05, 0.95])
+
+# ╔═╡ 1e3b42aa-5d26-4daf-af62-ba561eb7db03
+function get_credible_interval(pmf_struct::pmf.Pmf{<:Union{Int, Float64}}, prob::Float64)::Vector{<:Union{Int, Float64}}
+	@assert (0 <= prob <= 1)
+	half_prob::Float64 = prob / 2
+	return get_name_for_quantile(pmf_struct, [0.5 - half_prob, 0.5 + half_prob])
+end
+
+# ╔═╡ 30acee30-58a1-4ff8-9de7-e02aa353f8cb
+get_credible_interval(t3, 0.9)
+
+# ╔═╡ 74116b5b-9eb6-4c65-bf0c-4b2cee05b257
+get_credible_interval(t3, 0.95)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1327,5 +1368,13 @@ version = "1.4.1+0"
 # ╠═c3da9f04-192c-4b3b-ac96-fda61e13c071
 # ╠═155c2bcc-344a-4f30-82b0-accf62f8d381
 # ╠═8da26b37-47b9-42df-9bee-716bfe4528f1
+# ╟─fae71039-91c3-43c1-b705-55b7579f3639
+# ╠═d06e3ee1-ac43-4405-b141-d1aee99483ac
+# ╠═8ec8c7c1-b2b5-4072-9bd7-b8a5c372e521
+# ╠═af56f241-4077-43c8-902e-6cab28bff929
+# ╠═c2c4f8ab-ada0-4b7c-9c8a-8befb22f23fe
+# ╠═1e3b42aa-5d26-4daf-af62-ba561eb7db03
+# ╠═30acee30-58a1-4ff8-9de7-e02aa353f8cb
+# ╠═74116b5b-9eb6-4c65-bf0c-4b2cee05b257
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
