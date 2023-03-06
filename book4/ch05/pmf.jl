@@ -107,7 +107,7 @@ Updates posteriors (old posteriors * new likelihoods) and normalizes them
 if posteriors were not updated before then the distribution of posteriors is uniform
 """
 function update_posteriors!(pmf::Pmf, new_likelihoods::Vector{Float64})
-    pmf.likelihoods = new_likelihoods
+    pmf.likelihoods .*= new_likelihoods
     pmf.unnorms = pmf.posteriors .* pmf.likelihoods
     normalize!(pmf)
 end
