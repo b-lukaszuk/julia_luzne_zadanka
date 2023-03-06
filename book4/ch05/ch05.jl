@@ -219,6 +219,14 @@ get_credible_interval(t3, 0.9)
 # ╔═╡ 74116b5b-9eb6-4c65-bf0c-4b2cee05b257
 get_credible_interval(t3, 0.95)
 
+# ╔═╡ c9c4f5c2-d41d-447e-9cf8-2f3ea3b918af
+md"""### The German Tank Problem
+
+During World War II The Wester Allies used statistics like in the train problem to determine the production of german tanks.
+
+See: [the Wikipedia page](https://en.wikipedia.org/wiki/German_tank_problem)
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1376,5 +1384,6 @@ version = "1.4.1+0"
 # ╠═1e3b42aa-5d26-4daf-af62-ba561eb7db03
 # ╠═30acee30-58a1-4ff8-9de7-e02aa353f8cb
 # ╠═74116b5b-9eb6-4c65-bf0c-4b2cee05b257
+# ╟─c9c4f5c2-d41d-447e-9cf8-2f3ea3b918af
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
