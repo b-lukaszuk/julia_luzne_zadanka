@@ -227,6 +227,20 @@ During World War II The Wester Allies used statistics like in the train problem 
 See: [the Wikipedia page](https://en.wikipedia.org/wiki/German_tank_problem)
 """
 
+# ╔═╡ 49f25152-5581-4b3b-9daa-0c3664c60734
+md"""### Informative Priors
+
+Among Bayesians, there are two approaches to choosing prior distributions:
+- informative priors
+- uninformative priors
+
+Informative priors might seem arbitrary. Uninformative priors give illusion of objectivity.
+
+If you have a lot of data, the choice of the prior doesn’t matter; informative and uninformative priors yield almost the same results. If you don’t have much data, using relevant background information (like the power law distribution) makes a big difference.
+
+And if, as in the German tank problem, you have to make life and death decisions based on your results, you should probably use all of the information at your disposal, rather than maintaining the illusion of objectivity by pretending to know less than you do.
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1385,5 +1399,6 @@ version = "1.4.1+0"
 # ╠═30acee30-58a1-4ff8-9de7-e02aa353f8cb
 # ╠═74116b5b-9eb6-4c65-bf0c-4b2cee05b257
 # ╟─c9c4f5c2-d41d-447e-9cf8-2f3ea3b918af
+# ╟─49f25152-5581-4b3b-9daa-0c3664c60734
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
