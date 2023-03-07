@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.5
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -240,6 +240,87 @@ If you have a lot of data, the choice of the prior doesn’t matter; informative
 
 And if, as in the German tank problem, you have to make life and death decisions based on your results, you should probably use all of the information at your disposal, rather than maintaining the illusion of objectivity by pretending to know less than you do.
 """
+
+# ╔═╡ 31246ebf-ddb1-4576-9f97-db6f88393a94
+md"""## Exercises"""
+
+# ╔═╡ b906b25b-24c8-4bf5-9e0f-0c8c663c8042
+md"""### Exercise 1
+
+Suppose you are giving a talk in a large lecture hall and the fire marshal interrupts because they think the audience exceeds 1200 people, which is the safe capacity of the room.
+
+You think there are fewer then 1200 people, and you offer to prove it. It would take too long to count, so you try an experiment:
+- You ask how many people were born on May 11 and two people raise their hands.
+- You ask how many were born on May 23 and 1 person raises their hand.
+- Finally, you ask how many were born on August 1, and no one raises their hand.
+
+How many people are in the audience? What is the probability that there are more than 1200 people.
+
+**Hint**: Remember the binomial distribution.
+"""
+
+# ╔═╡ 12d746e7-2764-484e-b136-d0c4084cd755
+md"""#### Ex1. Reasoning
+
+Let's say (assume) that a year have always 365 days (no leap years) and that we can have in the lecture hall from 365 people (we would not confuse less than that with 1200 or more) to roughly 2*1200 people (otherwise it is clearly more than 1200).
+
+So my assumptions are:
+- there are from 365 people, up to 2400 people
+- each of those numbers is equally likely.
+
+If so, then the priors look like:
+"""
+
+# ╔═╡ 3256d1e4-ac91-4842-8164-aa701e94d24d
+begin
+	ex1_names = Vector{Int}(365:2400)
+	ex1 = pmf.Pmf(ex1_names, repeat([1/length(ex1_names)], length(ex1_names)));
+end;
+
+# ╔═╡ a78e3c88-cd83-43a0-8192-ef08f36a2a6f
+md"Now according to the hint I should use some binomial functions.
+
+From [Distributions package](https://juliastats.org/Distributions.jl/stable/) we got:
+- `Distributions.Binomial(n, p)`
+- `Distributions.pdf(d::UnivariateDistribution, x::Real)`
+
+`p` is probability of choosing a person born at any day of the year (so 1/365)
+
+`n` is the number of people in the lecture hall (365:2400)
+
+`x` is the number of people born at a given day that were chosen at random (k in binomial distribution)
+
+Since I got 2 times May 11, 1 time May 23, and 0 times August 1, then I will multiply the probabilities
+"
+
+# ╔═╡ 680f3a55-f716-40d7-8e86-b14f8b0b98da
+md"""#### Ex1. Solution"""
+
+# ╔═╡ 70c1c088-22ac-4875-be40-9a01bdf7283f
+begin
+	for x in [0, 1, 2]
+		ex1.likelihoods .*= dst.pdf.(dst.Binomial.(ex1.names, 1/365), x)
+	end
+	pmf.calculate_posteriors!(ex1)
+end;
+
+# ╔═╡ 68b34a97-f178-4845-acc5-fe4e09900fb8
+pmf.draw_posteriors(ex1, "Posterior distribution of\nnum. of people in the lecture hall", "Num. of people in the lecture hall", "PMF", "posteriors")
+
+# ╔═╡ 10b608ee-179e-40bf-b42e-4cdd64eb583a
+pmf.get_name_max_posterior(ex1)
+
+# ╔═╡ 89cc98c1-63b6-4de2-a1ac-d795fe1e7d84
+get_mean_posterior(ex1)
+
+# ╔═╡ 7fc87f8c-6a09-4f7a-981c-eadbc343a94c
+get_credible_interval(ex1, 0.95)
+
+# ╔═╡ 592a45a1-1fd6-4f2f-891d-f0ecfa7aefa6
+md"""Probability of more than 1200 people in the lecture hall is:"""
+
+# ╔═╡ b95a2c7f-9f12-4824-bc87-37a8cd7f9e27
+sum(ex1.posteriors[findfirst(x -> x == 1201, ex1.names):end])
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1400,5 +1481,18 @@ version = "1.4.1+0"
 # ╠═74116b5b-9eb6-4c65-bf0c-4b2cee05b257
 # ╟─c9c4f5c2-d41d-447e-9cf8-2f3ea3b918af
 # ╟─49f25152-5581-4b3b-9daa-0c3664c60734
+# ╟─31246ebf-ddb1-4576-9f97-db6f88393a94
+# ╟─b906b25b-24c8-4bf5-9e0f-0c8c663c8042
+# ╟─12d746e7-2764-484e-b136-d0c4084cd755
+# ╠═3256d1e4-ac91-4842-8164-aa701e94d24d
+# ╟─a78e3c88-cd83-43a0-8192-ef08f36a2a6f
+# ╟─680f3a55-f716-40d7-8e86-b14f8b0b98da
+# ╠═70c1c088-22ac-4875-be40-9a01bdf7283f
+# ╠═68b34a97-f178-4845-acc5-fe4e09900fb8
+# ╠═10b608ee-179e-40bf-b42e-4cdd64eb583a
+# ╠═89cc98c1-63b6-4de2-a1ac-d795fe1e7d84
+# ╠═7fc87f8c-6a09-4f7a-981c-eadbc343a94c
+# ╟─592a45a1-1fd6-4f2f-891d-f0ecfa7aefa6
+# ╠═b95a2c7f-9f12-4824-bc87-37a8cd7f9e27
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
