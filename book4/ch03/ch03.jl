@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -179,7 +179,10 @@ get_prior(letters, "t")
 get_prior(die, [1, 4, 7])
 
 # ╔═╡ 961b2d60-87cc-4538-baf7-9fbb1f69f9d8
-md"""### The Cookie Problem Revisited"""
+md"""### The Cookie Problem Revisited
+
+Revisiting [The Cookie Problem](https://allendowney.github.io/ThinkBayes2/chap02.html#the-cookie-problem) from Chapter 2
+"""
 
 # ╔═╡ 38b5ea75-87f1-4fac-a982-5f523a9ce8e1
 cookie = mk_pmf_from_seq(["Bowl1", "Bowl2"])
@@ -216,7 +219,18 @@ begin
 end
 
 # ╔═╡ 7deba330-8071-4421-ac2c-1f4971913c6f
-md"""### 101 Bowls"""
+md"""### 101 Bowls
+
+Next let’s solve a cookie problem with 101 bowls:
+- Bowl 0 contains 0% vanilla cookies,
+- Bowl 1 contains 1% vanilla cookies,
+- Bowl 2 contains 2% vanilla cookies,
+- [...]
+- Bowl 99 contains 99% vanilla cookies, and
+- Bowl 100 contains all vanilla cookies.
+
+Suppose we choose a bowl at random, choose a cookie at random, and it turns out to be vanilla. What is the probability that the cookie came from Bowl `x`, for each value of `x`?
+"""
 
 # ╔═╡ 1ebd9bed-b7b6-4284-883d-5f9c872c5165
 begin
@@ -388,15 +402,15 @@ If there is a matching pair then the probability for two white socks is:
 
 # ╔═╡ 9f546cc3-d966-4c3b-a2c3-834a3729db84
 begin
-	ex3_dice = Pmf(["drawer1", "drawer2"], [0.5, 0.5])
-	ex3_dice.likelihoods = [1/2, 1/3]
-	update!(ex3_dice)
-	pmf2df(ex3_dice)
+	ex3_socks = Pmf(["drawer1", "drawer2"], [0.5, 0.5])
+	ex3_socks.likelihoods = [1/2, 1/3]
+	update!(ex3_socks)
+	pmf2df(ex3_socks)
 end
 
 # ╔═╡ 32a33e83-37eb-4317-b7b4-1ae352627709
 begin
-	get_posterior(ex3_dice, "drawer1") * 0.5
+	get_posterior(ex3_socks, "drawer1") * 0.5
 end
 
 # ╔═╡ 973295b0-1500-4b44-9aae-631b10b6773f
