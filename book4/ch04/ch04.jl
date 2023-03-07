@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -298,7 +298,7 @@ end;
 begin
 	plts.plot(ex1.names, ex1.posteriors, label="prior")
 	plts.plot!(ex11.names, ex11.posteriors, label="posterior")
-	plts.xlabel!("Posterior after hittin 3/3")
+	plts.xlabel!("Posterior after hitting 3/3")
 	plts.ylabel!("PMF")
 end
 
