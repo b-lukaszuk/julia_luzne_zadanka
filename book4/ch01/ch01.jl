@@ -53,10 +53,10 @@ md"""the code (indus10 column) for "banking and related activities" is 6870"""
 banker = Vector{Bool}((gss[!, :indus10] .== 6870));
 
 # ╔═╡ 928aee16-3657-44af-9c3c-d710e72bd54a
-"Number of bankers in the dataset: $(sum(banker))"
+md"Number of bankers in the dataset: $(sum(banker))"
 
 # ╔═╡ ce6f3827-0f7c-4463-9c8f-d417f23c55ba
-"Fraction of bankers in the dataset: $(sum(banker) / length(banker))"
+md"Fraction of bankers in the dataset: $(sum(banker) / length(banker))"
 
 # ╔═╡ 52533666-0a44-46d8-987f-d618918a6ef5
 md"""### The Probability Function"""
@@ -74,7 +74,7 @@ begin
 end
 
 # ╔═╡ 8ec010c2-41c4-47bb-aced-6db24b714c59
-"Experimental probability of being a banker: $(get_prob(banker))"
+md"Experimental probability of being a banker: $(get_prob(banker))"
 
 # ╔═╡ 946b0960-3e39-4697-9718-89c422a3ba4b
 md"""Coding of sex: 1 - Male, 2 - Female"""
@@ -82,7 +82,7 @@ md"""Coding of sex: 1 - Male, 2 - Female"""
 # ╔═╡ 0544df22-e00c-46e1-942c-e085d521eda8
 begin
 	female = Vector{Bool}((gss[!, :sex] .== 2))
-	"Experimental probability of being a banker: $(get_prob(female))"
+	md"Experimental probability of being a woman: $(get_prob(female))"
 end
 
 # ╔═╡ 11f3e137-9f39-46fc-9d0c-01cf29d2fa6a
@@ -110,13 +110,13 @@ Coding of `partyid`:
 # ╔═╡ 364da58e-819c-45dd-9ede-baa5fa667f03
 begin
 	liberal = Vector{Bool}((gss[!, :polviews] .<= 3))
-	"Experimental probability of liberal views: $(get_prob(liberal))"
+	md"Experimental probability of liberal views: $(get_prob(liberal))"
 end
 
 # ╔═╡ 6105f242-d9c6-4f9a-abdd-d2d814327c1d
 begin
 	democrat = Vector{Bool}((gss[!, :partyid] .<= 1))
-	"Experimental probability of partyid democrat: $(get_prob(democrat))"
+	md"Experimental probability of partyid democrat: $(get_prob(democrat))"
 end
 
 # ╔═╡ 899a5de0-bb1e-46e2-93cf-d69a10914df3
@@ -125,13 +125,13 @@ md"""### Conjunction"""
 # ╔═╡ c3963f5d-da0b-4664-96d5-dbe40731dcbe
 begin
 	p_banker_and_democrat = get_prob(Vector{Bool}(banker .&& democrat))
-	"Experimental probability of banker and democrat: $p_banker_and_democrat"
+	md"Experimental probability of banker and democrat: $p_banker_and_democrat"
 end
 
 # ╔═╡ 18a1e2b5-8ab8-4b21-92d2-90350655409e
 begin
 	p_democrat_and_banker = get_prob(Vector{Bool}(democrat .&& banker))
-	"Experimental probability of democrat and banker: $p_democrat_and_banker"
+	md"Experimental probability of democrat and banker: $p_democrat_and_banker"
 end
 
 # ╔═╡ cff1ea7d-466e-4f5f-81ef-1fad38f6eef4
@@ -146,28 +146,28 @@ function get_cond_prob(proposition::Vector{Bool}, given::Vector{Bool})::Float64
 end
 
 # ╔═╡ 201cc89b-366c-45ba-9e36-e0756ea2fce0
-"Experimental P(democrat | liberal) = $(get_cond_prob(democrat, liberal))"
+md"Experimental P(democrat | liberal) = $(get_cond_prob(democrat, liberal))"
 
 # ╔═╡ a54b8b96-63cb-443d-ba25-05beeec446a6
 md"""What is the probability that a respondent is female, given that they are a banker?"""
 
 # ╔═╡ 475de773-b242-47d5-b216-b52b58816e9f
-"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
+md"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
 
 # ╔═╡ 95c86f6b-d03e-4c39-becd-f7f6e2d87fe6
 md"""What is the probability that a respondent is liberal, given that they are female?"""
 
 # ╔═╡ d092f04f-1bbf-430a-a8b7-62456bd8cf13
-"Experimental P(liberal | female) = $(get_cond_prob(liberal, female))"
+md"Experimental P(liberal | female) = $(get_cond_prob(liberal, female))"
 
 # ╔═╡ 5236fb18-eb47-46b0-b452-588be0500c01
 md"""### Conditional Probability Is Not Commutative"""
 
 # ╔═╡ c1d111c3-8f6d-4492-bbe9-bfec47695af1
-"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
+md"Experimental P(female | banker) = $(get_cond_prob(female, banker))"
 
 # ╔═╡ f03f6efe-2dcb-4334-beb1-bbac03beff66
-"Experimental P(banker | female) = $(get_cond_prob(banker, female))"
+md"Experimental P(banker | female) = $(get_cond_prob(banker, female))"
 
 # ╔═╡ 8e269d9f-1dff-4601-ad1e-9ccdd175a4e4
 md"""### Condition and Conjunction"""
@@ -175,13 +175,13 @@ md"""### Condition and Conjunction"""
 # ╔═╡ 8405c06b-cf28-4b5e-ae71-44999972d65d
 begin
 	liberal_and_democrat = Vector{Bool}(liberal .&& democrat)
-	"Experimental P(female | (liberal & democrat)) = $(get_cond_prob(female, liberal_and_democrat))"
+	md"Experimental P(female | (liberal & democrat)) = $(get_cond_prob(female, liberal_and_democrat))"
 end
 
 # ╔═╡ 4be70c9a-1172-4ec5-b84a-41d8e5aedb7d
 begin
 	liberal_and_female = Vector{Bool}(liberal .&& female)
-	"Experimental P((liberal & female) | banker) = $(get_cond_prob(liberal_and_female, banker))"
+	md"Experimental P((liberal & female) | banker) = $(get_cond_prob(liberal_and_female, banker))"
 end
 
 # ╔═╡ dd39a65e-fecd-471c-b471-72f63bc8bb96
