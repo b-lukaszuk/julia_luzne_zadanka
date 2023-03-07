@@ -81,7 +81,7 @@ Rewriting bayes's theorem with H (hypothesis) and D (data) yields:
 $P(H|D) = \frac{P(H)P(D|H)}{P(D)}$
 where:
 - P(H) - the probability of the hypothesis before we see the data, called the prior probability, or just **prior**
-- P(H|D) - the probability of the hypothesis after we see the dat, called the **posterior**
+- P(H|D) - the probability of the hypothesis after we see the data, called the **posterior**
 - P(D|H) - the probability of the data under the hypothesis, called the **likelihood**
 - P(D) - the **total probability of the data**, under any hypothesis
 
@@ -142,7 +142,7 @@ $P(D) = \sum \limits_{i=1}^{N} P(H_{i}) P(D|H_{i})$
 # ╔═╡ 1dec6590-9004-463d-aaf7-d9a2d244e9a7
 begin
 	prob_data = sum(table[!, "unnorm"])
-	"So, P(D) = $(prob_data)"
+	md"So, P(D) = $(prob_data)"
 end
 
 # ╔═╡ 878fd95f-5e2f-4688-b875-1b4f9d352aff
@@ -202,7 +202,8 @@ monty = pd.DataFrame(
 )
 
 # ╔═╡ e9bb20bf-fac0-493c-a72a-ab15534a7cf9
-md"""The data is that Monty (the host) opened Door 3 and revealed a goat.
+md"""Suppose you pick Door 1. Before opening the door you chose Monty (the host) opened Door 3 and revealed a goat. Now he gives You a chance to change your choice.
+
 So let’s consider the probability of the data under each hypothesis:
 - If the car is behind Door 1, Monty chooses Door 2 or 3 at random, so the probability he opens Door 3 is $\frac{1}{2}$.
 - If the car is behind Door 2, Monty has to open Door 3, so the probability of the data under this hypothesis is 1.
