@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.19
 
 using Markdown
 using InteractiveUtils
@@ -45,14 +45,14 @@ md"""### The Train Problem
 'A railroad numbers its locomotives in order 1..N. One day you see a locomotive with the number 60. Estimate how many locomotives the railroad has.'
 
 To apply Bayesian reasoning, we can break this problem into two steps:
-- What did we know about  before we saw the data?
-- For any given value of , what is the likelihood of seeing the data (a locomotive with number 60)?
+- What did we know about N before we saw the data?
+- For any given value of N, what is the likelihood of seeing the data (a locomotive with number 60)?
 
 The answer to the first question is the prior. The answer to the second is the likelihood.
 """
 
 # ╔═╡ ac9a468e-338c-4e7f-a62b-939eee7e4ff4
-train = pmf.Pmf(Vector{Int}(1:1000), repeat([1/1000], 1000));
+train = pmf.mk_pmf_from_seq(Vector{Int}(1:1000));
 
 # ╔═╡ 897422c5-9e8c-420f-827b-dca40bca8f3d
 function update_train!(train::pmf.Pmf{Int}, data::Int)
@@ -94,7 +94,7 @@ begin
 	mean_posteriors1 = []
 
 	for high in upper_bounds1
-		t1 = pmf.Pmf(collect(1:high), repeat([1/high], high))
+		t1 = pmf.mk_pmf_from_seq(collect(1:high))
 		update_train!(t1, 60)
 		push!(mean_posteriors1, get_mean_posterior(t1))
 	end
@@ -115,7 +115,7 @@ begin
 	mean_posteriors2 = []
 
 	for high in upper_bounds2
-		t2 = pmf.Pmf(collect(1:high), repeat([1/high], high))
+		t2 = pmf.mk_pmf_from_seq(collect(1:high))
 		for d in dataset2
 			update_train!(t2, d)
 		end
@@ -272,10 +272,7 @@ If so, then the priors look like:
 """
 
 # ╔═╡ 3256d1e4-ac91-4842-8164-aa701e94d24d
-begin
-	ex1_names = Vector{Int}(365:2400)
-	ex1 = pmf.Pmf(ex1_names, repeat([1/length(ex1_names)], length(ex1_names)));
-end;
+ex1 = pmf.mk_pmf_from_seq(collect(365:2400));
 
 # ╔═╡ a78e3c88-cd83-43a0-8192-ef08f36a2a6f
 md"Now according to the hint I should use some binomial functions.
