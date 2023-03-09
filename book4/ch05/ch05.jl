@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -318,6 +318,71 @@ md"""Probability of more than 1200 people in the lecture hall is:"""
 
 # ╔═╡ b95a2c7f-9f12-4824-bc87-37a8cd7f9e27
 sum(ex1.posteriors[findfirst(x -> x == 1201, ex1.names):end])
+
+# ╔═╡ a187248f-e3f3-43d4-b563-6db158723316
+md"""### Exercise 2
+
+I often see rabbits in the garden behind my house, but it’s not easy to tell them apart, so I don’t really know how many there are.
+
+Suppose I deploy a motion-sensing camera trap that takes a picture of the first rabbit it sees each day. After three days, I compare the pictures and conclude that two of them are the same rabbit and the other is different.
+
+How many rabbits visit my garden?
+
+To answer this question, we have to think about the prior distribution and the likelihood of the data:
+- I have sometimes seen four rabbits at the same time, so I know there are at least that many. I would be surprised if there were more than 10. So, at least as a starting place, I think a uniform prior from 4 to 10 is reasonable.
+- To keep things simple, let’s assume that all rabbits who visit my garden are equally likely to be caught by the camera trap in a given day. Let’s also assume it is guaranteed that the camera trap gets a picture every day.
+"""
+
+# ╔═╡ bbf7a43f-8b8b-4465-8626-6ed13d23296d
+ex2 = pmf.mk_pmf_from_seq(collect(4:10));
+
+# ╔═╡ d4e29859-ddf4-40fb-967e-1f53c730ca9c
+md"#### Ex2. Resoning
+
+What are the likelihoods, so P(D|H)?
+
+<<<Let’s also assume it is guaranteed that the camera trap gets a picture every day.>>
+So every day either I got a rabbit or I don't, but I got a picture (So, 0 or 1 rabbits).
+
+Let's say that there are 4 rabbits so what is a probability that I get:
+- 2x rabbit A, 1x rabbit B from three days observation (1 rabbit at a day)
+
+So, I can have it on 3 ways:
+- (rA and rA and rB) OR
+- (rA and rB and rA) OR
+- (rB and rA and rA)
+
+All three probabilities are equal to each other.
+
+<<<[...] let’s assume that all rabbits who visit my garden are equally likely to be caught by the camera trap in a given day>>> So, probability of getting any rabbit is 1/4 (if there are 4 rabbits in my garden)
+
+So, the probability of getting: rA and rA and rB is:
+1/4 (P getting any rabbit, e.g. rabbit A on day 1) * 1/4 (P getting on day 2 the rabbit from day 1) * 3/4 (P getting some other rabit, e.g. rabbit B on day 3)
+
+So the P(D|H) is $3 * (\frac{1}{4} * \frac{1}{4} * \frac{3}{4})$, or for N rabbits and 3 days:
+
+$3 * [\frac{1}{N} * \frac{1}{N} * (1 - \frac{1}{N})]$
+"
+
+# ╔═╡ 20551428-3e31-4d83-ac06-44b92b3d3391
+md"#### Ex2. Solution"
+
+# ╔═╡ 58991c12-02e3-40d7-afe4-5fc3f524b993
+function get_ex2_likelihood(n::Int)::Float64
+	return Float64(3 * (1//n * 1//n * (1 - 1//n)))
+end
+
+# ╔═╡ 1d0c2366-1a06-4db4-8b18-48a925d8839f
+begin
+	ex2.likelihoods = get_ex2_likelihood.(ex2.names)
+	pmf.calculate_posteriors!(ex2)
+end;
+
+# ╔═╡ 8ba6ecea-14f7-4dc5-a310-627926543b0e
+begin
+	pmf.draw_posteriors(ex2, "Posterior probability\nspotted: 2*rabbitA, 1*rabbitB", "Number of rabbits in garden", "PMF", "")
+	plts.scatter!(ex2.names, ex2.posteriors, label="Posterior for number of rabbits in garden")
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1491,5 +1556,12 @@ version = "1.4.1+0"
 # ╠═7fc87f8c-6a09-4f7a-981c-eadbc343a94c
 # ╟─592a45a1-1fd6-4f2f-891d-f0ecfa7aefa6
 # ╠═b95a2c7f-9f12-4824-bc87-37a8cd7f9e27
+# ╟─a187248f-e3f3-43d4-b563-6db158723316
+# ╠═bbf7a43f-8b8b-4465-8626-6ed13d23296d
+# ╟─d4e29859-ddf4-40fb-967e-1f53c730ca9c
+# ╟─20551428-3e31-4d83-ac06-44b92b3d3391
+# ╠═58991c12-02e3-40d7-afe4-5fc3f524b993
+# ╠═1d0c2366-1a06-4db4-8b18-48a925d8839f
+# ╠═8ba6ecea-14f7-4dc5-a310-627926543b0e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
