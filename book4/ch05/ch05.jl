@@ -390,6 +390,69 @@ md"### Exercise 3
 Suppose that in the criminal justice system, all prison sentences are either 1, 2, or 3 years, with an equal number of each. One day, you visit a prison and choose a prisoner at random. What is the probability that they are serving a 3-year sentence? What is the average remaining sentence of the prisoners you observe?
 "
 
+# ╔═╡ d6c75e08-3c10-44d9-bed2-3984b4513d26
+md"#### Ex3. Simulation
+
+First, let's try to solve it with some compter simulation."
+
+# ╔═╡ f53b72a8-1218-4ce3-a587-20c943e41e2b
+struct Prisoner
+	full_sentence::Int
+	remained::Int
+
+	Prisoner(s::Int) = new(s, s)
+	Prisoner(s::Int, r::Int) = new(s, r)
+end
+
+# ╔═╡ 1015595b-73b5-4647-8634-5ea871309eaa
+function reduce_remained(p::Prisoner)::Prisoner
+	return Prisoner(p.full_sentence, p.remained-1)
+end
+
+# ╔═╡ 9f1b43fd-82c7-47ca-b956-9d4c712cb142
+function ex3_run_cycle(prevPris::Vector{Prisoner})::Vector{Prisoner}
+	newPris = filter(p->p.remained > 0, [reduce_remained(p) for p in prevPris])
+	for s in 1:3
+		push!(newPris, Prisoner(s))
+	end
+	return newPris
+end
+
+# ╔═╡ b849ddc4-7c30-44b2-9f36-9b9b530aef3b
+function ex3_run_n_cycles(n::Int)::Vector{Prisoner}
+	prisoners::Vector{Prisoner} = [Prisoner(s) for s in 1:3]
+	for _ in 1:n
+		prisoners = ex3_run_cycle(prisoners)
+	end
+	return prisoners
+end
+
+# ╔═╡ bf5342f8-a450-4366-b910-573613d0f1d0
+function count_properties(prisoners::Vector{Prisoner}, prop::String)::Dict{Int, Int}
+	counts::Dict{Int, Int} = Dict()
+	for p in prisoners
+		field = getproperty(p, Symbol(prop))
+		counts[field] = get(counts, field, 0) + 1
+	end
+	return counts
+end
+
+# ╔═╡ 2abd014c-0b6d-4bff-97d4-c7f757596dbf
+# due to the construction of ex3_run_n_cycles with n=3, gives the same result as n=100
+ex3_tmp1 = count_properties(ex3_run_n_cycles(3), "full_sentence")
+
+# ╔═╡ 6cd042e1-acd7-48c4-92c6-2fa9ef585b31
+# probability of finding a prisoner with given sentence (full_sentence, probability)
+[(k, v/sum(values(ex3_tmp1))) for (k, v) in ex3_tmp1]
+
+# ╔═╡ 6c68d24f-8355-40d5-abc3-cacd3d3efd5a
+# due to the construction of ex3_run_n_cycles with n=3, gives the same result as n=100
+ex3_tmp2 = count_properties(ex3_run_n_cycles(3), "remained")
+
+# ╔═╡ 4958a1a6-7620-4479-a3c7-fa2456d56f58
+# average sentence
+sum([k*v for (k, v) in ex3_tmp2]) / sum(values(ex3_tmp2))
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1570,5 +1633,15 @@ version = "1.4.1+0"
 # ╠═1d0c2366-1a06-4db4-8b18-48a925d8839f
 # ╠═8ba6ecea-14f7-4dc5-a310-627926543b0e
 # ╟─79a5ea4a-16cc-4b0b-94d8-f6e939c70b56
+# ╟─d6c75e08-3c10-44d9-bed2-3984b4513d26
+# ╠═f53b72a8-1218-4ce3-a587-20c943e41e2b
+# ╠═1015595b-73b5-4647-8634-5ea871309eaa
+# ╠═9f1b43fd-82c7-47ca-b956-9d4c712cb142
+# ╠═b849ddc4-7c30-44b2-9f36-9b9b530aef3b
+# ╠═bf5342f8-a450-4366-b910-573613d0f1d0
+# ╠═2abd014c-0b6d-4bff-97d4-c7f757596dbf
+# ╠═6cd042e1-acd7-48c4-92c6-2fa9ef585b31
+# ╠═6c68d24f-8355-40d5-abc3-cacd3d3efd5a
+# ╠═4958a1a6-7620-4479-a3c7-fa2456d56f58
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
