@@ -384,6 +384,12 @@ begin
 	plts.scatter!(ex2.names, ex2.posteriors, label="Posterior for number of rabbits in garden")
 end
 
+# ╔═╡ 79a5ea4a-16cc-4b0b-94d8-f6e939c70b56
+md"### Exercise 3
+
+Suppose that in the criminal justice system, all prison sentences are either 1, 2, or 3 years, with an equal number of each. One day, you visit a prison and choose a prisoner at random. What is the probability that they are serving a 3-year sentence? What is the average remaining sentence of the prisoners you observe?
+"
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1563,5 +1569,6 @@ version = "1.4.1+0"
 # ╠═58991c12-02e3-40d7-afe4-5fc3f524b993
 # ╠═1d0c2366-1a06-4db4-8b18-48a925d8839f
 # ╠═8ba6ecea-14f7-4dc5-a310-627926543b0e
+# ╟─79a5ea4a-16cc-4b0b-94d8-f6e939c70b56
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
