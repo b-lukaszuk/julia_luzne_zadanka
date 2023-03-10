@@ -453,6 +453,52 @@ ex3_tmp2 = count_properties(ex3_run_n_cycles(3), "remained")
 # average sentence
 sum([k*v for (k, v) in ex3_tmp2]) / sum(values(ex3_tmp2))
 
+# ╔═╡ 339b1196-ded0-457c-9068-677aaddafae0
+md"#### Ex3. Reasoning
+
+So, probability (based on simulation) it seems that the greater the sentence, the greater the probability of finding a prisoner with that sentence (directly proportional), like:
+- P(1) => 1,
+- P(2) => 2 * P(1),
+- P(3) => 3 * P(1).
+
+The remaining years:
+- sentence: 1yr => [1yr]
+- sentence: 2yrs => [1yr, 2yrs]
+- sentence: 3yrs => [1yr, 2yrs, 3yrs]
+
+So, probability of remaining is 3x1year, 2x2years, 1x3years each divided by 6
+"
+
+# ╔═╡ 0f83771f-c088-408f-b32f-63a5090b2757
+md"#### Ex3. Solution with PMF"
+
+# ╔═╡ 683670dc-4283-48d8-8cf4-e52ac7411a0a
+ex3 = pmf.Pmf(collect(1:3), collect(1:3) ./ sum(1:3))
+
+# ╔═╡ 40737bfd-2c53-44bb-b2a3-8245558298d8
+begin
+	plts.bar(ex3.names, ex3.priors, label="Priors")
+	plts.title!("Probability of finding a prisoner\nwith a given sentence")
+	plts.xlabel!("Total sentence [years]")
+	plts.ylabel!("PMF")
+	plts.xticks!(1:3)
+end
+
+# ╔═╡ 1c5b5e86-61bb-481f-913c-776570ace001
+ex3_remaining = collect(3:-1:1.0) ./ sum(collect(3:-1:1.0))
+
+# ╔═╡ e63f4a17-b424-473a-883c-b75e24b3473f
+begin
+	plts.bar(ex3.names, ex3_remaining, label="Posteriors")
+	plts.title!("Probability of finding a prisoner\nwith a remaining sentence")
+	plts.xlabel!("Remaining sentence [years]")
+	plts.ylabel!("PMF")
+	plts.xticks!(1:3)
+end
+
+# ╔═╡ b8b17db3-987a-4146-aa70-37d53f7255a8
+sum([i*v for (i, v) in enumerate(ex3_remaining)])
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1643,5 +1689,12 @@ version = "1.4.1+0"
 # ╠═6cd042e1-acd7-48c4-92c6-2fa9ef585b31
 # ╠═6c68d24f-8355-40d5-abc3-cacd3d3efd5a
 # ╠═4958a1a6-7620-4479-a3c7-fa2456d56f58
+# ╟─339b1196-ded0-457c-9068-677aaddafae0
+# ╟─0f83771f-c088-408f-b32f-63a5090b2757
+# ╠═683670dc-4283-48d8-8cf4-e52ac7411a0a
+# ╠═40737bfd-2c53-44bb-b2a3-8245558298d8
+# ╠═1c5b5e86-61bb-481f-913c-776570ace001
+# ╠═e63f4a17-b424-473a-883c-b75e24b3473f
+# ╠═b8b17db3-987a-4146-aa70-37d53f7255a8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
