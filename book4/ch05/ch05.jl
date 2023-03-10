@@ -499,6 +499,66 @@ end
 # ╔═╡ b8b17db3-987a-4146-aa70-37d53f7255a8
 sum([i*v for (i, v) in enumerate(ex3_remaining)])
 
+# ╔═╡ 1a4dd964-d1a6-4562-b264-10b888f065e0
+md"### Exercise 4
+
+If I chose a random adult in the U.S., what is the probability that they have a sibling? To be precise, what is the probability that their mother has had at least one other child.
+
+[This article from the Pew Research Center](https://www.pewresearch.org/social-trends/2015/05/07/family-size-among-mothers/) provides some relevant data.
+
+From it, I extracted the following distribution of family size for mothers in the U.S. who were 40-44 years old in 2014:
+"
+
+# ╔═╡ b7c7bca4-dea7-4ce8-8822-e1cec53066a7
+ex4 = pmf.Pmf(collect(1:4), [22, 41, 24, 14])
+
+# ╔═╡ 72417b17-4601-4adf-884b-b9ca69a6958d
+begin
+	plts.bar(ex4.names, ex4.priors, legend=false)
+	plts.title!("Distribution of family size")
+	plts.xlabel!("Number of children")
+	plts.ylabel!("PMF")
+	plts.xticks!(1:4, ["1", "2", "3", "4+"])
+end
+
+# ╔═╡ b122bba5-1042-4b15-bd73-775552665d9a
+md"For simplicity, let’s assume that all families in the 4+ category have exactly 4 children."
+
+# ╔═╡ efdcc141-6dd7-4aef-8b71-9b7a545718fb
+md"#### Ex4. Reasoning
+
+Hmm, there is one small problem with the data, namely: sum(ex4.priors) = $(sum(ex4.priors)) so, it is more than 100%.
+
+Let's correct that right away, making it add up to 100% or 1.
+"
+
+# ╔═╡ 196ba57f-c4e5-4abf-a5c5-7c9929392657
+ex4.priors = ex4.priors ./ sum(ex4.priors)
+
+# ╔═╡ 7a4b5968-f558-4cf6-bf58-94c47681790d
+sum(ex4.priors)
+
+# ╔═╡ caaf3a48-2674-4310-9ed7-db97ea61f3b2
+md"much better."
+
+# ╔═╡ 2d598078-1a33-4724-889e-bb2500451b0d
+md"#### Ex4. Solution
+
+OK, so now, let's go for probability.
+In the case of prisoners You were more likely to choose a prisoner with a longer sentence, so here You are more likely to choose a person with siblings."
+
+# ╔═╡ 3bda1d60-904c-45b6-ba1c-d1f3335c611b
+begin
+	ex4.likelihoods = collect(1:4) ./ sum(1:4)
+	pmf.calculate_posteriors!(ex4)
+end
+
+# ╔═╡ 20fab33b-d6ad-4b05-956d-81e79936fdf3
+ex4.posteriors
+
+# ╔═╡ 01c7e0c6-96df-477a-95ab-edcd263848b2
+sum(ex4.posteriors[2:end])
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1696,5 +1756,17 @@ version = "1.4.1+0"
 # ╠═1c5b5e86-61bb-481f-913c-776570ace001
 # ╠═e63f4a17-b424-473a-883c-b75e24b3473f
 # ╠═b8b17db3-987a-4146-aa70-37d53f7255a8
+# ╟─1a4dd964-d1a6-4562-b264-10b888f065e0
+# ╠═b7c7bca4-dea7-4ce8-8822-e1cec53066a7
+# ╠═72417b17-4601-4adf-884b-b9ca69a6958d
+# ╟─b122bba5-1042-4b15-bd73-775552665d9a
+# ╟─efdcc141-6dd7-4aef-8b71-9b7a545718fb
+# ╠═196ba57f-c4e5-4abf-a5c5-7c9929392657
+# ╠═7a4b5968-f558-4cf6-bf58-94c47681790d
+# ╟─caaf3a48-2674-4310-9ed7-db97ea61f3b2
+# ╟─2d598078-1a33-4724-889e-bb2500451b0d
+# ╠═3bda1d60-904c-45b6-ba1c-d1f3335c611b
+# ╠═20fab33b-d6ad-4b05-956d-81e79936fdf3
+# ╠═01c7e0c6-96df-477a-95ab-edcd263848b2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
