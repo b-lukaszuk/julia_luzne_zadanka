@@ -573,6 +573,32 @@ Since you were born quite recently, let’s assume that you are, in fact, human 
 Given this data and dubious prior, what is the probability that our civilization will be short-lived?
 """
 
+# ╔═╡ 8a357e23-e1bb-4fc3-8a62-d0678e6c4747
+md"#### Ex5. Reasoning
+
+1 billion is 1'000'000'000, one with nine zeros.
+
+So, for short-lived population the probability of a person being number 108 billion is
+1/200 billion.
+
+For long-lived population the probability of a person being number 108 billion is 1/2000 billion
+"
+
+# ╔═╡ c6352739-9214-47d1-a26a-3eb4417a85c9
+md"#### Ex5. Solution"
+
+# ╔═╡ 02bbe891-905e-4962-a2d5-e92b9f84706b
+ex5 = pmf.mk_pmf_from_seq(["sl-200b", "ll-2000b"])
+
+# ╔═╡ 8153fb87-a266-481f-8bd5-c1361fb6d996
+ex5.likelihoods = [1/(200*1e9), 1/(2000*1e9)]
+
+# ╔═╡ 938ec401-7178-491a-aa1e-fbd746db75a4
+pmf.calculate_posteriors!(ex5)
+
+# ╔═╡ fb131cc0-67de-4f53-9fef-72565e168a65
+pmf.pmf2df(ex5)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1783,5 +1809,11 @@ version = "1.4.1+0"
 # ╠═20fab33b-d6ad-4b05-956d-81e79936fdf3
 # ╠═01c7e0c6-96df-477a-95ab-edcd263848b2
 # ╟─3eaf0b6a-9d95-4eda-b04f-37991cdf6ff1
+# ╟─8a357e23-e1bb-4fc3-8a62-d0678e6c4747
+# ╟─c6352739-9214-47d1-a26a-3eb4417a85c9
+# ╠═02bbe891-905e-4962-a2d5-e92b9f84706b
+# ╠═8153fb87-a266-481f-8bd5-c1361fb6d996
+# ╠═938ec401-7178-491a-aa1e-fbd746db75a4
+# ╠═fb131cc0-67de-4f53-9fef-72565e168a65
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
