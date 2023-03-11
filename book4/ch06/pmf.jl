@@ -31,18 +31,18 @@ mutable struct Pmf{T}
 
     # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
-        error("length(names) must be equal length(priors)") :
-        new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+                                error("length(names) must be equal length(priors)") :
+                                new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
     # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{Float64}, prs) = (length(ns) != length(prs)) ?
-        error("length(names) must be equal length(priors)") :
-        new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+                                    error("length(names) must be equal length(priors)") :
+                                    new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 
     # posteriors are uniform, i.e. initially each prior is equally likely
     Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
-        error("length(names) must be equal length(priors)") :
-        new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+                                   error("length(names) must be equal length(priors)") :
+                                   new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
 end
 
 function Base.show(io::IO, pmf::Pmf)
@@ -56,32 +56,32 @@ end
 """
 gets counts of elements in a vector{T}, returns Dict{T, count}
 """
-function get_counts(v::Vector{T})::Dict{T, Int} where T
-    result::Dict{T, Int} = Dict()
+function get_counts(v::Vector{T})::Dict{T,Int} where {T}
+    result::Dict{T,Int} = Dict()
     for elt in v
         result[elt] = get(result, elt, 0) + 1
     end
     return result
 end
 
-function mk_pmf_from_seq(seq::Vector{T})::Pmf where T
-    counts::Dict{T, Int} = get_counts(seq)
+function mk_pmf_from_seq(seq::Vector{T})::Pmf where {T}
+    counts::Dict{T,Int} = get_counts(seq)
     total::Int = sum(values(counts))
     names::Vector{T} = unique(seq)
-    priors::Vector{Float64} = [counts[n]/total for n in names]
+    priors::Vector{Float64} = [counts[n] / total for n in names]
     return Pmf(names, priors)
 end
 
-function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, default) where T
+function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, default) where {T}
     ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
     return isnothing(ind) ? default : getproperty(pmf, Symbol(field_name))[ind]
 end
 
-function get_prior(pmf::Pmf, name::Union{Int, String, Float64})::Float64
+function get_prior(pmf::Pmf, name::Union{Int,String,Float64})::Float64
     return get_field_vals_eq_name(pmf, name, "priors", 0.0)
 end
 
-function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
+function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
     return [get_prior(pmf, n) for n in names]
 end
 
@@ -119,24 +119,24 @@ function update_posteriors!(pmf::Pmf)
 end
 
 function pmf2df(pmf::Pmf)::pd.DataFrame
-    df = pd.DataFrame((;pmf.names, pmf.priors, pmf.likelihoods, pmf.posteriors))
+    df = pd.DataFrame((; pmf.names, pmf.priors, pmf.likelihoods, pmf.posteriors))
     return df
 end
 
-function get_posterior(pmf::Pmf{T}, name::T)::Float64 where T
+function get_posterior(pmf::Pmf{T}, name::T)::Float64 where {T}
     return get_field_vals_eq_name(pmf, name, "posteriors", 0.0)
 end
 
-function get_posterior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
+function get_posterior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
     return [get_posterior(pmf, n) for n in names]
 end
 
 function get_id_max_posterior(pmf::Pmf)::Int
     max_prob::Float64 = max(pmf.posteriors...)
-    return findfirst(x->x==max_prob, pmf.posteriors)
+    return findfirst(x -> x == max_prob, pmf.posteriors)
 end
 
-function get_name_max_posterior(pmf::Pmf{T})::T where T
+function get_name_max_posterior(pmf::Pmf{T})::T where {T}
     return pmf.names[get_id_max_posterior(pmf)]
 end
 
@@ -155,7 +155,7 @@ Reads data from dataset, updates likelihood based on prob_mapping,
 then calculates and updates posteriors (old posteriors are discarded)
 """
 function calculate_posteriors!(pmf::Pmf{T}, dataset::String,
-    prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
+    prob_mapping::Dict{Char,Vector{Float64}}) where {T<:Union{Int,String,Float64}}
     for datum in dataset
         pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
     end
@@ -166,7 +166,7 @@ end
 Calculates likelihoods for binomial with n trials, k successes, p - prob. of success (taken from priors)
 then it updates posteriors (old posteriors * new likelihoods) and normalizes them
 """
-function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String, Int}) where T<:Union{Int, String, Float64}
+function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String,Int}) where {T<:Union{Int,String,Float64}}
     ps::Vector{Float64} = binom_pmf.priors
     likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
     update_likelihoods!(binom_pmf, likelihood)
@@ -176,7 +176,7 @@ end
 """
 Draws posteriors (Y-axis) and names (X-axis) if they are numeric, uses Plots
 """
-function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
+function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where {T<:Union{Int,Float64}}
     plts.plot(pmf.names, pmf.posteriors, label=label)
     plts.title!(title)
     plts.xlabel!(xlab)
@@ -186,11 +186,49 @@ end
 """
 Draws priors (Y-axis) and names (X-axis) if they are numeric, uses Plots
 """
-function draw_priors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where T<:Union{Int, Float64}
+function draw_priors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where {T<:Union{Int,Float64}}
     plts.plot(pmf.names, pmf.priors, label=label)
     plts.title!(title)
     plts.xlabel!(xlab)
     plts.ylabel!(ylab)
+end
+
+function get_mean_posterior(pmf::Pmf{<:Union{Int,Float64}})::Float64
+    return sum(pmf.posteriors .* pmf.names)
+end
+
+function get_name_for_quantile(pmf::Pmf{<:Union{Int,Float64}},
+    cum_posterior_prob::Float64)::Union{Int,Float64}
+    @assert (0 <= cum_posterior_prob <= 1)
+    total::Float64 = 0
+    for i in eachindex(pmf.names)
+        total += pmf.posteriors[i]
+        if total >= cum_posterior_prob
+            return pmf.names[i]
+        end
+    end
+    return nothing
+end
+
+function get_name_for_quantile(pmf::Pmf{<:Union{Int,Float64}},
+    cum_posterior_probs::Vector{Float64})::Vector{<:Union{Int,Float64}}
+    return [get_name_for_quantile(pmf, p) for p in cum_posterior_probs]
+end
+
+function get_credible_interval(pmf::Pmf{<:Union{Int,Float64}},
+    prob::Float64)::Vector{<:Union{Int,Float64}}
+    @assert (0 <= prob <= 1)
+    half_prob::Float64 = prob / 2
+    return get_name_for_quantile(pmf, [0.5 - half_prob, 0.5 + half_prob])
+end
+
+function update_with_data!(pmf::Pmf{Int}, data::Int)
+    hypos = pmf.names
+    likelihood = 1 ./ hypos
+    impossible = (data .> hypos)
+    likelihood[impossible] .= 0
+    pmf.likelihoods .*= likelihood
+    pmf.calculate_posteriors!(pmf)
 end
 
 end
