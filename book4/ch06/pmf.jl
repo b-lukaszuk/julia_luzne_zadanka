@@ -53,6 +53,9 @@ function Base.show(io::IO, pmf::Pmf)
     print(io, result)
 end
 
+"""
+gets counts of elements in a vector{T}, returns Dict{T, count}
+"""
 function get_counts(v::Vector{T})::Dict{T, Int} where T
     result::Dict{T, Int} = Dict()
     for elt in v
@@ -102,13 +105,16 @@ function calculate_posteriors!(pmf::Pmf)
     normalize!(pmf)
 end
 
+function update_likelihoods!(pmf::Pmf, new_likelihoods::Vector{Float64})
+    pmf.likelihoods .*= new_likelihoods
+end
+
 """
-Updates posteriors (old posteriors * new likelihoods) and normalizes them
+Updates posteriors (posteriors * likelihoods) and normalizes them
 if posteriors were not updated before then the distribution of posteriors is uniform
 """
-function update_posteriors!(pmf::Pmf, new_likelihoods::Vector{Float64})
-    pmf.likelihoods .*= new_likelihoods
-    pmf.unnorms = pmf.posteriors .* pmf.likelihoods
+function update_posteriors!(pmf::Pmf)
+    pmf.unnorms = pmf.likelihoods .* pmf.posteriors
     normalize!(pmf)
 end
 
@@ -148,7 +154,8 @@ end
 Reads data from dataset, updates likelihood based on prob_mapping,
 then calculates and updates posteriors (old posteriors are discarded)
 """
-function calculate_posteriors!(pmf::Pmf{T}, dataset::String, prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
+function calculate_posteriors!(pmf::Pmf{T}, dataset::String,
+    prob_mapping::Dict{Char, Vector{Float64}}) where T<:Union{Int, String, Float64}
     for datum in dataset
         pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
     end
@@ -162,7 +169,8 @@ then it updates posteriors (old posteriors * new likelihoods) and normalizes the
 function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String, Int}) where T<:Union{Int, String, Float64}
     ps::Vector{Float64} = binom_pmf.priors
     likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
-    update_posteriors!(binom_pmf, likelihood)
+    update_likelihoods!(binom_pmf, likelihood)
+    update_posteriors!(binom_pmf)
 end
 
 """
