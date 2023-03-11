@@ -559,6 +559,20 @@ ex4.posteriors
 # ╔═╡ 01c7e0c6-96df-477a-95ab-edcd263848b2
 sum(ex4.posteriors[2:end])
 
+# ╔═╡ 3eaf0b6a-9d95-4eda-b04f-37991cdf6ff1
+md"""### Exercise 5
+
+The [Doomsday argument](https://en.wikipedia.org/wiki/Doomsday_argument) is “a probabilistic argument that claims to predict the number of future members of the human species given an estimate of the total number of humans born so far.”
+
+Suppose there are only two kinds of intelligent civilizations that can happen in the universe. The “short-lived” kind go exinct after only 200 billion individuals are born. The “long-lived” kind survive until 2,000 billion individuals are born. And suppose that the two kinds of civilization are equally likely. Which kind of civilization do you think we live in?
+
+The Doomsday argument says we can use the total number of humans born so far as data. According to the [Population Reference Bureau](https://www.prb.org/articles/how-many-people-have-ever-lived-on-earth/), the total number of people who have ever lived is about 108 billion.
+
+Since you were born quite recently, let’s assume that you are, in fact, human being number 108 billion. If `N` is the total number who will ever live and we consider you to be a randomly-chosen person, it is equally likely that you could have been person 1, or `N`, or any number in between. So what is the probability that you would be number 108 billion?
+
+Given this data and dubious prior, what is the probability that our civilization will be short-lived?
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1768,5 +1782,6 @@ version = "1.4.1+0"
 # ╠═3bda1d60-904c-45b6-ba1c-d1f3335c611b
 # ╠═20fab33b-d6ad-4b05-956d-81e79936fdf3
 # ╠═01c7e0c6-96df-477a-95ab-edcd263848b2
+# ╟─3eaf0b6a-9d95-4eda-b04f-37991cdf6ff1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
