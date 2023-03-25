@@ -167,8 +167,8 @@ Calculates likelihoods for binomial with n trials, k successes, p - prob. of suc
 then it updates posteriors (old posteriors * new likelihoods) and normalizes them
 """
 function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String,Int}) where {T<:Union{Int,String,Float64}}
-    ps::Vector{Float64} = binom_pmf.priors
-    likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
+    ns::Vector{Float64} = binom_pmf.names
+    likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ns), data["k"])
     update_likelihoods!(binom_pmf, likelihood)
     update_posteriors!(binom_pmf)
 end
