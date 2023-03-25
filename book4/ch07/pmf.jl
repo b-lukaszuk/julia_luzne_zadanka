@@ -231,4 +231,61 @@ function update_with_data!(pmf::Pmf{Int}, data::Int)
     pmf.calculate_posteriors!(pmf)
 end
 
+function sum_probs_by_names(names::Vector{Int}, probs::Vector{Float64})::Dict{Int,Float64}
+    @assert length(names) == length(probs)
+    res::Dict{Int,Float64} = Dict()
+    for i in eachindex(names)
+        res[names[i]] = get(res, names[i], 0) + probs[i]
+    end
+    return res
+end
+
+"""
+Inspired by similar function in empiricaldist by Allen Downey
+
+args:
+fn - function accepting 2 Int64 as input and returning Int64 as output
+"""
+function convolve_dist(pmf1::Pmf{Int}, pmf2::Pmf{Int}, fn::Function)::Pmf{Int}
+    # Iterators.product(vec1, vec2) gives cartesian product of two vects [(v1.0, v2.0), (v1.0, v2.1), etc.]
+    new_names::Vector{Int} = [[fn(a, b) for (a, b) in Iterators.product(pmf1.names, pmf2.names)]...]
+    new_priors::Vector{Float64} = [[a * b for (a, b) in Iterators.product(pmf1.priors, pmf2.priors)]...]
+    probs::Dict{Int,Float64} = sum_probs_by_names(new_names, new_priors)
+    ordered_keys::Vector{Int64} = sort(collect(keys(probs)))
+    ordered_vals::Vector{Float64} = [probs[k] for k in ordered_keys]
+    return Pmf(ordered_keys, ordered_vals ./ sum(ordered_vals))
+end
+
+function add_dist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .+ x, pmf1.priors)
+end
+
+function add_dist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .+ x, pmf1.priors)
+end
+
+function add_dist_seq(seq::Vector{<:Pmf{Int}})::Pmf{Int}
+    res::Pmf{Int} = seq[1]
+    for i in 2:length(seq)
+        res = add_dist(res, seq[i])
+    end
+    return res
+end
+
+function sub_dist(dist::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(dist.names .- x, dist.priors)
+end
+
+function sub_dist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return convolve_dist(pmf1, pmf2, -)
+end
+
+function mul_dist(dist::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(dist.names .* x, dist.priors)
+end
+
+function mul_dist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return convolve_dist(pmf1, pmf2, *)
+end
+
 end
