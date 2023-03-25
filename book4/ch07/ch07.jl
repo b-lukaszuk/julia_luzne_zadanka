@@ -8,6 +8,8 @@ using InteractiveUtils
 begin
 	include("pmf.jl")
 	import .ProbabilityMassFunction as pmf
+	include("simplestat.jl")
+	import .SimpleStatistics as ss
 end
 
 # ╔═╡ 846f457a-b205-11ed-0734-f92538cec098
@@ -36,6 +38,39 @@ PlutoUI.TableOfContents(depth=4)
 
 # ╔═╡ 5da35a4b-bc8c-412c-89c8-16e46fd7f067
 md"""## Code from chapter"""
+
+# ╔═╡ 9e9cc1a8-dbc6-473a-b583-bf012d905ea4
+md"### Cumulative Distribution Functions
+
+A useful alternative to probability mass functions (pmf-s) are cumulative distribution functions (cdf-s).
+
+Here a pmf and cdf for [the Euro problem](https://allendowney.github.io/ThinkBayes2/chap04.html#the-euro-problem) discussed before.
+"
+
+# ╔═╡ fae6b24f-fe3e-4ad3-8919-3250c96fb438
+coin1 = pmf.Pmf(collect(range(0, 1, 101)), repeat([1/101], 101));
+
+# ╔═╡ 9fe98742-eb4a-4a9f-8e85-c9bcd3ddfa5a
+coin1_data = Dict("n" => 250, "k" => 140);
+
+# ╔═╡ 060ae814-3a4f-47c1-8fcb-28f08efaa4ab
+pmf.update_binomial!(coin1, coin1_data);
+
+# ╔═╡ 4aec3128-151a-4e7e-b800-01da1878256a
+coin1_cum_prob = cumsum(coin1.posteriors);
+
+# ╔═╡ 0563feda-7636-4a21-9747-6059f9668cf5
+begin
+	pmf.draw_posteriors(coin1, "Posterior distribution of the Euro problem",
+		"Proportion of heads (x)", "Probability", "PMF")
+	plts.plot!(coin1.names, coin1_cum_prob, label="CDF")
+end
+
+# ╔═╡ abe93224-077f-4498-ad96-2c55dcf4b1c0
+coin1_cum_prob[findfirst(x -> x==0.61, coin1.names)]
+
+# ╔═╡ 7dd74a7d-9872-413e-8a58-89c7945c28b9
+coin1.names[findfirst(x -> x >= 0.96, coin1_cum_prob)]
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1167,5 +1202,13 @@ version = "1.4.1+0"
 # ╠═e59f34b1-44ef-498d-bd44-7a83985674bb
 # ╠═732ecfa0-b3a2-4892-81ef-334dee711a9c
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
+# ╟─9e9cc1a8-dbc6-473a-b583-bf012d905ea4
+# ╠═fae6b24f-fe3e-4ad3-8919-3250c96fb438
+# ╠═9fe98742-eb4a-4a9f-8e85-c9bcd3ddfa5a
+# ╠═060ae814-3a4f-47c1-8fcb-28f08efaa4ab
+# ╠═4aec3128-151a-4e7e-b800-01da1878256a
+# ╠═0563feda-7636-4a21-9747-6059f9668cf5
+# ╠═abe93224-077f-4498-ad96-2c55dcf4b1c0
+# ╠═7dd74a7d-9872-413e-8a58-89c7945c28b9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
