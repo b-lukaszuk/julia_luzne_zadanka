@@ -150,6 +150,64 @@ get_name_for_posterior(coin1_cdf, 0.96)
 # ╔═╡ eaf1c968-b9d4-4053-ac7c-4ea66851f24b
 get_posterior_for_name(coin1_cdf, 0.61)
 
+# ╔═╡ 97e0d994-cf77-41bd-909e-06806fefd321
+md"### Best Three of Four
+
+In Dungeons & Dragons, each character has six attributes:
+- strength,
+- intelligence,
+- wisdom,
+- dexterity,
+- constitution,
+- charisma.
+
+To generate a new character, players roll four 6-sided dice for each attribute and add up the best three. For example, if I roll for strength and get 1, 2, 3, 4 on the dice, my character’s strength would be the sum of 2, 3, and 4, which is 9.
+"
+
+# ╔═╡ 6fd2afdb-f675-47d8-8338-d077a9959ae8
+function mk_dice(sides::Int)::pmf.Pmf{Int}
+	return pmf.mk_pmf_from_seq(collect(1:sides))
+end
+
+# ╔═╡ 0942fe2b-d3f1-4bcf-a103-828630d5f52b
+begin
+	dice6sides = mk_dice(6)
+	three_dice_6_sides = repeat([dice6sides], 3)
+end;
+
+# ╔═╡ 9d5fa1c2-f8c0-41bf-8021-04cf6bd42507
+pmf_3d6 = pmf.add_dist_seq(three_dice_6_sides)
+
+# ╔═╡ c615644c-b8cf-4e08-89e4-ad6264ab0ea0
+pmf.draw_priors(pmf_3d6, "Distribution of attributes",
+	"Outcome", "PMF", "")
+
+# ╔═╡ fdad0151-aba7-4621-872e-070874cf2445
+md"If we roll four dice and add up the best three, computing the distribution of the sum is a bit more complicated. I’ll (Allen Downey) estimate the distribution by simulating 10,000 rolls."
+
+# ╔═╡ f5ddf901-205e-497d-9aea-31bedf8ac866
+begin
+	n_rolls = 10_000
+	rolls = rand(1:6, (n_rolls, 4))
+	sort!(rolls, dims=2, rev=true)
+	rolls_3_bests_sums = sum(rolls[:, 1:3], dims=2)
+end;
+
+# ╔═╡ 50d95345-d58f-4eab-bcaa-490dbf50c2bc
+pmf_best3 = pmf.mk_pmf_from_seq(rolls_3_bests_sums[:, 1]);
+
+# ╔═╡ 5afd384a-db69-4636-a939-1c36d876c184
+begin
+	pmf.draw_priors(pmf_3d6, "Distribution of attributes",
+		"Outcome", "PMF", "sum of 3 dice")
+	plts.plot!(pmf_best3.names, pmf_best3.priors, label="best 3 of 4", legend=:topleft)
+end
+
+# ╔═╡ 8fbca9d9-5db6-471d-b6bc-4412bc9ddee0
+md"As you might expect, choosing the best three out of four tends to yield higher values.
+
+Next we’ll find the distribution for the maximum of six attributes, each the sum of the best three of four dice."
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1303,5 +1361,15 @@ version = "1.4.1+0"
 # ╠═6fa51b0a-ec5c-4bcd-a3b6-9ef6062c3393
 # ╠═f1aad45f-64eb-4f4d-84c4-24b1210865d7
 # ╠═eaf1c968-b9d4-4053-ac7c-4ea66851f24b
+# ╟─97e0d994-cf77-41bd-909e-06806fefd321
+# ╠═6fd2afdb-f675-47d8-8338-d077a9959ae8
+# ╠═0942fe2b-d3f1-4bcf-a103-828630d5f52b
+# ╠═9d5fa1c2-f8c0-41bf-8021-04cf6bd42507
+# ╠═c615644c-b8cf-4e08-89e4-ad6264ab0ea0
+# ╟─fdad0151-aba7-4621-872e-070874cf2445
+# ╠═f5ddf901-205e-497d-9aea-31bedf8ac866
+# ╠═50d95345-d58f-4eab-bcaa-490dbf50c2bc
+# ╠═5afd384a-db69-4636-a939-1c36d876c184
+# ╟─8fbca9d9-5db6-471d-b6bc-4412bc9ddee0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
