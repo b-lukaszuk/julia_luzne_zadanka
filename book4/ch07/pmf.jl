@@ -260,8 +260,8 @@ function add_dist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
     return Pmf(pmf1.names .+ x, pmf1.priors)
 end
 
-function add_dist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
-    return Pmf(pmf1.names .+ x, pmf1.priors)
+function add_dist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return convolve_dist(pmf1, pmf2, +)
 end
 
 function add_dist_seq(seq::Vector{<:Pmf{Int}})::Pmf{Int}
