@@ -67,7 +67,7 @@ end
 function mk_pmf_from_seq(seq::Vector{T})::Pmf where {T}
     counts::Dict{T,Int} = get_counts(seq)
     total::Int = sum(values(counts))
-    names::Vector{T} = unique(seq)
+    names::Vector{T} = sort(unique(seq))
     priors::Vector{Float64} = [counts[n] / total for n in names]
     return Pmf(names, priors)
 end
