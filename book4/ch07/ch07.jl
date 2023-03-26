@@ -72,6 +72,84 @@ coin1_cum_prob[findfirst(x -> x==0.61, coin1.names)]
 # ╔═╡ 7dd74a7d-9872-413e-8a58-89c7945c28b9
 coin1.names[findfirst(x -> x >= 0.96, coin1_cum_prob)]
 
+# ╔═╡ 9d69d679-2266-4d09-b53f-0beca05f2179
+md"#### CDF struct and its functionality"
+
+# ╔═╡ 9f765925-29d9-4ec0-a960-8df4364469fd
+mutable struct Cdf{T}
+    names::Vector{T}
+    posteriors::Vector{Float64}
+
+    # posteriors are uniform, i.e. initially each prior is equally likely
+    Cdf(ns::Vector{Int}, posts) = (length(ns) != length(posts)) ? error("length(names) must be equal length(posteriors)") : new{Int}(ns, posts)
+    Cdf(ns::Vector{Float64}, posts) = (length(ns) != length(posts)) ? error("length(names) must be equal length(posteriors)") : new{Float64}(ns, posts)
+    Cdf(ns::Vector{String}, posts) = (length(ns) != length(posts)) ? error("length(names) must be equal length(posteriors)") : new{String}(ns, posts)
+end
+
+# ╔═╡ 7be616ff-3178-4dee-9a85-fe4cf0558b02
+function Base.show(io::IO, cdf::Cdf)
+    result = "names: $(join(cdf.names, ", "))\n"
+    result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, cdf.posteriors), ", "))\n"
+    print(io, result)
+end
+
+# ╔═╡ 838f95ff-6170-452b-a7d2-0892dccaa920
+function mk_cdf_from_pmf(pmf_dist::pmf.Pmf{T})::Cdf{T} where T
+	return Cdf(pmf_dist.names, cumsum(pmf_dist.posteriors))
+end
+
+# ╔═╡ 36e734ff-e684-4e9c-a93f-b7f59b8b63eb
+function mk_pmf_from_cdf(cdf_dist::Cdf{T})::pmf.Pmf{T} where T
+	diffs::Vector{Float64} = diff(cdf_dist.posteriors)
+	prepend!(diffs, cdf_dist.posteriors[1])
+	return pmf.Pmf(cdf_dist.names, diffs)
+end
+
+# ╔═╡ f99232a8-10c4-46f7-9fef-472e2d67f17b
+"""
+	returns name from cdf.names that is >= posterior
+"""
+function get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T where T
+	@assert 0 <= posterior <= 1
+	return cdf_dist.names[findfirst(x -> x >= posterior, cdf_dist.posteriors)]
+end
+
+# ╔═╡ 80d8c54a-f6b6-46ba-af0c-dd3ec5ccc356
+function get_posterior_for_name(cdf_dist::Cdf{T}, name::Float64)::Float64 where T
+	return cdf_dist.posteriors[findfirst(x -> x == name, cdf_dist.names)]
+end
+
+# ╔═╡ 576cd7c4-549a-4ad5-9e52-7c8435191a98
+function get_credible_interval(cdf_dist::Cdf{T}, prob::Float64)::Vector{T} where T
+	@assert 0 <= prob <= 1
+	probs::Vector{Float64} = [0.5 - prob / 2, 0.5 + prob / 2]
+	return [get_name_for_posterior(cdf_dist, p) for p in probs]
+end
+
+# ╔═╡ 5dbad685-2b43-4cc0-a9db-098285cd334e
+function is_roughly_equal(n1::Number, n2::Number, precision::Int=15)::Bool
+	@assert 0 <= precision <= 16
+	return round(n1, digits=precision) == round(n2, digits=precision)
+end
+
+# ╔═╡ 8e9c3291-9fa3-468a-ae6b-cabb4f5c5383
+coin1_cdf = mk_cdf_from_pmf(coin1)
+
+# ╔═╡ c6b6748d-3652-4c69-b058-b6b566ad5b97
+coin1_recreated = mk_pmf_from_cdf(coin1_cdf);
+
+# ╔═╡ ba3786c0-90dc-4068-a5f1-8fedaecfb176
+all(is_roughly_equal.(coin1.posteriors, coin1_recreated.priors))
+
+# ╔═╡ 6fa51b0a-ec5c-4bcd-a3b6-9ef6062c3393
+get_credible_interval(coin1_cdf, 0.9)
+
+# ╔═╡ f1aad45f-64eb-4f4d-84c4-24b1210865d7
+get_name_for_posterior(coin1_cdf, 0.96)
+
+# ╔═╡ eaf1c968-b9d4-4053-ac7c-4ea66851f24b
+get_posterior_for_name(coin1_cdf, 0.61)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1210,5 +1288,20 @@ version = "1.4.1+0"
 # ╠═0563feda-7636-4a21-9747-6059f9668cf5
 # ╠═abe93224-077f-4498-ad96-2c55dcf4b1c0
 # ╠═7dd74a7d-9872-413e-8a58-89c7945c28b9
+# ╟─9d69d679-2266-4d09-b53f-0beca05f2179
+# ╠═9f765925-29d9-4ec0-a960-8df4364469fd
+# ╠═7be616ff-3178-4dee-9a85-fe4cf0558b02
+# ╠═838f95ff-6170-452b-a7d2-0892dccaa920
+# ╠═36e734ff-e684-4e9c-a93f-b7f59b8b63eb
+# ╠═f99232a8-10c4-46f7-9fef-472e2d67f17b
+# ╠═80d8c54a-f6b6-46ba-af0c-dd3ec5ccc356
+# ╠═576cd7c4-549a-4ad5-9e52-7c8435191a98
+# ╠═5dbad685-2b43-4cc0-a9db-098285cd334e
+# ╠═8e9c3291-9fa3-468a-ae6b-cabb4f5c5383
+# ╠═c6b6748d-3652-4c69-b058-b6b566ad5b97
+# ╠═ba3786c0-90dc-4068-a5f1-8fedaecfb176
+# ╠═6fa51b0a-ec5c-4bcd-a3b6-9ef6062c3393
+# ╠═f1aad45f-64eb-4f4d-84c4-24b1210865d7
+# ╠═eaf1c968-b9d4-4053-ac7c-4ea66851f24b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
