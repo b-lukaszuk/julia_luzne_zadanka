@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -266,6 +266,44 @@ begin
 	plts.plot!(cdf_best3.names, cdf_best3.posteriors, label="best 3 of 4 dice")
 
 	plts.plot!(cdf_max6.names, cdf_max6.posteriors, label="max of 6 attributes")
+end
+
+# ╔═╡ b0aea785-5700-48ee-b012-9070ac3458ae
+md"### Minimum
+
+To compute the distribution of the minimum, we'll use the **complementary CDF**, which we can compute like this:
+"
+
+# ╔═╡ 28c611da-6452-4a41-92ea-d987a464666e
+prob_gt = 1 .- cdf_best3.posteriors;
+
+# ╔═╡ 8512b66c-7746-4654-9cfe-b9c745faa109
+md"As the variable name suggests, the complementary CDF is the probability that a value from the distribution is greater than `x`. If we draw 6 values from the distribution, the probability that all 6 exceed `x` is:"
+
+# ╔═╡ df51529b-d1b0-4911-9583-b11ed7116be2
+prob_gt6 = prob_gt .^ 6;
+
+# ╔═╡ f5e79837-3011-420b-9f79-39986b09bced
+md"If all 6 exceed `x`, that means their minimum exceeds `x`, so `prob_gt6` is the complementary CDF of the minimum. And that means we can compute the CDF of the minimum like this:"
+
+# ╔═╡ fee8e66d-6e71-4fdd-8a80-1f93146fc1f0
+prob_le6 = 1 .- prob_gt6;
+
+# ╔═╡ 1918c9f6-c401-4298-af12-61c9ce9d9e40
+md"We can put those values in a `Cdf` struct like this:"
+
+# ╔═╡ cb29319d-309a-4f8b-9ca9-cac774d46c2b
+cdf_min6 = Cdf(cdf_max6.names, prob_le6);
+
+# ╔═╡ 19ec038d-3fdd-45f1-87f7-4f6a45bb5a07
+begin
+	plts.plot(cdf_max6.names, cdf_max6.posteriors, label="maximum of 6")
+	plts.title!("Minimum and maximum of six attributes")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("CDF")
+	plts.xticks!(3:18)
+
+	plts.plot!(cdf_min6.names, cdf_min6.posteriors, label="minimum of 6")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1438,5 +1476,14 @@ version = "1.4.1+0"
 # ╟─f2036c6b-ea7e-4fd3-8195-337249560f40
 # ╠═bd67e94d-d08a-40b4-a3e0-a826d4620916
 # ╠═4002e8f8-a3ea-4243-b981-3b43cb47bf8e
+# ╟─b0aea785-5700-48ee-b012-9070ac3458ae
+# ╠═28c611da-6452-4a41-92ea-d987a464666e
+# ╟─8512b66c-7746-4654-9cfe-b9c745faa109
+# ╠═df51529b-d1b0-4911-9583-b11ed7116be2
+# ╟─f5e79837-3011-420b-9f79-39986b09bced
+# ╠═fee8e66d-6e71-4fdd-8a80-1f93146fc1f0
+# ╟─1918c9f6-c401-4298-af12-61c9ce9d9e40
+# ╠═cb29319d-309a-4f8b-9ca9-cac774d46c2b
+# ╠═19ec038d-3fdd-45f1-87f7-4f6a45bb5a07
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
