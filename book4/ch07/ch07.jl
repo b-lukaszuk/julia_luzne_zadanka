@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.19
 
 using Markdown
 using InteractiveUtils
@@ -94,8 +94,23 @@ function Base.show(io::IO, cdf::Cdf)
 end
 
 # ╔═╡ 838f95ff-6170-452b-a7d2-0892dccaa920
-function mk_cdf_from_pmf(pmf_dist::pmf.Pmf{T})::Cdf{T} where T
-	return Cdf(pmf_dist.names, cumsum(pmf_dist.posteriors))
+"""
+	mk_cdf_from_pmf(pmf_dist::pmf.Pmf{T}, use_priors::Bool=true)::Cdf{T}
+
+	returns cdf build from pmf
+
+	--
+	args:
+		pmf_dist: Pmf struct
+		use_priors: if true then pmf.priors are used to construct cdf
+					otherwise pmf.posteriors are used to construct cdf
+"""
+function mk_cdf_from_pmf(pmf_dist::pmf.Pmf{T}, use_priors::Bool=true)::Cdf{T} where T
+	if use_priors
+		return Cdf(pmf_dist.names, cumsum(pmf_dist.priors))
+	else
+		return Cdf(pmf_dist.names, cumsum(pmf_dist.posteriors))
+	end
 end
 
 # ╔═╡ 36e734ff-e684-4e9c-a93f-b7f59b8b63eb
@@ -107,6 +122,8 @@ end
 
 # ╔═╡ f99232a8-10c4-46f7-9fef-472e2d67f17b
 """
+	get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T
+
 	returns name from cdf.names that is >= posterior
 """
 function get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T where T
@@ -133,7 +150,7 @@ function is_roughly_equal(n1::Number, n2::Number, precision::Int=15)::Bool
 end
 
 # ╔═╡ 8e9c3291-9fa3-468a-ae6b-cabb4f5c5383
-coin1_cdf = mk_cdf_from_pmf(coin1)
+coin1_cdf = mk_cdf_from_pmf(coin1, false)
 
 # ╔═╡ c6b6748d-3652-4c69-b058-b6b566ad5b97
 coin1_recreated = mk_pmf_from_cdf(coin1_cdf);
