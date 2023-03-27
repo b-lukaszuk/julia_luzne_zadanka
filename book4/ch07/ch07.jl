@@ -225,6 +225,49 @@ md"As you might expect, choosing the best three out of four tends to yield highe
 
 Next we’ll find the distribution for the maximum of six attributes, each the sum of the best three of four dice."
 
+# ╔═╡ ba4f448a-0929-425a-9e79-9f5663e21d8a
+md"### Maximum
+
+Recall that `Cdf(x)` is the sum of probabilities for quantities less than or equal to `x`. Equivalently, it is the probability that a random value chosen from the distribution is less than or equal to `x`.
+
+Now suppose I draw 6 values from this distribution. The probability that all 6 of them are less than or equal to `x` is `Cdf(x)` raised to the 6th power."
+
+# ╔═╡ de88b7f6-0a75-486a-902e-992f4816d560
+begin
+	cdf_best3 = mk_cdf_from_pmf(pmf_best3)
+	cdf_max6 = Cdf(cdf_best3.names, cdf_best3.posteriors .^ 6)
+end;
+
+# ╔═╡ 22da94a4-e4b2-472b-84aa-a183f638d6c6
+pmf_max6 = mk_pmf_from_cdf(cdf_max6);
+
+# ╔═╡ b6008358-3e81-4470-8378-0c62168abbb0
+begin
+	pmf.draw_priors(pmf_max6, "Distribution of attributes",
+		"Outcome", "PMF", "max of 6 attributes")
+	plts.xticks!(3:18)
+end
+
+# ╔═╡ f2036c6b-ea7e-4fd3-8195-337249560f40
+md"Most characters have at least one attribute greater than 12; almost 10% of them have an 18.
+
+The following figure shows the CDFs for the three distributions we have computed."
+
+# ╔═╡ bd67e94d-d08a-40b4-a3e0-a826d4620916
+cdf_3d6 = mk_cdf_from_pmf(pmf_3d6);
+
+# ╔═╡ 4002e8f8-a3ea-4243-b981-3b43cb47bf8e
+begin
+	plts.plot(cdf_3d6.names, cdf_3d6.posteriors, label="sum of 3 dice")
+	plts.title!("Distribution of attributes")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+
+	plts.plot!(cdf_best3.names, cdf_best3.posteriors, label="best 3 of 4 dice")
+
+	plts.plot!(cdf_max6.names, cdf_max6.posteriors, label="max of 6 attributes")
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1388,5 +1431,12 @@ version = "1.4.1+0"
 # ╠═50d95345-d58f-4eab-bcaa-490dbf50c2bc
 # ╠═5afd384a-db69-4636-a939-1c36d876c184
 # ╟─8fbca9d9-5db6-471d-b6bc-4412bc9ddee0
+# ╟─ba4f448a-0929-425a-9e79-9f5663e21d8a
+# ╠═de88b7f6-0a75-486a-902e-992f4816d560
+# ╠═22da94a4-e4b2-472b-84aa-a183f638d6c6
+# ╠═b6008358-3e81-4470-8378-0c62168abbb0
+# ╟─f2036c6b-ea7e-4fd3-8195-337249560f40
+# ╠═bd67e94d-d08a-40b4-a3e0-a826d4620916
+# ╠═4002e8f8-a3ea-4243-b981-3b43cb47bf8e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
