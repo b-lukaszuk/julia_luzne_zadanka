@@ -143,6 +143,39 @@ function get_credible_interval(cdf_dist::Cdf{T}, prob::Float64)::Vector{T} where
 	return [get_name_for_posterior(cdf_dist, p) for p in probs]
 end
 
+# ╔═╡ 95f1806d-7fe6-4b8d-9901-bf05c33612a7
+"""
+	Computes and returns the distribution of a maximum of a cdf
+
+	---
+	args:
+		n: Int, drawing n times from cdf_dist(x), getting the prob.
+			that all n of them are less than or equal to x
+"""
+function get_max_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
+	cdf_max_n::Vector{Float64} = cdf_dist.posteriors .^ n
+	return Cdf(cdf_dist.names, cdf_max_n)
+end
+
+# ╔═╡ d0b1b8e7-2ce8-4f47-9ee0-251a64da1ca1
+"""
+	Computes and returns the distribution of a minimum of a cdf
+
+	---
+	args:
+		n: Int, drawing n times from cdf_dist(x), getting the prob.
+			that all n of them are greater than or equal to x
+"""
+function get_min_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
+	# prob that a val from dist is greater than x
+	prob_gt = 1 .- cdf_dist.posteriors
+	# prob that all n vals drawn from dist exceed x
+	# (their min exceeds x)
+	prob_gt_n = prob_gt .^ n
+	prob_le_n = 1 .- prob_gt_n
+	return Cdf(cdf_dist.names, prob_le_n)
+end
+
 # ╔═╡ 5dbad685-2b43-4cc0-a9db-098285cd334e
 function is_roughly_equal(n1::Number, n2::Number, precision::Int=15)::Bool
 	@assert 0 <= precision <= 16
@@ -1452,6 +1485,8 @@ version = "1.4.1+0"
 # ╠═f99232a8-10c4-46f7-9fef-472e2d67f17b
 # ╠═80d8c54a-f6b6-46ba-af0c-dd3ec5ccc356
 # ╠═576cd7c4-549a-4ad5-9e52-7c8435191a98
+# ╠═95f1806d-7fe6-4b8d-9901-bf05c33612a7
+# ╠═d0b1b8e7-2ce8-4f47-9ee0-251a64da1ca1
 # ╠═5dbad685-2b43-4cc0-a9db-098285cd334e
 # ╠═8e9c3291-9fa3-468a-ae6b-cabb4f5c5383
 # ╠═c6b6748d-3652-4c69-b058-b6b566ad5b97
