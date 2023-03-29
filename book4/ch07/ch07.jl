@@ -132,7 +132,7 @@ function get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T where T
 end
 
 # ╔═╡ 80d8c54a-f6b6-46ba-af0c-dd3ec5ccc356
-function get_posterior_for_name(cdf_dist::Cdf{T}, name::Float64)::Float64 where T
+function get_posterior_for_name(cdf_dist::Cdf{T}, name::T)::Float64 where T
 	return cdf_dist.posteriors[findfirst(x -> x == name, cdf_dist.names)]
 end
 
@@ -338,6 +338,80 @@ begin
 
 	plts.plot!(cdf_min6.names, cdf_min6.posteriors, label="minimum of 6")
 end
+
+# ╔═╡ 9386ae07-6d2e-4ea2-a7b9-f681878101c5
+md"### Mixture
+
+Here’s another example inspired by Dungeons & Dragons:
+
+- Suppose your character is armed with a dagger in one hand and a short sword in the other.
+- During each round, you attack a monster with one of your two weapons, chosen at random.
+- The dagger causes one 4-sided die of damage; the short sword causes one 6-sided die of damage.
+
+What is the distribution of damage you inflict in each round?
+"
+
+# ╔═╡ 0e627f03-8a8c-4c83-94d6-69ad8022830c
+begin
+	d4s = mk_dice(4)
+	d6s = mk_dice(6)
+end;
+
+# ╔═╡ 53f81cfa-b8cf-43e9-99e3-9f4f3eae5b8b
+md"Now, let’s compute the probability you inflict 1 point of damage.
+
+- If you attacked with the dagger, it’s 1/4.
+- If you attacked with the short sword, it’s 1/6.
+
+Because the probability of choosing either weapon is 1/2, the total probability is the average:"
+
+# ╔═╡ 49818e55-b7b5-4ba2-a22d-06b208c5f0e1
+sum(d4s.priors[1] + d6s.priors[1]) / 2
+
+# ╔═╡ 88441cb6-d5fb-443a-9653-2a6200bb36a0
+md"For the outcomes 2, 3, and 4, the probability is the same, but for 5 and 6 it’s different, because those outcomes are impossible with the 4-sided die.
+
+In general we have:
+"
+
+# ╔═╡ 245ea5fd-baa5-46ff-889a-39c5cd123a14
+# mix1 vals add up to 1
+mix1 = ([get(d4s.priors, i, 0) for i in 1:6] .+ d6s.priors) ./ 2
+
+# ╔═╡ d89e2928-a11b-4f74-9222-6ed62d8ff668
+begin
+	plts.bar(1:6, mix1, legend=false)
+	plts.title!("Mixture of one 4-sided and one 6-sided die")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ 43967a1b-e1d0-4e24-9fdc-892a2d6f5e7f
+md"Now suppose you are fighting three monsters:
+
+- One has a club, which causes one 4-sided die of damage.
+- One has a mace, which causes one 6-sided die.
+- And one has a quarterstaff, which also causes one 6-sided die.
+
+Because the melee is disorganized, you are attacked by one of these monsters each round, chosen at random.
+
+Let's find the damage distribution in this case
+"
+
+# ╔═╡ d831a27e-8271-414c-a7d8-fdf5425e68c9
+# mix2 vals add up to 1
+mix2 = ([get(d4s.priors, i, 0) for i in 1:6] .+ d6s.priors .* 2) ./ 3
+
+# ╔═╡ 3530dcdb-8513-47d5-bd6d-252d9701d1be
+begin
+	plts.bar(1:6, mix2, legend=false)
+	plts.title!("Mixture of one 4-sided and two 6-sided die")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+end
+
+# ╔═╡ 57cd4aa5-eb0a-48d4-837b-74ca0f6c651b
+md"In this section we used the `+` operator, which adds the probabilities in the distributions, not to be confused with `Pmf.add_dist`, which computes the distribution of the sum of the distributions."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1520,5 +1594,16 @@ version = "1.4.1+0"
 # ╟─1918c9f6-c401-4298-af12-61c9ce9d9e40
 # ╠═cb29319d-309a-4f8b-9ca9-cac774d46c2b
 # ╠═19ec038d-3fdd-45f1-87f7-4f6a45bb5a07
+# ╟─9386ae07-6d2e-4ea2-a7b9-f681878101c5
+# ╠═0e627f03-8a8c-4c83-94d6-69ad8022830c
+# ╟─53f81cfa-b8cf-43e9-99e3-9f4f3eae5b8b
+# ╠═49818e55-b7b5-4ba2-a22d-06b208c5f0e1
+# ╟─88441cb6-d5fb-443a-9653-2a6200bb36a0
+# ╠═245ea5fd-baa5-46ff-889a-39c5cd123a14
+# ╠═d89e2928-a11b-4f74-9222-6ed62d8ff668
+# ╟─43967a1b-e1d0-4e24-9fdc-892a2d6f5e7f
+# ╠═d831a27e-8271-414c-a7d8-fdf5425e68c9
+# ╠═3530dcdb-8513-47d5-bd6d-252d9701d1be
+# ╟─57cd4aa5-eb0a-48d4-837b-74ca0f6c651b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
