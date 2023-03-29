@@ -411,7 +411,22 @@ begin
 end
 
 # ╔═╡ 57cd4aa5-eb0a-48d4-837b-74ca0f6c651b
-md"In this section we used the `+` operator, which adds the probabilities in the distributions, not to be confused with `Pmf.add_dist`, which computes the distribution of the sum of the distributions."
+md"In this section we used the `+` operator, which adds the probabilities in the distributions, not to be confused with `Pmf.add_dist`, which computes the distribution of the sum of the distributions.
+
+Let's see the difference, below the distribution of the total damage done per round."
+
+# ╔═╡ f931a740-794b-4c7f-b153-36ea4f278933
+tot_dmg_per_round = pmf.add_dist(
+	pmf.Pmf(collect(1:6), mix1), pmf.Pmf(collect(1:6), mix2));
+
+# ╔═╡ aecd8923-e40b-4661-9e5f-5ec73994fb15
+begin
+	plts.bar(tot_dmg_per_round.names, tot_dmg_per_round.priors, legend=false)
+	plts.title!("Total damage inflicted by both parties")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+	plts.xticks!(2:12)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1605,5 +1620,7 @@ version = "1.4.1+0"
 # ╠═d831a27e-8271-414c-a7d8-fdf5425e68c9
 # ╠═3530dcdb-8513-47d5-bd6d-252d9701d1be
 # ╟─57cd4aa5-eb0a-48d4-837b-74ca0f6c651b
+# ╠═f931a740-794b-4c7f-b153-36ea4f278933
+# ╠═aecd8923-e40b-4661-9e5f-5ec73994fb15
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
