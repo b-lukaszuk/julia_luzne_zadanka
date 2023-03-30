@@ -428,6 +428,74 @@ begin
 	plts.xticks!(2:12)
 end
 
+# ╔═╡ 48da7cb9-eef7-468a-88b8-42766fd55160
+md"### General Mixtures
+...we’ll continue the previous example for one more section.
+
+Suppose three more monsters join the combat, each of them with a battle axe that causes one 8-sided die of damage. Still, only one monster attacks per round, chosen at random, so the damage they inflict is a mixture of:
+- One 4-sided die,
+- Two 6-sided dice, and
+- Three 8-sided dice.
+"
+
+# ╔═╡ 77104898-c7fc-42e0-80f7-d6264c4da085
+begin
+	hypos = [4, 6, 8]
+	counts = [1, 2, 3]
+	pmf_dice = pmf.Pmf(counts, counts ./ sum(counts))
+end
+
+# ╔═╡ 54357568-f945-47a0-b7fa-4938de6ce81f
+dice = [mk_dice(sides) for sides in hypos];
+
+# ╔═╡ c5cfb8e2-f79e-4c6a-ba08-8dfa59c2ad79
+md"To compute the distribution of the mixture, I’ll compute the weighted average of the dice, using the probabilities in `pmf_dice` as the weights."
+
+# ╔═╡ f2296a8e-d403-4480-8f3f-028ff80a0652
+function pad_vect(vect::Vector{Float64}, final_len::Int, fill::Float64=0.0)::Vector{Float64}
+	return [get(vect, i, fill) for i in 1:final_len]
+end
+
+# ╔═╡ e6fc66ff-0640-4f61-b265-00bacc12cf16
+begin
+	no_of_sides = collect(1:max(hypos...))
+	counts_and_priors = Dict{Int, Vector{Float64}}()
+	for i in counts
+		counts_and_priors[i] = pad_vect(dice[i].priors, max(hypos...))
+	end
+end
+
+# ╔═╡ 41cbcd0b-2328-4dba-ae0c-6b27fc32310b
+df1 = pd.DataFrame(Dict(string(k) => v for (k, v) in counts_and_priors))
+
+# ╔═╡ 9dd62af8-dbd9-4611-82ca-1d8052eeceef
+md"The next step is to multiply each row by the probabilities in `pmf_dice`"
+
+# ╔═╡ ee4cefd0-7b10-4eaf-9d5a-ddf46c42f8cc
+begin
+	counts_and_posteriors = Dict{Int, Vector{Float64}}()
+	for i in 1:3
+		counts_and_posteriors[i] = 
+			counts_and_priors[i] .* pmf_dice.priors[i]
+	end
+	df2 = pd.DataFrame(Dict(string(k) => v for (k, v) in counts_and_posteriors))
+end
+
+# ╔═╡ 8afd8d9b-a22c-42ab-bbe1-be69afbdc312
+md"Now we add up the weighted distributions"
+
+# ╔═╡ c0472bf4-751e-4161-8526-7bb80fb37c9b
+mix3 = df2 |> Matrix |> x -> sum(x, dims=2)
+
+# ╔═╡ 301b66ac-72cd-4671-98bb-c49aecad4ae9
+begin
+	plts.bar(1:8, mix3, label="mixture")
+	plts.title!("Distribution of damage with three different weapons")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+	plts.xticks!(1:8)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -635,9 +703,9 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "0ba171480d51567ba337e5eea4e68a8231b7a2c3"
+git-tree-sha1 = "7072f1e3e5a8be51d525d64f63d3ec1287ff2790"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "0.13.10"
+version = "0.13.11"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -727,10 +795,10 @@ uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
 
 [[deps.HypergeometricFunctions]]
-deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions", "Test"]
-git-tree-sha1 = "709d864e3ed6e3545230601f94e11ebc65994641"
+deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions"]
+git-tree-sha1 = "6de59b37a1d330bdd766610fe751fed605170dc4"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
-version = "0.3.11"
+version = "0.3.13"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -1023,9 +1091,9 @@ uuid = "91d4177d-7536-5919-b921-800302f37372"
 version = "1.3.2+0"
 
 [[deps.OrderedCollections]]
-git-tree-sha1 = "85f8e6578bf1f9ee0d11e7bb1b1456435479d47c"
+git-tree-sha1 = "d78db6df34313deaca15c5c0b9ff562c704fe1ab"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.4.1"
+version = "1.5.0"
 
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1228,9 +1296,9 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "f9af7f195fb13589dd2e2d57fdb401717d2eb1f6"
+git-tree-sha1 = "45a7769a04a3cf80da1c1c7c60caf932e6f4c9f7"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.5.0"
+version = "1.6.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
@@ -1292,9 +1360,9 @@ uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.9.11"
 
 [[deps.Tricks]]
-git-tree-sha1 = "6bac775f2d42a611cdfcd1fb217ee719630c4175"
+git-tree-sha1 = "aadb748be58b492045b4f56166b5188aa63ce549"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.6"
+version = "0.1.7"
 
 [[deps.URIs]]
 git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
@@ -1622,5 +1690,17 @@ version = "1.4.1+0"
 # ╟─57cd4aa5-eb0a-48d4-837b-74ca0f6c651b
 # ╠═f931a740-794b-4c7f-b153-36ea4f278933
 # ╠═aecd8923-e40b-4661-9e5f-5ec73994fb15
+# ╟─48da7cb9-eef7-468a-88b8-42766fd55160
+# ╠═77104898-c7fc-42e0-80f7-d6264c4da085
+# ╠═54357568-f945-47a0-b7fa-4938de6ce81f
+# ╟─c5cfb8e2-f79e-4c6a-ba08-8dfa59c2ad79
+# ╠═f2296a8e-d403-4480-8f3f-028ff80a0652
+# ╠═e6fc66ff-0640-4f61-b265-00bacc12cf16
+# ╠═41cbcd0b-2328-4dba-ae0c-6b27fc32310b
+# ╟─9dd62af8-dbd9-4611-82ca-1d8052eeceef
+# ╠═ee4cefd0-7b10-4eaf-9d5a-ddf46c42f8cc
+# ╟─8afd8d9b-a22c-42ab-bbe1-be69afbdc312
+# ╠═c0472bf4-751e-4161-8526-7bb80fb37c9b
+# ╠═301b66ac-72cd-4671-98bb-c49aecad4ae9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
