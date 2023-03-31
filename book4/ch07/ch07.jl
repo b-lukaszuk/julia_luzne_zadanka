@@ -496,6 +496,40 @@ begin
 	plts.xticks!(1:8)
 end
 
+# ╔═╡ 6eb30ed5-f897-4687-8029-911a7326744d
+"""Make a mixture of distributions.
+	---
+	args:
+		pmf_dist - names of dists in pmf_seq & probs of getting a dist in pmf_seq
+				names are consecutive integers from 1
+		pmf_seq - pmf_dists and their proper probabilities
+	"""
+function mk_mixture(pmf_dist::pmf.Pmf{Int}, pmf_seq::Vector{pmf.Pmf{Int}})
+	max_len::Int = max([length(p.names) for p in pmf_seq]...)
+	names::Vector{Int} = [p.names for p in pmf_seq if length(p.names) == max_len][1]
+	pmfs_inds_and_priors::Dict{Int, Vector{Float64}} = Dict(
+		i => pad_vect(s.priors, max_len) for (i, s) in enumerate(pmf_seq))
+	pmfs_inds_and_posteriors::Dict{Int, Vector{Float64}} = Dict(
+		k => v .* pmf_dist.priors[k] for (k, v) in pmfs_inds_and_priors
+	)
+	df::pd.DataFrame = pd.DataFrame(
+		Dict(string(k) => v for (k, v) in pmfs_inds_and_posteriors))
+	mix_probs::Vector{Float64} = (df |> Matrix |> x -> sum(x, dims=2))[:, 1]
+	return pmf.Pmf(names, mix_probs)
+end
+
+# ╔═╡ 35568e58-a6bb-4a67-839e-e2152b3c19cf
+mix = mk_mixture(pmf_dice, dice)
+
+# ╔═╡ 6378e97f-7d68-4bed-a464-8bd216d1ef61
+begin
+	plts.bar(mix.names, mix.priors, label="mixture")
+	plts.title!("Distribution of damage with three different weapons")
+	plts.xlabel!("Outcome")
+	plts.ylabel!("PMF")
+	plts.xticks!(1:8)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1702,5 +1736,8 @@ version = "1.4.1+0"
 # ╟─8afd8d9b-a22c-42ab-bbe1-be69afbdc312
 # ╠═c0472bf4-751e-4161-8526-7bb80fb37c9b
 # ╠═301b66ac-72cd-4671-98bb-c49aecad4ae9
+# ╠═6eb30ed5-f897-4687-8029-911a7326744d
+# ╠═35568e58-a6bb-4a67-839e-e2152b3c19cf
+# ╠═6378e97f-7d68-4bed-a464-8bd216d1ef61
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
