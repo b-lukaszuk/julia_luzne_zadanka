@@ -471,14 +471,11 @@ df1 = pd.DataFrame(Dict(string(k) => v for (k, v) in counts_and_priors))
 # ╔═╡ 9dd62af8-dbd9-4611-82ca-1d8052eeceef
 md"The next step is to multiply each row by the probabilities in `pmf_dice`"
 
-# ╔═╡ ee4cefd0-7b10-4eaf-9d5a-ddf46c42f8cc
+# ╔═╡ a74ef7c7-bd72-498e-9e2e-dd8ea489d333
 begin
-	counts_and_posteriors = Dict{Int, Vector{Float64}}()
-	for i in 1:3
-		counts_and_posteriors[i] = 
-			counts_and_priors[i] .* pmf_dice.priors[i]
-	end
-	df2 = pd.DataFrame(Dict(string(k) => v for (k, v) in counts_and_posteriors))
+	df2 = pd.select(df1,
+		map(string, 1:3) .=> [x -> x .* y for y in pmf_dice.priors] .=> map(string, 1:3))
+	df2
 end
 
 # ╔═╡ 8afd8d9b-a22c-42ab-bbe1-be69afbdc312
@@ -500,9 +497,8 @@ end
 """Make a mixture of distributions.
 	---
 	args:
-		pmf_dist - names of dists in pmf_seq & probs of getting a dist in pmf_seq
-				names are consecutive integers from 1
-		pmf_seq - pmf_dists and their proper probabilities
+		pmf_dist - probs of getting a dist in pmf_seq (names and priors)
+		pmf_seq - pmf_dists and their probs (priors), names betw seqs should overlap
 	"""
 function mk_mixture(pmf_dist::pmf.Pmf{Int}, pmf_seq::Vector{pmf.Pmf{Int}})
 	max_len::Int = max([length(p.names) for p in pmf_seq]...)
@@ -1732,7 +1728,7 @@ version = "1.4.1+0"
 # ╠═e6fc66ff-0640-4f61-b265-00bacc12cf16
 # ╠═41cbcd0b-2328-4dba-ae0c-6b27fc32310b
 # ╟─9dd62af8-dbd9-4611-82ca-1d8052eeceef
-# ╠═ee4cefd0-7b10-4eaf-9d5a-ddf46c42f8cc
+# ╠═a74ef7c7-bd72-498e-9e2e-dd8ea489d333
 # ╟─8afd8d9b-a22c-42ab-bbe1-be69afbdc312
 # ╠═c0472bf4-751e-4161-8526-7bb80fb37c9b
 # ╠═301b66ac-72cd-4671-98bb-c49aecad4ae9
