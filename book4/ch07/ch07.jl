@@ -495,10 +495,12 @@ end
 
 # ╔═╡ 6eb30ed5-f897-4687-8029-911a7326744d
 """Make a mixture of distributions.
+
 	---
 	args:
-		pmf_dist - probs of getting a dist in pmf_seq (names and priors)
-		pmf_seq - pmf_dists and their probs (priors), names betw seqs should overlap
+
+		pmf_dist: probs of getting a dist in pmf_seq (names and priors)
+		pmf_seq: pmf_dists and their probs (priors), names betw seqs should overlap
 	"""
 function mk_mixture(pmf_dist::pmf.Pmf{Int}, pmf_seq::Vector{pmf.Pmf{Int}})
 	max_len::Int = max([length(p.names) for p in pmf_seq]...)
@@ -526,6 +528,13 @@ begin
 	plts.xticks!(1:8)
 end
 
+# ╔═╡ 12300a6f-24be-4a91-b1de-c778b09954bf
+md"### Summary
+
+A `Pmf` and the corresponding `Cdf` are equivalent in the sense that they contain the same information, so you can convert from one to the other.
+The primary difference between them is performance: some operations are faster and easier with a `Pmf`; others are faster with a `Cdf` (like presented in this chapter distribution of maximums and minimums).
+"
+
 # ╔═╡ c6e66856-425b-4b51-850c-5c7a1f423a95
 md"## Exercises"
 
@@ -541,13 +550,6 @@ Compare the distribution of the values in the standard array to the distribution
 - The highest value in the standard array is 15. For each attribute, what is the probability of getting a value greater than 15? If you roll the dice six times, what’s the probability that at least one of your attributes is greater than 15?
 
 To get you started, here’s a `Cdf` that represents the distribution of attributes in the standard array:
-"
-
-# ╔═╡ 12300a6f-24be-4a91-b1de-c778b09954bf
-md"### Summary
-
-A `Pmf` and the corresponding `Cdf` are equivalent in the sense that they contain the same information, so you can convert from one to the other.
-The primary difference between them is performance: some operations are faster and easier with a `Pmf`; others are faster with a `Cdf` (like presented in this chapter distribution of maximums and minimums).
 "
 
 # ╔═╡ 0b74df23-e86c-4033-a288-3890ae7efebc
