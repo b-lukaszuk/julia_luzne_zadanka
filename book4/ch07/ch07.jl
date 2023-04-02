@@ -543,6 +543,13 @@ Compare the distribution of the values in the standard array to the distribution
 To get you started, here’s a `Cdf` that represents the distribution of attributes in the standard array:
 "
 
+# ╔═╡ 12300a6f-24be-4a91-b1de-c778b09954bf
+md"### Summary
+
+A `Pmf` and the corresponding `Cdf` are equivalent in the sense that they contain the same information, so you can convert from one to the other.
+The primary difference between them is performance: some operations are faster and easier with a `Pmf`; others are faster with a `Cdf` (like presented in this chapter distribution of maximums and minimums).
+"
+
 # ╔═╡ 0b74df23-e86c-4033-a288-3890ae7efebc
 begin
 	ex1_standard = [15, 14, 13, 12, 10, 8]
@@ -1758,6 +1765,7 @@ version = "1.4.1+0"
 # ╠═6eb30ed5-f897-4687-8029-911a7326744d
 # ╠═35568e58-a6bb-4a67-839e-e2152b3c19cf
 # ╠═6378e97f-7d68-4bed-a464-8bd216d1ef61
+# ╟─12300a6f-24be-4a91-b1de-c778b09954bf
 # ╟─c6e66856-425b-4b51-850c-5c7a1f423a95
 # ╟─cf5d01a0-270d-4b4a-a26e-3e2d4a6a1791
 # ╠═0b74df23-e86c-4033-a288-3890ae7efebc
