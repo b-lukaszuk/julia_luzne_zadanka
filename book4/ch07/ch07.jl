@@ -176,6 +176,39 @@ function get_min_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
 	return Cdf(cdf_dist.names, prob_le_n)
 end
 
+# ╔═╡ 73ac6a7c-4f9f-46c2-a569-9391a724b53c
+function get_avg(pmf_dist::pmf.Pmf{T},
+	use_priors::Bool=true)::Float64 where T<:Union{Int, Float64}
+	if use_priors
+		return sum(pmf_dist.names .* pmf_dist.priors)
+	else
+		return sum(pmf_dist.names .* pmf_dist.posteriors)
+	end
+end
+
+# ╔═╡ 5f27be89-656f-498e-a645-846c117ddab6
+function get_avg(cdf_dist::Cdf{T})::Float64 where T<:Union{Int, Float64}
+	pmf_dist::pmf.Pmf{T} = mk_pmf_from_cdf(cdf_dist)
+	return get_avg(pmf_dist)
+end
+
+# ╔═╡ 42eefead-bd2c-4a01-82b2-63f057df55d6
+function get_std(pmf_dist::pmf.Pmf{T},
+	use_priors::Bool=true)::Float64 where T<:Union{Int, Float64}
+	avg::Float64 = get_avg(pmf_dist, use_priors)
+	devs::Vector{Float64} = pmf_dist.names .- avg
+	ps::Vector{Float64} = use_priors ? pmf_dist.priors : pmf_dist.posteriors
+	var:: Float64 = sum((devs.^2) .* ps)
+	return sqrt(var)
+end
+
+# ╔═╡ afec0fff-df0b-47d9-98b1-09a34f8038b3
+function get_std(cdf_dist::Cdf{T},
+	use_priors::Bool=true)::Float64 where T<:Union{Int, Float64}
+	pmf_dist::pmf.Pmf{T} = mk_pmf_from_cdf(cdf_dist)
+	return get_std(pmf_dist)
+end
+
 # ╔═╡ 5dbad685-2b43-4cc0-a9db-098285cd334e
 function is_roughly_equal(n1::Number, n2::Number, precision::Int=15)::Bool
 	@assert 0 <= precision <= 16
@@ -545,7 +578,7 @@ When you generate a D&D character, instead of rolling dice, you can use the “s
 
 Compare the distribution of the values in the standard array to the distribution we computed for the best three out of four:
 - Which distribution has higher mean? Use the `mean` method.
-- Which distribution has higher standard deviation? Use the std method.
+- Which distribution has higher standard deviation? Use the `std` method.
 - The lowest value in the standard array is 8. For each attribute, what is the probability of getting a value less than 8? If you roll the dice six times, what’s the probability that at least one of your attributes is less than 8?
 - The highest value in the standard array is 15. For each attribute, what is the probability of getting a value greater than 15? If you roll the dice six times, what’s the probability that at least one of your attributes is greater than 15?
 
@@ -557,6 +590,48 @@ begin
 	ex1_standard = [15, 14, 13, 12, 10, 8]
 	ex1_cdf_standard = mk_cdf_from_pmf(pmf.mk_pmf_from_seq(ex1_standard))
 end
+
+# ╔═╡ 12c5417d-9c8d-4f40-9837-84486683c264
+begin
+	plts.plot(ex1_cdf_standard.names, ex1_cdf_standard.posteriors, label="D&D standard", color=:navy)
+	plts.scatter!(ex1_cdf_standard.names, ex1_cdf_standard.posteriors, label="",
+		markershape=:circ, markercolor=:navy, markersize=6)
+	plts.plot!(cdf_best3.names, cdf_best3.posteriors, label="D&D best 3 of 4",
+		color=:red)
+	plts.scatter!(cdf_best3.names, cdf_best3.posteriors, label="",
+		markershape=:rect, markercolor=:red)
+	plts.xticks!(1:20)
+end
+
+# ╔═╡ 0f2897a0-0bff-45be-a2af-80df284bb202
+md"#### Ex1. Medians, means, stds
+
+D&D standard:
+- name of prob median = $(get_name_for_posterior(ex1_cdf_standard, 0.5))
+- name of prob avg = $(round(get_avg(ex1_cdf_standard), digits=3))
+- name of prob std = $(round(get_std(ex1_cdf_standard), digits=3))
+
+D&D best 3 of 4:
+- name of prob median = $(get_name_for_posterior(cdf_best3, 0.5))
+- name of prob avg= $(round(get_avg(cdf_best3), digits=3))
+- name of prob std = $(round(get_std(cdf_best3), digits=3))
+"
+
+# ╔═╡ f13ddf81-491e-412d-9e35-aa2e7824e6e3
+md"#### Ex1. Attribute(s) less than 8
+
+Best 3 of 4:
+- prob of getting each attribute less than 8 = $(round(get_posterior_for_name(cdf_best3, 7), digits=3))
+- prob of getting at least 1 of 6 attributes less than 8 = $(round(get_posterior_for_name(get_min_cdf_dist(cdf_best3, 6), 7), digits=3))
+"
+
+# ╔═╡ c199f262-11fb-40f7-a4da-b37d05cdc258
+md"#### Ex1. Attribute(s) greater than 15
+
+Best 3 of 4:
+- prob of getting an attribute greater than 15 = $(round(1 - get_posterior_for_name(cdf_best3, 15), digits=3))
+- prob of getting at least 1 of 6 attributes greater than 15 = $(round(1 - get_posterior_for_name(get_max_cdf_dist(cdf_best3, 6), 15), digits=3))
+"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1706,6 +1781,10 @@ version = "1.4.1+0"
 # ╠═576cd7c4-549a-4ad5-9e52-7c8435191a98
 # ╠═95f1806d-7fe6-4b8d-9901-bf05c33612a7
 # ╠═d0b1b8e7-2ce8-4f47-9ee0-251a64da1ca1
+# ╠═73ac6a7c-4f9f-46c2-a569-9391a724b53c
+# ╠═5f27be89-656f-498e-a645-846c117ddab6
+# ╠═42eefead-bd2c-4a01-82b2-63f057df55d6
+# ╠═afec0fff-df0b-47d9-98b1-09a34f8038b3
 # ╠═5dbad685-2b43-4cc0-a9db-098285cd334e
 # ╠═8e9c3291-9fa3-468a-ae6b-cabb4f5c5383
 # ╠═c6b6748d-3652-4c69-b058-b6b566ad5b97
@@ -1771,5 +1850,9 @@ version = "1.4.1+0"
 # ╟─c6e66856-425b-4b51-850c-5c7a1f423a95
 # ╟─cf5d01a0-270d-4b4a-a26e-3e2d4a6a1791
 # ╠═0b74df23-e86c-4033-a288-3890ae7efebc
+# ╠═12c5417d-9c8d-4f40-9837-84486683c264
+# ╟─0f2897a0-0bff-45be-a2af-80df284bb202
+# ╟─f13ddf81-491e-412d-9e35-aa2e7824e6e3
+# ╟─c199f262-11fb-40f7-a4da-b37d05cdc258
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
