@@ -526,6 +526,29 @@ begin
 	plts.xticks!(1:8)
 end
 
+# ╔═╡ c6e66856-425b-4b51-850c-5c7a1f423a95
+md"## Exercises"
+
+# ╔═╡ cf5d01a0-270d-4b4a-a26e-3e2d4a6a1791
+md"### Exercise 1
+
+When you generate a D&D character, instead of rolling dice, you can use the “standard array” of attributes, which is 15, 14, 13, 12, 10, and 8. Do you think you are better off using the standard array or (literally) rolling the dice?
+
+Compare the distribution of the values in the standard array to the distribution we computed for the best three out of four:
+- Which distribution has higher mean? Use the `mean` method.
+- Which distribution has higher standard deviation? Use the std method.
+- The lowest value in the standard array is 8. For each attribute, what is the probability of getting a value less than 8? If you roll the dice six times, what’s the probability that at least one of your attributes is less than 8?
+- The highest value in the standard array is 15. For each attribute, what is the probability of getting a value greater than 15? If you roll the dice six times, what’s the probability that at least one of your attributes is greater than 15?
+
+To get you started, here’s a `Cdf` that represents the distribution of attributes in the standard array:
+"
+
+# ╔═╡ 0b74df23-e86c-4033-a288-3890ae7efebc
+begin
+	ex1_standard = [15, 14, 13, 12, 10, 8]
+	ex1_cdf_standard = mk_cdf_from_pmf(pmf.mk_pmf_from_seq(ex1_standard))
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1735,5 +1758,8 @@ version = "1.4.1+0"
 # ╠═6eb30ed5-f897-4687-8029-911a7326744d
 # ╠═35568e58-a6bb-4a67-839e-e2152b3c19cf
 # ╠═6378e97f-7d68-4bed-a464-8bd216d1ef61
+# ╟─c6e66856-425b-4b51-850c-5c7a1f423a95
+# ╟─cf5d01a0-270d-4b4a-a26e-3e2d4a6a1791
+# ╠═0b74df23-e86c-4033-a288-3890ae7efebc
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
