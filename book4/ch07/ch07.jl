@@ -149,8 +149,8 @@ end
 
 	---
 	args:
-		n: Int, drawing n times from cdf_dist(x), getting the prob.
-			that all n of them are less than or equal to x
+		n: Int, drawing n times from cdf_dist,
+			returns cdf where cdf(x) prob. that all n of drawings are <= to x
 """
 function get_max_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
 	cdf_max_n::Vector{Float64} = cdf_dist.posteriors .^ n
@@ -163,8 +163,8 @@ end
 
 	---
 	args:
-		n: Int, drawing n times from cdf_dist(x), getting the prob.
-			that all n of them are greater than or equal to x
+		n: Int, drawing n times from cdf_dist(x),
+			returns cdf where cdf(x) prob. that all n of drawings are >= to x
 """
 function get_min_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
 	# prob that a val from dist is greater than x
