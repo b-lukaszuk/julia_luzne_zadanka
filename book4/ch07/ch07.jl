@@ -527,7 +527,9 @@ begin
 end
 
 # ╔═╡ 6eb30ed5-f897-4687-8029-911a7326744d
-"""Make a mixture of distributions.
+"""mk\\_mixture(pmf\\_dist::pmf.Pmf{Int}, pmf\\_seq::Vector{pmf.Pmf{Int}})::pmf.Pmf{Int}
+
+	Make a mixture of distributions.
 
 	---
 	args:
@@ -535,16 +537,16 @@ end
 		pmf_dist: probs of getting a dist in pmf_seq (names and priors)
 		pmf_seq: pmf_dists and their probs (priors), names betw seqs should overlap
 	"""
-function mk_mixture(pmf_dist::pmf.Pmf{Int}, pmf_seq::Vector{pmf.Pmf{Int}})
+function mk_mixture(pmf_dist::pmf.Pmf{Int}, pmf_seq::Vector{pmf.Pmf{Int}})::pmf.Pmf{Int}
 	max_len::Int = max([length(p.names) for p in pmf_seq]...)
 	names::Vector{Int} = [p.names for p in pmf_seq if length(p.names) == max_len][1]
-	pmfs_inds_and_priors::Dict{Int, Vector{Float64}} = Dict(
-		i => pad_vect(s.priors, max_len) for (i, s) in enumerate(pmf_seq))
-	pmfs_inds_and_posteriors::Dict{Int, Vector{Float64}} = Dict(
-		k => v .* pmf_dist.priors[k] for (k, v) in pmfs_inds_and_priors
+	pmfs_names_and_priors::Dict{Int, Vector{Float64}} = Dict(
+		pmf_dist.names[i] => pad_vect(s.priors, max_len) for (i, s) in enumerate(pmf_seq))
+	pmfs_names_and_posteriors::Dict{Int, Vector{Float64}} = Dict(
+		k => v .* pmf.get_prior(pmf_dist, k) for (k, v) in pmfs_names_and_priors
 	)
 	df::pd.DataFrame = pd.DataFrame(
-		Dict(string(k) => v for (k, v) in pmfs_inds_and_posteriors))
+		Dict(string(k) => v for (k, v) in pmfs_names_and_posteriors))
 	mix_probs::Vector{Float64} = (df |> Matrix |> x -> sum(x, dims=2))[:, 1]
 	return pmf.Pmf(names, mix_probs)
 end
