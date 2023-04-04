@@ -652,6 +652,43 @@ If the same monster attacks you again, what is the probability that you suffer 6
 **Hint**: Compute a posterior distribution as we have done before and pass it as one of the arguments to `make_mixture`.
 "
 
+# ╔═╡ 37a1b1cf-8ef7-47c5-8e71-0883a623bb6d
+begin
+	# P(D|H), or P(1..no_sides | n_sided_dice is choosen)
+	# so, ex3_pmf_seq[1].priors contains rather likelihoods
+	ex2_pmf_seq = [mk_dice(i) for i in [6, 8, 10]]
+	ex2_posteriors = []
+end;
+
+# ╔═╡ 9bb3994d-4808-49a4-97e4-1f6c893bece7
+for seq in ex2_pmf_seq
+	# P(H), or P(choosing n_sided dice)
+	# so we are updating priors
+	pmf.update_likelihoods!(seq, repeat([1/3], length(seq.names)))
+	# priors times likelihoods is the same as likelihoods times priors
+	# the resultant posteriors are updated
+	pmf.update_posteriors!(seq)
+	push!(ex2_posteriors, pmf.get_prior(seq, 1))
+end;
+
+# ╔═╡ d61f135d-a6cf-4cce-9df7-f45f01f34f4f
+# P(H|D), or P(dice | 1 dmg), or P(n_sided_dice | 1 side on top)
+# probabilities of getting a given monster if we got 1 dmg
+# for [6, 8, 10] sided dice respectively
+ex2_post_norm = ex2_posteriors ./ sum(ex2_posteriors)
+
+# ╔═╡ c2bc5bab-01cd-4338-9c17-dc7e4770b667
+md"Not sure I understand the task description right.
+
+'If the same monster attacks You again, what is the probability that you suffer 6 points of damage?'
+
+Doesn't this mean that I need to calculate:
+- P(6 dmg | 6 sided dice) = 1/6
+- P(6 dmg | 8 sided dice) = 1/8
+- P(6 dmg | 10 sided dice) = 1/10
+
+But following the hint and using `make_mixture` will get me P(6 dmg) no matter the dice (monster), after I get 1 dmg in first throw (after considering probability of each monster in first attack). So, that's why I stop here."
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1874,5 +1911,9 @@ version = "1.4.1+0"
 # ╟─f13ddf81-491e-412d-9e35-aa2e7824e6e3
 # ╟─c199f262-11fb-40f7-a4da-b37d05cdc258
 # ╟─80e41355-d158-4145-9c45-951d9aceedb7
+# ╠═37a1b1cf-8ef7-47c5-8e71-0883a623bb6d
+# ╠═9bb3994d-4808-49a4-97e4-1f6c893bece7
+# ╠═d61f135d-a6cf-4cce-9df7-f45f01f34f4f
+# ╟─c2bc5bab-01cd-4338-9c17-dc7e4770b667
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
