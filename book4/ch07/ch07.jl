@@ -633,6 +633,23 @@ Best 3 of 4:
 - prob of getting at least 1 of 6 attributes greater than 15 = $(round(1 - get_posterior_for_name(get_max_cdf_dist(cdf_best3, 6), 15), digits=3))
 "
 
+# ╔═╡ 80e41355-d158-4145-9c45-951d9aceedb7
+md"### Exercise 2
+
+Suppose you are fighting three monsters:
+- One is armed with a short sword that causes one 6-sided die of damage,
+- One is armed with a battle axe that causes one 8-sided die of damage, and
+- One is armed with a bastard sword that causes one 10-sided die of damage.
+
+One of the monsters, chosen at random, attacks you and does 1 point of damage.
+
+Which monster do you think it was? Compute the posterior probability that each monster was the attacker.
+
+If the same monster attacks you again, what is the probability that you suffer 6 points of damage?
+
+**Hint**: Compute a posterior distribution as we have done before and pass it as one of the arguments to `make_mixture`.
+"
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1854,5 +1871,6 @@ version = "1.4.1+0"
 # ╟─0f2897a0-0bff-45be-a2af-80df284bb202
 # ╟─f13ddf81-491e-412d-9e35-aa2e7824e6e3
 # ╟─c199f262-11fb-40f7-a4da-b37d05cdc258
+# ╟─80e41355-d158-4145-9c45-951d9aceedb7
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
