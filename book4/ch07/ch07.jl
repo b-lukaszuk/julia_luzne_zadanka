@@ -718,7 +718,69 @@ begin
 end;
 
 # ╔═╡ 342180b4-9861-4f63-9de2-ea18e83b0b28
-plts.histogram(ex3_sample, legend=false)
+begin
+	plts.histogram(ex3_sample, legend=false)
+	plts.title!("Bread loaves weight distribution")
+	plts.xlabel!("Mass of a bread loaf [g]")
+	plts.ylabel!("Number of bread loaves")
+end
+
+# ╔═╡ acf4f3df-a464-4f6d-9542-a295071bf616
+md"#### Ex3. Solution
+
+So, like in subchapter 'Maximum' from this chapter (ch07.jl) I will do Pmf and Cdf objects first"
+
+# ╔═╡ 4a4b027f-368a-491b-865c-de11f230624f
+begin
+	# lets round the numbers just a bit
+	ex3_pmf = pmf.mk_pmf_from_seq(round.(ex3_sample, digits=1))
+	ex3_cdf = mk_cdf_from_pmf(ex3_pmf)
+end;
+
+# ╔═╡ 55f97f94-4624-4f9b-a22f-6f2eeed07dd3
+begin
+	plts.histogram(ex3_pmf.names, normalize=:probability, label="")
+	plts.plot!(ex3_cdf.names, ex3_cdf.posteriors, label="CDF")
+	plts.title!("Bread loaves weight distribution")
+	plts.xlabel!("Mass of a bread loaf [g]")
+	plts.ylabel!("Probability of a bread loaf having certain mass")
+end
+
+# ╔═╡ 7873d85c-33c1-44a4-b419-ba3d84632f86
+md"Now, the baker compares a few bread loaves and chooses the most heavy one to give it to Poincaré. Lets say he compares between 2 (not possible to compare less than 2 bread loaves) and 10 bread loaves (otherwise it would take too much time to do that). So we need to use `get_max_cdf_dist` developed in this chapter (see section CDF struct and its functionality in this file)"
+
+# ╔═╡ 5d3f2ab7-072d-43c4-9ff4-3f684eb59aa2
+begin
+	ex3_max_cdfs = Dict{Int, Cdf}()
+	for i in 2:10
+		ex3_max_cdfs[i] = get_max_cdf_dist(ex3_cdf, i)
+	end;
+end
+
+# ╔═╡ a2a8baa8-b8db-42e2-b9a7-46ab524ee333
+md"This `get_max_cdf_dist` will return `cdf` where `cdf(x)` is probability that all n of drawings are <= to `x`.
+
+Now the question is 'How many loaves would the baker have to heft to make the average of the maximum 1000 g?' so, we need to calculate the averages (previously developed `get_avg` function) or a median (since in ideal normal distribution mean is equal to median).
+"
+
+# ╔═╡ 2e0e1c4e-d7cd-4a92-ac1a-a1933b026d70
+begin
+	ex3_max_avgs = Dict{Int, Float64}()
+	for (k, v) in ex3_max_cdfs
+		tmp = get_avg(v)
+		if (990 <= tmp <= 1010)
+			ex3_max_avgs[k] = tmp
+		end
+	end
+end;
+
+# ╔═╡ 26d219a8-6508-4959-86b3-89f4bdd8422e
+# so the baker wouldhave to heft on avg 4 or 5 bread loaves
+ex3_max_avgs
+
+# ╔═╡ 81a95524-6c14-480c-be33-bafde878a610
+# checkup of the above assumption with median
+[get_name_for_posterior(ex3_max_cdfs[4], 0.5), get_name_for_posterior(ex3_max_cdfs[5], 0.5)]
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1950,5 +2012,14 @@ version = "1.4.1+0"
 # ╟─13f58198-6fce-4098-b64a-4fcdee753559
 # ╠═acbd2e1e-e803-41b0-8271-19afeb688c6e
 # ╠═342180b4-9861-4f63-9de2-ea18e83b0b28
+# ╟─acf4f3df-a464-4f6d-9542-a295071bf616
+# ╠═4a4b027f-368a-491b-865c-de11f230624f
+# ╠═55f97f94-4624-4f9b-a22f-6f2eeed07dd3
+# ╟─7873d85c-33c1-44a4-b419-ba3d84632f86
+# ╠═5d3f2ab7-072d-43c4-9ff4-3f684eb59aa2
+# ╟─a2a8baa8-b8db-42e2-b9a7-46ab524ee333
+# ╠═2e0e1c4e-d7cd-4a92-ac1a-a1933b026d70
+# ╠═26d219a8-6508-4959-86b3-89f4bdd8422e
+# ╠═81a95524-6c14-480c-be33-bafde878a610
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
