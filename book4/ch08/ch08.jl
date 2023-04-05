@@ -43,6 +43,23 @@ PlutoUI.TableOfContents(depth=4)
 # ╔═╡ 5da35a4b-bc8c-412c-89c8-16e46fd7f067
 md"""## Code from chapter"""
 
+# ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
+md"### Poisson Processes
+
+This chapter introduces the [Poisson process](https://en.wikipedia.org/wiki/Poisson_point_process), which is a model used to describe events that occur at random intervals."
+
+# ╔═╡ 8920cd93-bd51-42bc-9010-044dcf80c655
+md"### The World Cup Problem
+
+In the 2018 FIFA World Cup final, France defeated Croatia 4 goals to 2. Based on this outcome:
+- How confident should we be that France is the better team?
+- If the same teams played again, what is the chance France would win again?
+
+To answer these questions, we have to make some modeling decisions.
+- First, I’ll assume that for any team against another team there is some unknown goal-scoring rate, measured in goals per game, which I’ll denote with the Python variable `lam` or the Greek letter $\lambda$, pronounced “lambda”.
+- Second, I’ll assume that a goal is equally likely during any minute of a game. So, in a 90 minute game, the probability of scoring during any minute is $\lambda / 90$.
+- Third, I’ll assume that a team never scores twice during the same minute."
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1173,5 +1190,7 @@ version = "1.4.1+0"
 # ╠═e59f34b1-44ef-498d-bd44-7a83985674bb
 # ╠═732ecfa0-b3a2-4892-81ef-334dee711a9c
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
+# ╟─2561b02a-0056-4564-ac78-9afef975eb5a
+# ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
