@@ -16,23 +16,23 @@ function Base.show(io::IO, cdf::Cdf)
 end
 
 """
-    get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T
+    getNameForPosterior(cdfDist::Cdf{T}, posterior::Float64)::T
 
     returns name from cdf.names that is >= posterior
 """
-function get_name_for_posterior(cdf_dist::Cdf{T}, posterior::Float64)::T where T
+function getNameForPosterior(cdfDist::Cdf{T}, posterior::Float64)::T where T
     @assert 0 <= posterior <= 1
-    return cdf_dist.names[findfirst(x -> x >= posterior, cdf_dist.posteriors)]
+    return cdfDist.names[findfirst(x -> x >= posterior, cdfDist.posteriors)]
 end
 
-function get_posterior_for_name(cdf_dist::Cdf{T}, name::T)::Float64 where T
-    return cdf_dist.posteriors[findfirst(x -> x == name, cdf_dist.names)]
+function getPosteriorForName(cdfDist::Cdf{T}, name::T)::Float64 where T
+    return cdfDist.posteriors[findfirst(x -> x == name, cdfDist.names)]
 end
 
-function get_credible_interval(cdf_dist::Cdf{T}, prob::Float64)::Vector{T} where T
+function getCredibleInterval(cdfDist::Cdf{T}, prob::Float64)::Vector{T} where T
     @assert 0 <= prob <= 1
     probs::Vector{Float64} = [0.5 - prob / 2, 0.5 + prob / 2]
-    return [get_name_for_posterior(cdf_dist, p) for p in probs]
+    return [getNameForPosterior(cdfDist, p) for p in probs]
 end
 
 """
@@ -40,12 +40,12 @@ end
 
     ---
     args:
-        n: Int, drawing n times from cdf_dist,
+        n: Int, drawing n times from cdfDist,
             returns cdf where cdf(x) prob. that all n of drawings are <= to x
 """
-function get_max_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
-    cdf_max_n::Vector{Float64} = cdf_dist.posteriors .^ n
-    return Cdf(cdf_dist.names, cdf_max_n)
+function getMaxCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where T
+    cdfMaxN::Vector{Float64} = cdfDist.posteriors .^ n
+    return Cdf(cdfDist.names, cdfMaxN)
 end
 
 """
@@ -53,17 +53,17 @@ end
 
     ---
     args:
-        n: Int, drawing n times from cdf_dist(x),
+        n: Int, drawing n times from cdfDist(x),
             returns cdf where cdf(x) prob. that all n of drawings are >= to x
 """
-function get_min_cdf_dist(cdf_dist::Cdf{T}, n::Int)::Cdf{T} where T
+function getMinCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where T
     # prob that a val from dist is greater than x
-    prob_gt::Vector{Float64} = 1 .- cdf_dist.posteriors
+    probGt::Vector{Float64} = 1 .- cdfDist.posteriors
     # prob that all n vals drawn from dist exceed x
     # (their min exceeds x)
-    prob_gt_n::Vector{Float64} = prob_gt .^ n
-    prob_le_n::Vector{Float64} = 1 .- prob_gt_n
-    return Cdf(cdf_dist.names, prob_le_n)
+    probGtN::Vector{Float64} = probGt .^ n
+    probLeN::Vector{Float64} = 1 .- probGtN
+    return Cdf(cdfDist.names, probLeN)
 end
 
 end
