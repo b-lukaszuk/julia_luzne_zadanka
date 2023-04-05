@@ -31,6 +31,7 @@ begin
 	import Distributions as dst
 	import Plots as plts
 	import PlutoUI
+	import Random as rnd
 end
 
 # ╔═╡ 732ecfa0-b3a2-4892-81ef-334dee711a9c
@@ -689,6 +690,36 @@ Doesn't this mean that I need to calculate:
 
 But following the hint and using `make_mixture` will get me P(6 dmg) no matter the dice (monster), after I get 1 dmg in first throw (after considering probability of each monster in first attack). So, that's why I stop here."
 
+# ╔═╡ 13f58198-6fce-4098-b64a-4fcdee753559
+md"### Exercise 3
+
+Henri Poincaré was a French mathematician who taught at the Sorbonne around 1900. The following anecdote about him is probably fiction, but it makes an interesting probability problem.
+
+Supposedly Poincaré suspected that his local bakery was selling loaves of bread that were lighter than the advertised weight of 1 kg, so every day for a year he bought a loaf of bread, brought it home and weighed it. At the end of the year, he plotted the distribution of his measurements and showed that it fit a normal distribution with mean 950 g and standard deviation 50 g. He brought this evidence to the bread police, who gave the baker a warning.
+
+For the next year, Poincaré continued to weigh his bread every day. At the end of the year, he found that the average weight was 1000 g, just as it should be, but again he complained to the bread police, and this time they fined the baker.
+
+Why? Because the shape of the new distribution was asymmetric. Unlike the normal distribution, it was skewed to the right, which is consistent with the hypothesis that the baker was still making 950 g loaves, but deliberately giving Poincaré the heavier ones.
+
+To see whether this anecdote is plausible, let’s suppose that when the baker sees Poincaré coming, he hefts n loaves of bread and gives Poincaré the heaviest one. How many loaves would the baker have to heft to make the average of the maximum 1000 g?
+
+To get you started, I’ll generate a year’s worth of data from a normal distribution with the given parameters.
+"
+
+# ╔═╡ acbd2e1e-e803-41b0-8271-19afeb688c6e
+begin
+	ex3_mean = 950
+	ex3_std = 50
+
+	# unlikely that it will work like np.random.seed(17) in Python
+	# but I will use it anyway
+	rnd.seed!(17)
+	ex3_sample = rand(dst.Normal(ex3_mean, ex3_std), 365)
+end;
+
+# ╔═╡ 342180b4-9861-4f63-9de2-ea18e83b0b28
+plts.histogram(ex3_sample, legend=false)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -696,6 +727,7 @@ DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 DataFrames = "~1.5.0"
@@ -710,7 +742,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "53c846a0030a33db60b694af787343f4d7c04cef"
+project_hash = "957acda0eab9c483f905214da2b3b72fe8168977"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1915,5 +1947,8 @@ version = "1.4.1+0"
 # ╠═9bb3994d-4808-49a4-97e4-1f6c893bece7
 # ╠═d61f135d-a6cf-4cce-9df7-f45f01f34f4f
 # ╟─c2bc5bab-01cd-4338-9c17-dc7e4770b667
+# ╟─13f58198-6fce-4098-b64a-4fcdee753559
+# ╠═acbd2e1e-e803-41b0-8271-19afeb688c6e
+# ╠═342180b4-9861-4f63-9de2-ea18e83b0b28
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
