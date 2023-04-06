@@ -1,4 +1,4 @@
-module ProbabilityMassFunction
+module ProbabilityMassFunctions
 
 import DataFrames as pd
 import Distributions as dst

@@ -1,4 +1,4 @@
-module CumulativeProbability
+module CumulativeProbabilityFunctions
 
 mutable struct Cdf{T}
     names::Vector{T}

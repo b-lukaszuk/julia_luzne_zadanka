@@ -1,10 +1,10 @@
 module EmpiricalDistributions
 
 include("./pmf.jl")
-import .ProbabilityMassFunction as pmf
+import .ProbabilityMassFunctions as pmf
 
 include("./cdf.jl")
-import .CumulativeProbability as cdf
+import .CumulativeProbabilityFunctions as cdf
 
 function mkPmfFromCdf(cdfDist::cdf.Cdf{T})::pmf.Pmf{T} where T
     diffs::Vector{Float64} = diff(cdfDist.posteriors)
