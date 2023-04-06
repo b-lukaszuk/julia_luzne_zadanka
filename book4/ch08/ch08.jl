@@ -6,12 +6,8 @@ using InteractiveUtils
 
 # ╔═╡ e59f34b1-44ef-498d-bd44-7a83985674bb
 begin
-	include("./cdf.jl")
-	import .CumulativeProbability as cdf
 	include("./empiricaldist.jl")
-	import .EmpiricalDistributions as ed
-	include("./pmf.jl")
-	import .ProbabilityMassFunction as pmf
+	import .EmpiricalDistributions: EmpiricalDistributions as ed, pmf, cdf
 	include("./simplestat.jl")
 	import .SimpleStatistics as ss
 end
@@ -43,6 +39,18 @@ PlutoUI.TableOfContents(depth=4)
 # ╔═╡ 5da35a4b-bc8c-412c-89c8-16e46fd7f067
 md"""## Code from chapter"""
 
+# ╔═╡ cf45aded-b08f-45f7-adbd-36ed2a8366f0
+md"### Functionality developed in Chapter 8"
+
+# ╔═╡ d631d658-8878-46f7-ba28-da53cc924108
+function mkPoissonPmf(lam::Float64, qs::Vector{T})::pmf.Pmf{T} where T<:Union{Int, Float64}
+	@assert lam >= 0
+	ps::Vector{Float64} = dst.pdf.(dst.Poisson(lam), qs)
+	pmfDist::pmf.Pmf{T} = pmf.Pmf(qs, ps)
+	pmfDist.priors = pmfDist.priors ./ sum(pmfDist.priors)
+	return pmfDist
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -59,6 +67,49 @@ To answer these questions, we have to make some modeling decisions.
 - First, I’ll assume that for any team against another team there is some unknown goal-scoring rate, measured in goals per game, which I’ll denote with the Python variable `lam` or the Greek letter $\lambda$, pronounced “lambda”.
 - Second, I’ll assume that a goal is equally likely during any minute of a game. So, in a 90 minute game, the probability of scoring during any minute is $\lambda / 90$.
 - Third, I’ll assume that a team never scores twice during the same minute."
+
+# ╔═╡ 61fa6a56-6078-4ce7-9e40-a8fc682289e9
+md"### The Poisson Distribution
+
+If the number of goals scored in a game follows a [Poisson distribution](https://en.wikipedia.org/wiki/Poisson_distribution) with a goal-scoring rate, $\lambda$, the probability of scoring `k` goals is:
+
+$\lambda^k exp(-\lambda) / k!$
+
+for any non-negative value of `k`.
+
+We can create one with $\lambda = 1.4$ like this:
+"
+
+# ╔═╡ ad0f914f-bd86-49f0-9e99-1d4f4dc5eb87
+begin
+	lam1 = 1.4
+	dist1 = dst.Poisson(lam1)
+	k1 = 4
+	dst.pdf(dist1, k1)
+end
+
+# ╔═╡ d1ee5193-ac2d-4f0c-9e45-786ebc5d1694
+md"This result implies that if the average goal-scoring rate is 1.4 goals per game, the probability of scoring 4 goals in a game is about 4%.
+
+Here (see above: 'Functionality developed in Chapter 8') we developed `mk_poisson_pmf`. For example, here's the distribution of goals scored for `lam=1.4`, computed for values of `k` from 0 to 9.
+"
+
+# ╔═╡ c1f2cc16-efc4-4579-ad55-4cbeb55624ab
+begin
+	pmfGoals1 = mkPoissonPmf(lam1, collect(0:9))
+	plts.bar(pmfGoals1.names, pmfGoals1.priors, label="Poisson distribution with λ = 1.4")
+	plts.title!("Distribution of goals scoared")
+	plts.xlabel!("Number of goals")
+	plts.ylabel!("PMF")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ adf13c77-88d3-4753-970b-793aebddf101
+md"The most likely outcomes are 0, 1, and 2; higher values are possible but increasingly unlikely. Values above 7 are negligible. This distribution shows that if we know the goal scoring rate, we can predict the number of goals.
+
+Now let’s turn it around: given a number of goals, what can we say about the goal-scoring rate?
+
+To answer that, we need to think about the prior distribution of `lam`, which represents the range of possible values and their probabilities before we see the score."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1190,7 +1241,14 @@ version = "1.4.1+0"
 # ╠═e59f34b1-44ef-498d-bd44-7a83985674bb
 # ╠═732ecfa0-b3a2-4892-81ef-334dee711a9c
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
+# ╟─cf45aded-b08f-45f7-adbd-36ed2a8366f0
+# ╠═d631d658-8878-46f7-ba28-da53cc924108
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
+# ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
+# ╠═ad0f914f-bd86-49f0-9e99-1d4f4dc5eb87
+# ╟─d1ee5193-ac2d-4f0c-9e45-786ebc5d1694
+# ╠═c1f2cc16-efc4-4579-ad55-4cbeb55624ab
+# ╟─adf13c77-88d3-4753-970b-793aebddf101
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
