@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -57,6 +57,19 @@ function updatePoisson!(pmfDist::pmf.Pmf{A}, k::B) where {A, B<:Union{Int, Float
 	likelihoods::Vector{Float64} = dst.pdf.(dst.Poisson.(lams), k)
 	pmf.updateLikelihoods!(pmfDist, likelihoods)
 	pmf.calculatePosteriors!(pmfDist)
+end
+
+# ╔═╡ 709fc66d-b41c-41c8-aa3c-23ffc2799f1d
+function getProbPmf1GtPmf2(pmf1::pmf.Pmf{A}, pmf2::pmf.Pmf{B}, usePriors::Bool=false)::Float64 where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	total::Float64 = 0
+	for (n1, p1) in zip(pmf1.names, usePriors ? pmf1.priors : pmf1.posteriors)
+		for (n2, p2) in zip(pmf2.names, usePriors ? pmf2.priors : pmf2.posteriors)
+			if n1 > n2
+				total += p1 * p2
+			end
+		end
+	end
+	return total
 end
 
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
@@ -202,6 +215,27 @@ end
 
 # ╔═╡ 53188411-8fcb-4460-9930-a0e62b92c650
 md"Average number of goals for Croatia and Frande, after updating for 2 and 4 goals, respectively = $(round(pmf.getMean(croatia1), digits=3), round(pmf.getMean(france1), digits=2))"
+
+# ╔═╡ a784eec3-c7c2-4d17-9b50-0ecccbe56979
+md"### Probability of Superiority
+
+How confident should we be that France is the better team?
+
+In the model, “better” means having a higher goal-scoring rate against the opponent. We can use the posterior distributions to compute the probability that a random value drawn from France’s distribution exceeds a value drawn from Croatia’s.
+
+One way to do that is to enumerate all pairs of values from the two distributions, adding up the total probability that one value exceeds the other (see: `getProbPmf1GtPmf2` from 'Functionality developed in Chapter 8' above).
+"
+
+# ╔═╡ 1e55aa63-5df0-43ea-8506-88a1ec39ce75
+getProbPmf1GtPmf2(france1, croatia1)
+
+# ╔═╡ 88a6f328-043f-4f57-ad57-4ecae4d60762
+md"The result is close to 75%. So, on the basis of one game, we have moderate confidence that France is actually the better team.
+
+Of course, we should remember that this result is based on the assumption that the goal-scoring rate is constant. In reality, if a team is down by one goal, they might play more aggressively toward the end of the game, making them more likely to score, but also more likely to give up an additional goal.
+
+As always, the results are only as good as the model.
+"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1336,6 +1370,7 @@ version = "1.4.1+0"
 # ╟─cf45aded-b08f-45f7-adbd-36ed2a8366f0
 # ╠═d631d658-8878-46f7-ba28-da53cc924108
 # ╠═ee051a16-416c-4f80-bfcc-60412eecb750
+# ╠═709fc66d-b41c-41c8-aa3c-23ffc2799f1d
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1353,5 +1388,8 @@ version = "1.4.1+0"
 # ╟─b99ffdb9-ecf1-4436-adf1-fc52c673c426
 # ╠═8216cc38-c389-49fd-b3de-7a8c7b2b20b1
 # ╟─53188411-8fcb-4460-9930-a0e62b92c650
+# ╟─a784eec3-c7c2-4d17-9b50-0ecccbe56979
+# ╠═1e55aa63-5df0-43ea-8506-88a1ec39ce75
+# ╟─88a6f328-043f-4f57-ad57-4ecae4d60762
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
