@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.19
 
 using Markdown
 using InteractiveUtils
@@ -110,6 +110,46 @@ md"The most likely outcomes are 0, 1, and 2; higher values are possible but incr
 Now let’s turn it around: given a number of goals, what can we say about the goal-scoring rate?
 
 To answer that, we need to think about the prior distribution of `lam`, which represents the range of possible values and their probabilities before we see the score."
+
+# ╔═╡ 00a24dec-3d4c-493a-99d1-b15ebff5714a
+md"### The Gamma Distribution
+
+In most games, teams score a few goals each. In rare cases, a team might score more than 5 goals, but they almost never score more than 10.
+
+Using [data from previous World Cups](https://www.statista.com/statistics/269031/goals-scored-per-game-at-the-fifa-world-cup-since-1930/), I (AD) estimate that each team scores about 1.4 goals per game, on average. So I’ll set the mean of `lam` to be 1.4.
+
+For a good team against a bad one, we expect `lam` to be higher; for a bad team against a good one, we expect it to be lower.
+
+To model the distribution of goal-scoring rates, I’ll (AD) use a [gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution), which I chose because:
+- The goal scoring rate is continuous and non-negative, and the gamma distribution is appropriate for this kind of quantity.
+- The gamma distribution has only one parameter, `alpha`, which is the mean. So it’s easy to construct a gamma distribution with the mean we want.
+- As we’ll see, the shape of the gamma distribution is a reasonable choice, given what we know about soccer.
+"
+
+# ╔═╡ a01d7fd7-8b63-499d-a14b-e8d70d8005e1
+begin
+	alpha1 = 1.4 # mean of the distribution
+	qs1 = collect(range(0, 10, 101)) # possible values of lam betw 0 and 10
+	ps1 = dst.pdf.(dst.Gamma(alpha1), qs1) # probability densities
+end;
+
+# ╔═╡ 0d508ddc-03f9-4411-9625-de45b40f0c97
+begin
+	priors1 = pmf.Pmf(qs1, ps1)
+	priors1.priors = ps1 ./ sum(ps1)
+end;
+
+# ╔═╡ 622c5054-0768-4be4-b3c5-0e6384994d88
+begin
+	pmf.drawPriors(priors1, "Prior distribution of λ",
+		"Goal scoring rate (lam)", "PMF", "prior")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ f451aac5-dcb2-4e0e-a5ca-cad468468192
+md"This distribution represents our prior knowledge about goal scoring: `lam` is usually less than 2, occasionally as high as 6, and seldom higher than that. Also the mean is equal to: pmf.getMean(priors1, true) = $(round(pmf.getMean(priors1, true), digits=2)).
+
+Now, Let's do an update."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -318,9 +358,9 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "7072f1e3e5a8be51d525d64f63d3ec1287ff2790"
+git-tree-sha1 = "0ba171480d51567ba337e5eea4e68a8231b7a2c3"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "0.13.11"
+version = "0.13.10"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -410,10 +450,10 @@ uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
 
 [[deps.HypergeometricFunctions]]
-deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions"]
-git-tree-sha1 = "6de59b37a1d330bdd766610fe751fed605170dc4"
+deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions", "Test"]
+git-tree-sha1 = "709d864e3ed6e3545230601f94e11ebc65994641"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
-version = "0.3.13"
+version = "0.3.11"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -911,9 +951,9 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "45a7769a04a3cf80da1c1c7c60caf932e6f4c9f7"
+git-tree-sha1 = "f9af7f195fb13589dd2e2d57fdb401717d2eb1f6"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.6.0"
+version = "1.5.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
@@ -975,9 +1015,9 @@ uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.9.11"
 
 [[deps.Tricks]]
-git-tree-sha1 = "aadb748be58b492045b4f56166b5188aa63ce549"
+git-tree-sha1 = "6bac775f2d42a611cdfcd1fb217ee719630c4175"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.7"
+version = "0.1.6"
 
 [[deps.URIs]]
 git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
@@ -1250,5 +1290,10 @@ version = "1.4.1+0"
 # ╟─d1ee5193-ac2d-4f0c-9e45-786ebc5d1694
 # ╠═c1f2cc16-efc4-4579-ad55-4cbeb55624ab
 # ╟─adf13c77-88d3-4753-970b-793aebddf101
+# ╟─00a24dec-3d4c-493a-99d1-b15ebff5714a
+# ╠═a01d7fd7-8b63-499d-a14b-e8d70d8005e1
+# ╠═0d508ddc-03f9-4411-9625-de45b40f0c97
+# ╠═622c5054-0768-4be4-b3c5-0e6384994d88
+# ╟─f451aac5-dcb2-4e0e-a5ca-cad468468192
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
