@@ -193,8 +193,8 @@ function drawPriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, labe
     plts.ylabel!(ylab)
 end
 
-function getMean(pmf::Pmf{<:Union{Int,Float64}}, priors::Bool=false)::Float64
-    return priors ? sum(pmf.priors .* pmf.names) : sum(pmf.posteriors .* pmf.names)
+function getMean(pmf::Pmf{<:Union{Int,Float64}}, usePriors::Bool=false)::Float64
+    return usePriors ? sum(pmf.priors .* pmf.names) : sum(pmf.posteriors .* pmf.names)
 end
 
 function getNameForQuantile(pmf::Pmf{<:Union{Int,Float64}},
