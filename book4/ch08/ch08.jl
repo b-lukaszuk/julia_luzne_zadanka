@@ -51,6 +51,14 @@ function mkPoissonPmf(lam::Float64, qs::Vector{T})::pmf.Pmf{T} where T<:Union{In
 	return pmfDist
 end
 
+# ╔═╡ ee051a16-416c-4f80-bfcc-60412eecb750
+function updatePoisson!(pmfDist::pmf.Pmf{A}, k::B) where {A, B<:Union{Int, Float64}}
+	lams::Vector{A} = pmfDist.names
+	likelihoods::Vector{Float64} = dst.pdf.(dst.Poisson.(lams), k)
+	pmf.updateLikelihoods!(pmfDist, likelihoods)
+	pmf.calculatePosteriors!(pmfDist)
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -150,6 +158,50 @@ end
 md"This distribution represents our prior knowledge about goal scoring: `lam` is usually less than 2, occasionally as high as 6, and seldom higher than that. Also the mean is equal to: pmf.getMean(priors1, true) = $(round(pmf.getMean(priors1, true), digits=2)).
 
 Now, Let's do an update."
+
+# ╔═╡ 33574238-10d4-4312-9427-fc6d3d0e43b1
+md"### The Update
+
+For example, if $\lambda$ is 1.4, the probability of scoring 4 goals in a game is:
+
+`dst.pdf(dst.Poisson(1.4), 4) =` $(dst.pdf(dst.Poisson(1.4), 4))
+
+Now suppose we are have an array of possible values for $\lambda$; we can compute the likelihood of the data for each hypothetical value of lam, like this:
+
+`likelihood = dst.pdf.(dst.Poisson.(lams), k)`
+
+And that’s all we need to do the update. To get the posterior distribution, we multiply the prior by the likelihoods we just computed and normalize the result (see `updatePoisson` in the section 'Functionality developed in Chapter 8').
+
+In ouf example, France scored 4 goals, so:
+"
+
+# ╔═╡ 3fa9f8fd-ccf2-490d-ba63-6ddd7566a188
+begin
+	france1 = pmf.Pmf(priors1.names, priors1.priors)
+	updatePoisson!(france1, 4)
+	pmf.drawPriors(priors1, "Prior distribution of λ",
+			"Goal scoring rate (lam)", "PMF", "prior")
+	plts.plot!(france1.names, france1.posteriors, label="France posterior")
+	plts.title!("Posterior distribution for France")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ b99ffdb9-ecf1-4436-adf1-fc52c673c426
+md"We can do he same for Croatia"
+
+# ╔═╡ 8216cc38-c389-49fd-b3de-7a8c7b2b20b1
+begin
+	croatia1 = pmf.Pmf(priors1.names, priors1.priors)
+	updatePoisson!(croatia1, 2)
+	pmf.drawPriors(priors1, "Prior distribution of λ",
+				"Goal scoring rate (lam)", "PMF", "prior")
+	plts.plot!(croatia1.names, croatia1.posteriors, label="Croatia posterior")
+	plts.title!("Posterior distribution for Croatia")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ 53188411-8fcb-4460-9930-a0e62b92c650
+md"Average number of goals for Croatia and Frande, after updating for 2 and 4 goals, respectively = $(round(pmf.getMean(croatia1), digits=3), round(pmf.getMean(france1), digits=2))"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1283,6 +1335,7 @@ version = "1.4.1+0"
 # ╟─5da35a4b-bc8c-412c-89c8-16e46fd7f067
 # ╟─cf45aded-b08f-45f7-adbd-36ed2a8366f0
 # ╠═d631d658-8878-46f7-ba28-da53cc924108
+# ╠═ee051a16-416c-4f80-bfcc-60412eecb750
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1295,5 +1348,10 @@ version = "1.4.1+0"
 # ╠═0d508ddc-03f9-4411-9625-de45b40f0c97
 # ╠═622c5054-0768-4be4-b3c5-0e6384994d88
 # ╟─f451aac5-dcb2-4e0e-a5ca-cad468468192
+# ╟─33574238-10d4-4312-9427-fc6d3d0e43b1
+# ╠═3fa9f8fd-ccf2-490d-ba63-6ddd7566a188
+# ╟─b99ffdb9-ecf1-4436-adf1-fc52c673c426
+# ╠═8216cc38-c389-49fd-b3de-7a8c7b2b20b1
+# ╟─53188411-8fcb-4460-9930-a0e62b92c650
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
