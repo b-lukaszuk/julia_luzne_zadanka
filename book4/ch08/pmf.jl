@@ -288,6 +288,10 @@ function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return convolveDist(pmf1, pmf2, *)
 end
 
+function padVect(vect::Vector{T}, final_len::Int, fill::Number=0)::Vector{T} where {T<:Union{Int,Float64}}
+    return [get(vect, i, fill) for i in 1:final_len]
+end
+
 """mkMixture(pmfDist::Pmf{Int}, pmfSeq::Vector{Pmf{Int}})::Pmf{Int}
 
     Make a mixture of distributions.
@@ -298,16 +302,16 @@ end
         pmfDist: probs of getting a dist in pmfSeq (names and priors)
         pmfSeq: pmfDists and their probs (priors), names betw seqs should overlap
     """
-function mkMixture(pmfDist::Pmf{Int}, pmfSeq::Vector{Pmf{Int}})::Pmf{Int}
+function mkMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}})::Pmf{B} where {A<:Union{Int,Float64},B<:Union{Int,Float64}}
     maxLen::Int = max([length(p.names) for p in pmfSeq]...)
-    names::Vector{Int} = [p.names for p in pmfSeq if length(p.names) == maxLen][1]
-    pmfsNamesAndPriors::Dict{Int, Vector{Float64}} = Dict(
+    names::Vector{B} = [p.names for p in pmfSeq if length(p.names) == maxLen][1]
+    pmfsNamesAndPriors::Dict{A,Vector{Float64}} = Dict(
         pmfDist.names[i] => padVect(s.priors, maxLen) for (i, s) in enumerate(pmfSeq))
-    pmfsNamesAndPosteriors::Dict{Int, Vector{Float64}} = Dict(
+    pmfsNamesAndPosteriors::Dict{A,Vector{Float64}} = Dict(
         k => v .* getPrior(pmfDist, k) for (k, v) in pmfsNamesAndPriors)
     df::pd.DataFrame = pd.DataFrame(
         Dict(string(k) => v for (k, v) in pmfsNamesAndPosteriors))
-    mixProbs::Vector{Float64} = (df |> Matrix |> x -> sum(x, dims=2))[:, 1]
+    mixProbs::Vector{Float64} = (df|>Matrix|>x->sum(x, dims=2))[:, 1]
     return Pmf(names, mixProbs)
 end
 
