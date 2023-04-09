@@ -72,6 +72,18 @@ function getProbPmf1GtPmf2(pmf1::pmf.Pmf{A}, pmf2::pmf.Pmf{B}, usePriors::Bool=f
 	return total
 end
 
+# ╔═╡ d279b142-1275-47a8-94e3-cc7f8dbcd431
+function getProbPmf1LtPmf2(pmf1::pmf.Pmf{A}, pmf2::pmf.Pmf{B}, usePriors::Bool=false)::Float64 where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	return getProbPmf1GtPmf2(pmf2, pmf1, usePriors)
+end
+
+# ╔═╡ d9aa6359-fc3f-4e1f-9676-52645715b756
+function getProbPmf1EqPmf2(pmf1::pmf.Pmf{A}, pmf2::pmf.Pmf{B}, usePriors::Bool=false)::Float64 where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	return (1 -
+		getProbPmf1GtPmf2(pmf1, pmf2, usePriors) -
+		getProbPmf1LtPmf2(pmf1, pmf2, usePriors))
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -236,6 +248,107 @@ Of course, we should remember that this result is based on the assumption that t
 
 As always, the results are only as good as the model.
 "
+
+# ╔═╡ b560e20c-0bf3-43b0-a73e-b66852974df1
+md"### Predicting the Rematch
+
+Now we can take on the second question: If the same teams played again, what is the chance Croatia would win? To answer this question, we’ll generate the “posterior predictive distribution”, which is the number of goals we expect a team to score.
+
+If we knew the goal scoring rate, `lam`, the distribution of goals would be a Poisson distribution with parameter lam. Since we don’t know `lam`, the distribution of goals is a mixture of a Poisson distributions with different values of `lam`.
+
+First I’ll (AD) generate a sequence of `Pmf` objects, one for each value of `lam`.
+"
+
+# ╔═╡ e01fb30d-636a-43f5-b653-93c5c49bb7fd
+pmfSeq1 = [mkPoissonPmf(lam, collect(0:9)) for lam in priors1.names];
+
+# ╔═╡ 06dac7f5-1f43-45d2-8eb9-87c67ab9533c
+begin
+	lambdas2idsOfPmfs = Dict{Int, Int}()
+	for i in 1:4
+		lambdas2idsOfPmfs[i] = findfirst(x -> x == i, priors1.names)
+	end
+end
+
+# ╔═╡ ace75e46-6289-4cba-8804-a16d0f6aa3e9
+begin
+	pmfLams2Inds = Dict(i => findfirst(x -> x == i, priors1.names) for i in 1:4)
+	pmfInds = sort(collect(values(pmfLams2Inds)))
+end
+
+# ╔═╡ 8a664f44-4941-4780-9e4b-9b274cec19b7
+begin
+	p = plts.plot(layout=(2, 2))
+	for i in 1:4
+		tmpInd = pmfLams2Inds[i]
+		plts.bar!(pmfSeq1[tmpInd].names, pmfSeq1[tmpInd].priors,
+			subplot=i, label="λ = $i", ylabel="PMF", xlabel="Number of goals",
+			xticks=0:10)
+	end
+	p
+end
+
+# ╔═╡ c3fa70be-092d-46c3-8c56-72dbf9ccf7ad
+md"The predictive distribution is a mixture of these `Pmf` objects, weighted with the posterior probabilities. We can use `make_mixture` from 'GeneralMixtures' (see Chapter 7) to compute this mixture."
+
+# ╔═╡ 2ec4039b-27a2-4c64-8f97-8fe4e8080f9a
+# strange, the distribution is different than the one presented by the author (AD)
+predFrance1 = pmf.mkMixture(france1, pmfSeq1);
+
+# ╔═╡ 3c8d2c4e-f94f-4077-9c60-b21186cc685d
+# strange, the distribution is different than the one presented by the author (AD)
+begin
+	plts.bar(predFrance1.names, predFrance1.priors, label="France")
+	plts.title!("Posterior predictive distribution")
+	plts.ylabel!("PMF")
+	plts.xlabel!("Number of goals")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ c5b95b6e-283c-4c52-8b0e-86f3fb5d6d43
+md"This distribution represents two sources of uncertainty: we don’t know the actual value of `lam`, and even if we did, we would not know the number of goals in the next game.
+
+Here's the predictive distribution for Croatia"
+
+# ╔═╡ 812ec246-2bd2-40d9-8c75-38c9cf823599
+# strange, the distribution is different than the one presented by the author (AD)
+#  it is also (virtually) the same as in predFrance1
+predCroatia1 = pmf.mkMixture(croatia1, pmfSeq1);
+
+# ╔═╡ c9f5648a-80fa-428c-af01-adc607baaaae
+# strange, the distribution is different than the one presented by the author (AD)
+begin
+	plts.bar(predCroatia1.names, predCroatia1.priors, label="Croatia")
+	plts.title!("Posterior predictive distribution")
+	plts.ylabel!("PMF")
+	plts.xlabel!("Number of goals")
+	plts.xticks!(0:10)
+end
+
+# ╔═╡ c9347e45-67de-4bea-ba58-99a6ed6d2ba9
+md"We can use these distributions to compute the probability that france wins, loses, or ties the rematch."
+
+# ╔═╡ 50833ed2-bde9-4ed5-b7af-e51a8f2502c4
+# strange, the probability is different than the one presented by the author (AD)
+franceWin1 = getProbPmf1GtPmf2(predFrance1, predCroatia1, true)
+
+# ╔═╡ 4d14fb10-86ba-4f88-b635-78c347d36bf9
+# strange, the probability is different than the one presented by the author (AD)
+franceLose1 = getProbPmf1LtPmf2(predFrance1, predCroatia1, true)
+
+# ╔═╡ 5a96c131-851b-44f0-8dd8-544736e3e322
+# strange, the probability is different than the one presented by the author (AD)
+franceTie1 = getProbPmf1EqPmf2(predFrance1, predCroatia1, true)
+
+# ╔═╡ cda10d30-10e8-4364-a479-f817eafce3f3
+md"Assuming that France wins half of the ties, their chance of winning the rematch is about 65%."
+
+# ╔═╡ 4cdc6f43-9e68-4c1e-8546-52e135c53442
+# strange, the probability is different than the one presented by the author (AD)
+franceWin1 + franceTie1/2
+
+# ╔═╡ a32f2ee2-e227-4e32-8a07-3600cc553303
+md"This is a bit lower than their probability of superiority, which is 75%. And that makes sense, because we are less certain about the outcome of a single game than we are about the goal-scoring rates. Even if France is the better team, they might lose the game."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1371,6 +1484,8 @@ version = "1.4.1+0"
 # ╠═d631d658-8878-46f7-ba28-da53cc924108
 # ╠═ee051a16-416c-4f80-bfcc-60412eecb750
 # ╠═709fc66d-b41c-41c8-aa3c-23ffc2799f1d
+# ╠═d279b142-1275-47a8-94e3-cc7f8dbcd431
+# ╠═d9aa6359-fc3f-4e1f-9676-52645715b756
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1391,5 +1506,23 @@ version = "1.4.1+0"
 # ╟─a784eec3-c7c2-4d17-9b50-0ecccbe56979
 # ╠═1e55aa63-5df0-43ea-8506-88a1ec39ce75
 # ╟─88a6f328-043f-4f57-ad57-4ecae4d60762
+# ╟─b560e20c-0bf3-43b0-a73e-b66852974df1
+# ╠═e01fb30d-636a-43f5-b653-93c5c49bb7fd
+# ╠═06dac7f5-1f43-45d2-8eb9-87c67ab9533c
+# ╠═ace75e46-6289-4cba-8804-a16d0f6aa3e9
+# ╠═8a664f44-4941-4780-9e4b-9b274cec19b7
+# ╟─c3fa70be-092d-46c3-8c56-72dbf9ccf7ad
+# ╠═2ec4039b-27a2-4c64-8f97-8fe4e8080f9a
+# ╠═3c8d2c4e-f94f-4077-9c60-b21186cc685d
+# ╟─c5b95b6e-283c-4c52-8b0e-86f3fb5d6d43
+# ╠═812ec246-2bd2-40d9-8c75-38c9cf823599
+# ╠═c9f5648a-80fa-428c-af01-adc607baaaae
+# ╟─c9347e45-67de-4bea-ba58-99a6ed6d2ba9
+# ╠═50833ed2-bde9-4ed5-b7af-e51a8f2502c4
+# ╠═4d14fb10-86ba-4f88-b635-78c347d36bf9
+# ╠═5a96c131-851b-44f0-8dd8-544736e3e322
+# ╟─cda10d30-10e8-4364-a479-f817eafce3f3
+# ╠═4cdc6f43-9e68-4c1e-8546-52e135c53442
+# ╟─a32f2ee2-e227-4e32-8a07-3600cc553303
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
