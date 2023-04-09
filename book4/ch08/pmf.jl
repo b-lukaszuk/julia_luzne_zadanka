@@ -288,19 +288,25 @@ function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return convolveDist(pmf1, pmf2, *)
 end
 
-function padVect(vect::Vector{T}, final_len::Int, fill::Number=0)::Vector{T} where {T<:Union{Int,Float64}}
-    return [get(vect, i, fill) for i in 1:final_len]
+function padVect(vect::Vector{Int}, finalLen::Int, fill::Int=0)::Vector{Int}
+    return [get(vect, i, fill) for i in 1:finalLen]
 end
 
-"""mkMixture(pmfDist::Pmf{Int}, pmfSeq::Vector{Pmf{Int}})::Pmf{Int}
+function padVect(vect::Vector{Float64}, finalLen::Int, fill::Float64=0.0)::Vector{Float64}
+    return [get(vect, i, fill) for i in 1:finalLen]
+end
+
+"""mkMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}})::Pmf{B} where {A<:Union{Int,Float64},B<:Union{Int,Float64}}
 
     Make a mixture of distributions.
 
     ---
     args:
 
-        pmfDist: probs of getting a dist in pmfSeq (names and priors)
-        pmfSeq: pmfDists and their probs (priors), names betw seqs should overlap
+        pmfDist: probs (in priors) of getting a dist in pmfSeq,
+                 e.g. pmfDist.priors[1] for pmfSeq[1], pmfDist.priors[2] for pmfSeq[2], etc.
+        pmfSeq: pmfDists and their probs (priors), names betw seqs should overlap (sorted order),
+                with longest seq containing them all
     """
 function mkMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}})::Pmf{B} where {A<:Union{Int,Float64},B<:Union{Int,Float64}}
     maxLen::Int = max([length(p.names) for p in pmfSeq]...)
@@ -313,6 +319,19 @@ function mkMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}})::Pmf{B} where {A<:Un
         Dict(string(k) => v for (k, v) in pmfsNamesAndPosteriors))
     mixProbs::Vector{Float64} = (df|>Matrix|>x->sum(x, dims=2))[:, 1]
     return Pmf(names, mixProbs)
+end
+
+function mkMixture2(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}}) where {A<:Union{Int,Float64},B<:Union{Int,Float64}}
+    maxLen::Int = max([length(p.names) for p in pmfSeq]...)
+    names::Vector{B} = [p.names for p in pmfSeq if length(p.names) == maxLen][1]
+    pmfsNamesAndLikelihoods::Dict{Symbol,Vector{Float64}} = Dict(
+        Symbol(pmfDist.names[i]) => padVect(s.priors, maxLen) for (i, s) in enumerate(pmfSeq))
+    likes::pd.DataFrame = pd.DataFrame(pmfsNamesAndLikelihoods)
+    pmfsNamesAndPosteriors::pd.DataFrame = pd.select(
+        likes,
+        pd.names(likes) .=> [x -> x .* y for y in pmfDist.priors] .=> identity)
+    mixProbs::Vector{Float64} = (pmfsNamesAndPosteriors|>Matrix|>x->sum(x, dims=2))[:, 1]
+    return Pmf(names, mixProbs ./ sum(mixProbs))
 end
 
 end
