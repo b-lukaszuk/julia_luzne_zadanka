@@ -298,7 +298,7 @@ end
 md"The predictive distribution is a mixture of these `Pmf` objects, weighted with the posterior probabilities. We can use `make_mixture` from 'GeneralMixtures' (see Chapter 7) to compute this mixture."
 
 # ╔═╡ 2ec4039b-27a2-4c64-8f97-8fe4e8080f9a
-predFrance1 = pmf.mkMixture(france1, pmfSeq1);
+predFrance1 = pmf.mkMixture(france1, pmfSeq1, true);
 
 # ╔═╡ 3c8d2c4e-f94f-4077-9c60-b21186cc685d
 begin
@@ -315,7 +315,7 @@ md"This distribution represents two sources of uncertainty: we don’t know the 
 Here's the predictive distribution for Croatia"
 
 # ╔═╡ 812ec246-2bd2-40d9-8c75-38c9cf823599
-predCroatia1 = pmf.mkMixture(croatia1, pmfSeq1);
+predCroatia1 = pmf.mkMixture(croatia1, pmfSeq1, true);
 
 # ╔═╡ c9f5648a-80fa-428c-af01-adc607baaaae
 begin
