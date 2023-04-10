@@ -52,11 +52,17 @@ function mkPoissonPmf(lam::Float64, qs::Vector{T})::pmf.Pmf{T} where T<:Union{In
 end
 
 # ╔═╡ ee051a16-416c-4f80-bfcc-60412eecb750
-function updatePoisson!(pmfDist::pmf.Pmf{A}, k::B) where {A, B<:Union{Int, Float64}}
+function updatePoisson!(pmfDist::pmf.Pmf{A}, k::B,
+updatePriors::Bool = false) where {A, B<:Union{Int, Float64}}
 	lams::Vector{A} = pmfDist.names
 	likelihoods::Vector{Float64} = dst.pdf.(dst.Poisson.(lams), k)
-	pmf.updateLikelihoods!(pmfDist, likelihoods)
-	pmf.calculatePosteriors!(pmfDist)
+	if updatePriors
+		pmfDist.priors = pmfDist.priors .* likelihoods
+		pmfDist.priors = pmfDist.priors ./ sum(pmfDist.priors)
+	else
+		pmf.updateLikelihoods!(pmfDist, likelihoods)
+		pmf.calculatePosteriors!(pmfDist)
+	end
 end
 
 # ╔═╡ 709fc66d-b41c-41c8-aa3c-23ffc2799f1d
@@ -203,10 +209,10 @@ In ouf example, France scored 4 goals, so:
 # ╔═╡ 3fa9f8fd-ccf2-490d-ba63-6ddd7566a188
 begin
 	france1 = pmf.Pmf(priors1.names, priors1.priors)
-	updatePoisson!(france1, 4)
+	updatePoisson!(france1, 4, true)
 	pmf.drawPriors(priors1, "Prior distribution of λ",
 			"Goal scoring rate (lam)", "PMF", "prior")
-	plts.plot!(france1.names, france1.posteriors, label="France posterior")
+	plts.plot!(france1.names, france1.priors, label="France posterior")
 	plts.title!("Posterior distribution for France")
 	plts.xticks!(0:10)
 end
@@ -217,16 +223,16 @@ md"We can do he same for Croatia"
 # ╔═╡ 8216cc38-c389-49fd-b3de-7a8c7b2b20b1
 begin
 	croatia1 = pmf.Pmf(priors1.names, priors1.priors)
-	updatePoisson!(croatia1, 2)
+	updatePoisson!(croatia1, 2, true)
 	pmf.drawPriors(priors1, "Prior distribution of λ",
 				"Goal scoring rate (lam)", "PMF", "prior")
-	plts.plot!(croatia1.names, croatia1.posteriors, label="Croatia posterior")
+	plts.plot!(croatia1.names, croatia1.priors, label="Croatia posterior")
 	plts.title!("Posterior distribution for Croatia")
 	plts.xticks!(0:10)
 end
 
 # ╔═╡ 53188411-8fcb-4460-9930-a0e62b92c650
-md"Average number of goals for Croatia and Frande, after updating for 2 and 4 goals, respectively = $(round(pmf.getMean(croatia1), digits=3), round(pmf.getMean(france1), digits=2))"
+md"Average number of goals for Croatia and Frande, after updating for 2 and 4 goals, respectively = $(round(pmf.getMean(croatia1, true), digits=3), round(pmf.getMean(france1, true), digits=2))"
 
 # ╔═╡ a784eec3-c7c2-4d17-9b50-0ecccbe56979
 md"### Probability of Superiority
@@ -239,7 +245,7 @@ One way to do that is to enumerate all pairs of values from the two distribution
 "
 
 # ╔═╡ 1e55aa63-5df0-43ea-8506-88a1ec39ce75
-getProbPmf1GtPmf2(france1, croatia1)
+getProbPmf1GtPmf2(france1, croatia1, true)
 
 # ╔═╡ 88a6f328-043f-4f57-ad57-4ecae4d60762
 md"The result is close to 75%. So, on the basis of one game, we have moderate confidence that France is actually the better team.
@@ -274,7 +280,7 @@ end
 begin
 	pmfLams2Inds = Dict(i => findfirst(x -> x == i, priors1.names) for i in 1:4)
 	pmfInds = sort(collect(values(pmfLams2Inds)))
-end
+end;
 
 # ╔═╡ 8a664f44-4941-4780-9e4b-9b274cec19b7
 begin
@@ -292,11 +298,9 @@ end
 md"The predictive distribution is a mixture of these `Pmf` objects, weighted with the posterior probabilities. We can use `make_mixture` from 'GeneralMixtures' (see Chapter 7) to compute this mixture."
 
 # ╔═╡ 2ec4039b-27a2-4c64-8f97-8fe4e8080f9a
-# strange, the distribution is different than the one presented by the author (AD)
 predFrance1 = pmf.mkMixture(france1, pmfSeq1);
 
 # ╔═╡ 3c8d2c4e-f94f-4077-9c60-b21186cc685d
-# strange, the distribution is different than the one presented by the author (AD)
 begin
 	plts.bar(predFrance1.names, predFrance1.priors, label="France")
 	plts.title!("Posterior predictive distribution")
@@ -311,12 +315,9 @@ md"This distribution represents two sources of uncertainty: we don’t know the 
 Here's the predictive distribution for Croatia"
 
 # ╔═╡ 812ec246-2bd2-40d9-8c75-38c9cf823599
-# strange, the distribution is different than the one presented by the author (AD)
-#  it is also (virtually) the same as in predFrance1
 predCroatia1 = pmf.mkMixture(croatia1, pmfSeq1);
 
 # ╔═╡ c9f5648a-80fa-428c-af01-adc607baaaae
-# strange, the distribution is different than the one presented by the author (AD)
 begin
 	plts.bar(predCroatia1.names, predCroatia1.priors, label="Croatia")
 	plts.title!("Posterior predictive distribution")
@@ -329,22 +330,18 @@ end
 md"We can use these distributions to compute the probability that france wins, loses, or ties the rematch."
 
 # ╔═╡ 50833ed2-bde9-4ed5-b7af-e51a8f2502c4
-# strange, the probability is different than the one presented by the author (AD)
 franceWin1 = getProbPmf1GtPmf2(predFrance1, predCroatia1, true)
 
 # ╔═╡ 4d14fb10-86ba-4f88-b635-78c347d36bf9
-# strange, the probability is different than the one presented by the author (AD)
 franceLose1 = getProbPmf1LtPmf2(predFrance1, predCroatia1, true)
 
 # ╔═╡ 5a96c131-851b-44f0-8dd8-544736e3e322
-# strange, the probability is different than the one presented by the author (AD)
 franceTie1 = getProbPmf1EqPmf2(predFrance1, predCroatia1, true)
 
 # ╔═╡ cda10d30-10e8-4364-a479-f817eafce3f3
 md"Assuming that France wins half of the ties, their chance of winning the rematch is about 65%."
 
 # ╔═╡ 4cdc6f43-9e68-4c1e-8546-52e135c53442
-# strange, the probability is different than the one presented by the author (AD)
 franceWin1 + franceTie1/2
 
 # ╔═╡ a32f2ee2-e227-4e32-8a07-3600cc553303
