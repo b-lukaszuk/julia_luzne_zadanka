@@ -401,6 +401,18 @@ md"It is counterintuitive, but true, that the most likely time to score a goal i
 With a goal-scoring rate of 1.4, it is possible that a team will take more than one game to score a goal, but it is unlikely that they will take more than two games. [Not sure how can you tell that from the graph above (BL)?]
 "
 
+# ╔═╡ 027581f6-a550-47da-9eec-ac05b07d3015
+md"### Summary
+
+This chapter introduces three new distributions, so it can be hard to keep them straight. Let’s review:
+- If a system satisfies the assumptions of a Poisson model, the number of events in a period of time follows a Poisson distribution, which is a discrete distribution with integer quantities from 0 to infinity. In practice, we can usually ignore low-probability quantities above a finite limit.
+- Also under the Poisson model, the interval between events follows an exponential distribution, which is a continuous distribution with quantities from 0 to infinity. Because it is continuous, it is described by a probability density function (PDF) rather than a probability mass function (PMF). But when we use an exponential distribution to compute the likelihood of the data, we can treat densities as unnormalized probabilities.
+- The Poisson and exponential distributions are parameterized by an event rate, denoted λ or `lam`.
+- For the prior distribution of λ, I used a gamma distribution, which is a continuous distribution with quantities from 0 to infinity, but I approximated it with a discrete, bounded PMF. The gamma distribution has one parameter, denoted α or `alpha`, which is also its mean.
+
+I chose the gamma distribution because the shape is consistent with our background knowledge about goal-scoring rates. There are other distributions we could have used; however, we will see in <<_ConjugatePriors>> that the gamma distribution can be a particularly good choice.
+"
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1581,5 +1593,6 @@ version = "1.4.1+0"
 # ╠═4131c9a7-f750-4ec7-ab41-efdfa8275d8d
 # ╠═70a9d68f-b9be-4f26-aee6-cb3143afd21f
 # ╟─c08dd92a-42dc-4c89-bc28-26726df37bee
+# ╟─027581f6-a550-47da-9eec-ac05b07d3015
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
