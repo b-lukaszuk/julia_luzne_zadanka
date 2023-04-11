@@ -90,6 +90,17 @@ function getProbPmf1EqPmf2(pmf1::pmf.Pmf{A}, pmf2::pmf.Pmf{B}, usePriors::Bool=f
 		getProbPmf1LtPmf2(pmf1, pmf2, usePriors))
 end
 
+# ╔═╡ 4d2b3a58-5a78-4304-a6c8-9b73f82975be
+"""Compute the PDF of the exponential distribution
+
+	If goal-scoring rate is λ, the probability of seeing an
+	interval between goals of t is proportional to the PDF of the
+	exponential distribution
+"""
+function getExpoPdf(t::Vector{A}, lam::B)::Vector{Float64} where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	return lam .* exp.(-lam .* t)
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -346,6 +357,49 @@ franceWin1 + franceTie1/2
 
 # ╔═╡ a32f2ee2-e227-4e32-8a07-3600cc553303
 md"This is a bit lower than their probability of superiority, which is 75%. And that makes sense, because we are less certain about the outcome of a single game than we are about the goal-scoring rates. Even if France is the better team, they might lose the game."
+
+# ╔═╡ a941e7a7-45df-4592-aac5-13ca5ca7030f
+md"### The Exponential Distribution
+
+Problem description:
+
+In the 2014 FIFA World Cup, Germany played Brazil in a semifinal match. Germany scored after 11 minutes and again at the 23 minute mark. At that point in the match, how many goals would you expect Germany to score after 90 minutes? What was the probability that they would score 5 more goals (as, in fact, they did)?
+
+In this version, notice that the data is not the number of goals in a fixed period of time, but the time between goals [hmm, not sure I (BL) would have guessed that after reading problem description].
+
+If each team has a constant goal-scoring rate, we expect the time between goals to follow an [exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution). Compare en.wikipedia definition from the link above: 'In probability theory and statistics, the exponential distribution or negative exponential distribution is the probability distribution of the time between events in a Poisson point process, i.e., a process in which events occur continuously and independently at a constant average rate.'
+
+If the goal-scoring rate is λ, the probability of seeing an interval between goals of `t` is proportional to the PDF of the exponential distribution:
+
+$\lambda \ exp(-\lambda t)$
+
+Because `t` is a continuous quantity, the value of this expression is not a probability; it is a probability density. However, it is proportional to the probability of the data, so we can use it as a likelihood in a Bayesian update.
+
+Similarly to SciPy's `expon` described by the author (AD) the `dst.Exponential` is also a bit cumbersome (at first sight) so I (BL) will write `getExpoPdf(t, lam)` based on the author's (AD) `expo_pdf(t, lam)`.
+"
+
+# ╔═╡ 0422fb65-07c0-44a4-8412-ae1d9ef9e31d
+begin
+	lam2 = 1.4
+	qs2 = collect(range(0, 4, 101))
+	ps2 = getExpoPdf(qs2, lam2)
+end;
+
+# ╔═╡ 4131c9a7-f750-4ec7-ab41-efdfa8275d8d
+begin
+	pmfTime = pmf.Pmf(qs2, ps2)
+	pmfTime.priors = pmfTime.priors ./ sum(pmfTime.priors)
+end;
+
+# ╔═╡ 70a9d68f-b9be-4f26-aee6-cb3143afd21f
+pmf.drawPriors(pmfTime, "Distribution of time between goals",
+	"Time between goals (games)", "PMF", "exponential with λ = 1.4")
+
+# ╔═╡ c08dd92a-42dc-4c89-bc28-26726df37bee
+md"It is counterintuitive, but true, that the most likely time to score a goal is immediately. After that, the probability of each successive interval is a little lower.
+
+With a goal-scoring rate of 1.4, it is possible that a team will take more than one game to score a goal, but it is unlikely that they will take more than two games. [Not sure how can you tell that from the graph above (BL)?]
+"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1483,6 +1537,7 @@ version = "1.4.1+0"
 # ╠═709fc66d-b41c-41c8-aa3c-23ffc2799f1d
 # ╠═d279b142-1275-47a8-94e3-cc7f8dbcd431
 # ╠═d9aa6359-fc3f-4e1f-9676-52645715b756
+# ╠═4d2b3a58-5a78-4304-a6c8-9b73f82975be
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1521,5 +1576,10 @@ version = "1.4.1+0"
 # ╟─cda10d30-10e8-4364-a479-f817eafce3f3
 # ╠═4cdc6f43-9e68-4c1e-8546-52e135c53442
 # ╟─a32f2ee2-e227-4e32-8a07-3600cc553303
+# ╟─a941e7a7-45df-4592-aac5-13ca5ca7030f
+# ╠═0422fb65-07c0-44a4-8412-ae1d9ef9e31d
+# ╠═4131c9a7-f750-4ec7-ab41-efdfa8275d8d
+# ╠═70a9d68f-b9be-4f26-aee6-cb3143afd21f
+# ╟─c08dd92a-42dc-4c89-bc28-26726df37bee
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
