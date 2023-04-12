@@ -413,6 +413,24 @@ This chapter introduces three new distributions, so it can be hard to keep them 
 I chose the gamma distribution because the shape is consistent with our background knowledge about goal-scoring rates. There are other distributions we could have used; however, we will see in <<_ConjugatePriors>> that the gamma distribution can be a particularly good choice.
 "
 
+# ╔═╡ ab896ead-07fc-4794-8e74-cf3839d8fb83
+md"## Exercises"
+
+# ╔═╡ 68947c92-e387-496d-b203-7852548f5871
+md"### Exercise 1
+
+Let’s finish the exercise we started:
+
+'In the 2014 FIFA World Cup, Germany played Brazil in a semifinal match. Germany scored after 11 minutes and again at the 23 minute mark. At that point in the match, how many goals would you expect Germany to score after 90 minutes? What was the probability that they would score 5 more goals (as, in fact, they did)?'
+
+Here are the steps I recommend:
+1. Starting with the same gamma prior we used in the previous problem, compute the likelihood of scoring a goal after 11 minutes for each possible value of lam. Don’t forget to convert all times into games rather than minutes.
+2. Compute the posterior distribution of lam for Germany after the first goal.
+3. Compute the likelihood of scoring another goal after 12 more minutes and do another update. Plot the prior, posterior after one goal, and posterior after two goals.
+3. Compute the posterior predictive distribution of goals Germany might score during the remaining time in the game, 90-23 minutes. Note: You will have to think about how to generate predicted goals for a fraction of a game.
+4. Compute the probability of scoring 5 or more goals during the remaining time.
+"
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1594,5 +1612,7 @@ version = "1.4.1+0"
 # ╠═70a9d68f-b9be-4f26-aee6-cb3143afd21f
 # ╟─c08dd92a-42dc-4c89-bc28-26726df37bee
 # ╟─027581f6-a550-47da-9eec-ac05b07d3015
+# ╟─ab896ead-07fc-4794-8e74-cf3839d8fb83
+# ╟─68947c92-e387-496d-b203-7852548f5871
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
