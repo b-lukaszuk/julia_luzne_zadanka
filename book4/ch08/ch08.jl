@@ -97,8 +97,8 @@ end
 	interval between goals of t is proportional to the PDF of the
 	exponential distribution
 """
-function getExpoPdf(t::Vector{A}, lam::B)::Vector{Float64} where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
-	return lam .* exp.(-lam .* t)
+function getExpoPdf(t::A, lam::B)::Float64 where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	return lam * exp(-lam * t)
 end
 
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
@@ -382,7 +382,7 @@ Similarly to SciPy's `expon` described by the author (AD) the `dst.Exponential` 
 begin
 	lam2 = 1.4
 	qs2 = collect(range(0, 4, 101))
-	ps2 = getExpoPdf(qs2, lam2)
+	ps2 = getExpoPdf.(qs2, lam2)
 end;
 
 # ╔═╡ 4131c9a7-f750-4ec7-ab41-efdfa8275d8d
