@@ -292,8 +292,8 @@ function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return convolveDist(pmf1, pmf2, *)
 end
 
-function padVect(vect::Vector{T}, finalLen::Int, fill::Int=0)::Vector{T} where {T<:Union{Int,Float64}}
-    return [get(vect, i, parse(typeof(vect[1]), string(fill))) for i in 1:finalLen]
+function padVect(vect::Vector{T}, finalLen::Int, fill::Number=0)::Vector{T} where {T<:Union{Int,Float64}}
+    return [get(vect, i, fill) for i in 1:finalLen]
 end
 
 """mkMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}}, usePriors::Boolean=false)::Pmf{B} where {A<:Union{Int,Float64},B<:Union{Int,Float64}}
