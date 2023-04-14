@@ -53,7 +53,7 @@ end
 
 # ╔═╡ ee051a16-416c-4f80-bfcc-60412eecb750
 function updatePoisson!(pmfDist::pmf.Pmf{A}, k::B,
-updatePriors::Bool = false) where {A, B<:Union{Int, Float64}}
+updatePriors::Bool = false) where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
 	lams::Vector{A} = pmfDist.names
 	likelihoods::Vector{Float64} = dst.pdf.(dst.Poisson.(lams), k)
 	if updatePriors
@@ -99,6 +99,18 @@ end
 """
 function getExpoPdf(t::A, lam::B)::Float64 where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
 	return lam * exp(-lam * t)
+end
+
+# ╔═╡ fa326c0d-8274-4e5a-8129-74444757d677
+function updateExponential!(pmfDist::pmf.Pmf{A}, t::B, updatePriors::Bool = false) where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	likelihoods::Vector{Float64} = getExpoPdf.(t, pmfDist.names)
+	if updatePriors
+		pmfDist.priors = pmfDist.priors .* likelihoods
+		pmfDist.priors = pmfDist.priors ./ sum(pmfDist.priors)
+	else
+		pmf.updateLikelihoods!(pmfDist, likelihoods)
+		pmf.calculatePosteriors!(pmfDist)
+	end
 end
 
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
@@ -432,36 +444,25 @@ Here are the steps I recommend:
 "
 
 # ╔═╡ 0c69e152-3ba5-4834-8328-45bb167bee67
-md"#### Ex 1.1"
+md"#### Ex 1.1 & Ex 2.2"
 
 # ╔═╡ 7cef74dd-86e2-4886-8090-44902f7d942d
 begin
 	ex11t11 = 11 / 90 # convert all times into games rather than minutes
-	ex11qs = copy(priors1.names) # gamma prior we used in the previous problem
-	ex11ps = getExpoPdf.(ex11t11, ex11qs)
-	ex11pmf = pmf.Pmf(priors1.names, priors1.priors)
-	pmf.updateLikelihoods!(ex11pmf, ex11ps)
+	# gamma prior we used in the previous problem
+	ex11pmf = pmf.Pmf(copy(priors1.names), copy(priors1.priors))
+	updateExponential!(ex11pmf, ex11t11, false)
 end;
-
-# ╔═╡ 69382ef0-86b3-4dad-ab81-db086c14d512
-md"#### Ex 1.2"
-
-# ╔═╡ 4caa3ac6-7285-4d6b-b9c1-1e86c206a4d1
-# posterior distribution of lam after the first goal (in 11 min)
-pmf.calculatePosteriors!(ex11pmf);
 
 # ╔═╡ ab3e9628-482b-4143-af62-59d4bd206664
 md"#### Ex 1.3"
 
-# ╔═╡ ec03968c-09b0-4041-beca-c3c02f4f8995
+# ╔═╡ 369aee8c-0620-4559-8b4f-9027cda84148
 begin
 	# after 12 more minutes, 11 min + 12 min = 23 min (as in task description)
 	ex13t23 = 12 / 90
-	ex13qs = copy(ex11pmf.names)
-	ex13ps = getExpoPdf.(ex13t23, ex13qs)
-	ex13pmf = pmf.Pmf(ex11pmf.names, ex11pmf.posteriors)
-	pmf.updateLikelihoods!(ex13pmf, ex13ps)
-	pmf.calculatePosteriors!(ex13pmf)
+	ex13pmf = pmf.Pmf(copy(ex11pmf.names), copy(ex11pmf.posteriors))
+	updateExponential!(ex13pmf, ex13t23)
 end;
 
 # ╔═╡ 2f53f371-4c73-42ff-a883-a0b61363f308
@@ -1610,6 +1611,7 @@ version = "1.4.1+0"
 # ╠═d279b142-1275-47a8-94e3-cc7f8dbcd431
 # ╠═d9aa6359-fc3f-4e1f-9676-52645715b756
 # ╠═4d2b3a58-5a78-4304-a6c8-9b73f82975be
+# ╠═fa326c0d-8274-4e5a-8129-74444757d677
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1658,10 +1660,8 @@ version = "1.4.1+0"
 # ╟─68947c92-e387-496d-b203-7852548f5871
 # ╟─0c69e152-3ba5-4834-8328-45bb167bee67
 # ╠═7cef74dd-86e2-4886-8090-44902f7d942d
-# ╟─69382ef0-86b3-4dad-ab81-db086c14d512
-# ╠═4caa3ac6-7285-4d6b-b9c1-1e86c206a4d1
 # ╟─ab3e9628-482b-4143-af62-59d4bd206664
-# ╠═ec03968c-09b0-4041-beca-c3c02f4f8995
+# ╠═369aee8c-0620-4559-8b4f-9027cda84148
 # ╠═2f53f371-4c73-42ff-a883-a0b61363f308
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
