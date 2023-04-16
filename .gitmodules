@@ -1,0 +1,3 @@
+[submodule "experiment1/BookTemplate"]
+	path = experiment1/BookTemplate
+	url = https://github.com/JuliaBooks/BookTemplate.git
