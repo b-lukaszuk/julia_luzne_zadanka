@@ -113,6 +113,21 @@ function updateExponential!(pmfDist::pmf.Pmf{A}, t::B, updatePriors::Bool = fals
 	end
 end
 
+# ╔═╡ e0eee2cc-ed27-43ee-a050-6b24d334de92
+"""Returns a copy of a pmf struct, where
+
+	copy.names - oryg.names
+
+	copy.priors - oryg.priors or oryg.posteriors (depending on copyPriors arg)
+"""
+function copyPmf(pmfDist::pmf.Pmf{T}, copyPriors::Bool = true)::pmf.Pmf{T} where T<:Union{String, Int, Float64}
+	if copyPriors
+		return pmf.Pmf(copy(pmfDist.names), copy(pmfDist.priors))
+	else
+		return pmf.Pmf(copy(pmfDist.names), copy(pmfDist.posteriors))
+	end
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -450,7 +465,7 @@ md"#### Ex 1.1 & Ex 2.2"
 begin
 	ex11t11 = 11 / 90 # convert all times into games rather than minutes
 	# gamma prior we used in the previous problem
-	ex11pmf = pmf.Pmf(copy(priors1.names), copy(priors1.priors))
+	ex11pmf = copyPmf(priors1, true)
 	updateExponential!(ex11pmf, ex11t11, false)
 end;
 
@@ -461,7 +476,7 @@ md"#### Ex 1.3"
 begin
 	# after 12 more minutes, 11 min + 12 min = 23 min (as in task description)
 	ex13t23 = 12 / 90
-	ex13pmf = pmf.Pmf(copy(ex11pmf.names), copy(ex11pmf.posteriors))
+	ex13pmf = copyPmf(ex11pmf, false)
 	updateExponential!(ex13pmf, ex13t23)
 end;
 
@@ -1612,6 +1627,7 @@ version = "1.4.1+0"
 # ╠═d9aa6359-fc3f-4e1f-9676-52645715b756
 # ╠═4d2b3a58-5a78-4304-a6c8-9b73f82975be
 # ╠═fa326c0d-8274-4e5a-8129-74444757d677
+# ╠═e0eee2cc-ed27-43ee-a050-6b24d334de92
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
