@@ -13,6 +13,24 @@ Romeo and Juliet, where:
 Romeo - basic statistics;
 Juliet - Julia, the programming language
 
+## Running book locally
+
+```bash
+julia --project -e 'using Books; serve()'
+```
+
+or
+
+```bash
+julia --project -ie 'using Books'
+```
+
+and then in the REPL
+
+<pre>
+julia> gen()
+</pre>
+
 # Additional info
 
 **Zawartość niniejszego katalogu może być nieprawidłowa, błędna czy szkodliwa. Używaj na własne ryzyko.**
