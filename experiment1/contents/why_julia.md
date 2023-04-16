@@ -2,7 +2,7 @@
 
 Before we jump into statistics I think we need to explain why do we use [Julia](https://julialang.org/) and not, e.g. [Python](https://www.python.org/) or [R](https://www.r-project.org/).
 
-Am I mad to use Julia for statistics instead of R (a project developed for statistical computing) or more popular (also in the field of DataScience) Python?
+Am I mad to use Julia for statistics instead of R (a project developed for statistical computing) or more popular (also in the field of Data Science) Python?
 
 Well, I hope that I'm just biased. I like Julia because:
 
@@ -47,13 +47,14 @@ Execution times of the scripts on my laptop (the specification is not that impor
 2. R: ~8.5 [sec]
 3. Python3: ~27 [sec]
 
-Granted, it's not a proper benchmarking, and e.g. Python's [numpy](https://github.com/numpy/numpy) library runs with the speed of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (so a bit faster than Julia). Still, it seems that the code that I write in Julia is consistently ~8-10 times faster than the code I write in the other two programming languages (a subjective feeling).
+Granted, it's not a proper benchmark, and e.g. Python's [numpy](https://github.com/numpy/numpy) library runs with the speed of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (so a bit faster than Julia). Still, it seems that the code that I write in Julia is consistently ~8-10 times faster than the code I write in the other two programming languages (a subjective feeling).
 
-**Fun fact**: a human being would need like 32 years to count to 1 billion (test yourself and show why).
+**Fun fact**: a human being would need like 32 years to count to 1 billion.
+Test yourself and show why. Hint: try to count/estimate for how long you are alive [in seconds].
 
 ## Julia is simple {#sec:julia_is_simple}
 
-What I mean by Julia's simplicity is its nice, friendly syntax.
+What I mean by Julia's simplicity is its nice, friendly and terse syntax.
 
 For instance to write a simple `Hello world` program all I have to do is type:
 
@@ -75,19 +76,19 @@ class HelloWorld {
 }
 </pre>
 
-For me too much boilerplate code, the code that I don't want to type, read or process in my head what is going on here. Additionally probably it will not run faster than the Julia's equivalent.
+For me too much boilerplate code, the code that I don't want to type, read or process in my head. Additionally, probably it will not run faster than the Julia's equivalent.
 
 ## Pleasure to write {#sec:jl_pleasure_to_write}
 
-According to [stack overflow's survey](https://survey.stackoverflow.co/2022/#section-most-loved-dreaded-and-wanted-programming-scripting-and-markup-languages) Julia got one of the best loved-dreaded ratio amongst the examined programming languages.
+According to [stack overflow's survey](https://survey.stackoverflow.co/2022/#section-most-loved-dreaded-and-wanted-programming-scripting-and-markup-languages) Julia got one of the best loved-dreaded ratio among the examined programming languages.
 
 This is also true for me. I like writing programs with Julia.
 
 ## Not mainstream {#sec:jl_not_mainstream}
 
-Not being 'a mainstream programming language' got its drawbacks (missing packages or community support). Luckily, Julia is big and mature enough, seems to be growing at a good pace, and got a pretty nice [interoperability](https://forem.julialang.org/ifihan/interoperability-in-julia-1m26) with other programming languages.
+Not being 'a mainstream programming language' got its drawbacks (missing packages or community support, etc.). Luckily, Julia is big and mature enough, seems to be growing at a good pace, and got a pretty nice [interoperability](https://forem.julialang.org/ifihan/interoperability-in-julia-1m26) with other programming languages.
 
-Moreover, not being a mainstreem language is like an opportunity, a gap to fill, a chance to explore (hence this book).
+Moreover, not being a mainstream language is like an opportunity, a gap to fill, a chance to explore (hence this book).
 
 ## Julia is free {#sec:jl_open_source}
 
