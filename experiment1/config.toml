@@ -3,6 +3,7 @@
   [projects.default]
   contents = [
     "about",
+    "why_julia",
     "appendix",
     "references",
   ]
