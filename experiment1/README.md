@@ -5,6 +5,8 @@ Here I will try to write a short book using [Julia](https://julialang.org/) and 
 It is intended to be an experiment (for my personal usage only).
 I haven't quite decided upon the language of the book yet (probably: english or polish, or maybe both).
 
+Not a big deal, maybe even I will abandon the project along the way (but maybe not).
+
 ## Working title
 
 Romeo and Juliet, where:
