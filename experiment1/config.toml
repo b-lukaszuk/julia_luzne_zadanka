@@ -4,6 +4,7 @@
   contents = [
     "about",
     "why_julia",
+    "julia_first_encounter",
     "appendix",
     "references",
   ]
