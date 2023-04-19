@@ -79,7 +79,7 @@ and press `Ctrl+Enter` to execute the cell and open a new cell below.
 
 This creates a variable (box) named `x` (x is a label on the box) that contains the value `1`. The `=` operator assigns `1` (right side) to `x` (left side) [puts `1` into the box].
 
-Now type and execute
+Now, in the cell below type and execute
 
 ```jl
 s = """
@@ -88,7 +88,7 @@ x = 2
 sc(s)
 ```
 
-If you did this in the cell below, then Pluto disabled the cell above (`x = 1`) and defined variable `x` in this new cell (to prevent you from accidentally overriding variable `x`).
+You may see that Pluto disabled the cell above (the one with `x = 1`) and defined variable `x` in the new cell (to prevent you from accidentally overriding variable `x`).
 
 Now, open a new cell, type and execute
 
@@ -146,9 +146,9 @@ sc(s)
 
 The `::Int` part informs Julia that you will be storing only [integers](https://en.wikipedia.org/wiki/Integer) (like: ..., -1, 0, 1, ...) in this box. Whereas by typing `::Float64` we declare to store only [floats](https://en.wikipedia.org/wiki/Floating-point_arithmetic) (like: ..., 1.1, 1.0, 0.0, 2.2, 3.14, ...) in that box.
 
-**Note the difference**
+### Optional type declaration {#sec:julia_optional_type_declaration}
 
-If you use variable without type definition you can freely reassign values even of different types (*note: in the code below `#` and all the text to the right of it is a comment, the part that is ignored by a computer but read by a human*)
+**Note the difference.** If you use variable without type definition you can freely reassign values even of different types (*note: in the code below `#` and all the text to the right of it is a comment, the part that is ignored by a computer but read by a human*)
 
 ```jl
 s = """
@@ -179,34 +179,29 @@ sc(s)
 
 But this is not OK (it's wrong! it's wroooong!)
 
-```jl
-s = """
+<pre>
 begin
 	c::Int = 1 # type integer declared
-	c = 1.0 # broke the promise, float delivered, will produce error
+	c = 3.3 # broke the promise, float delivered, will produce error
 end
-"""
-sc(s)
-```
+</pre>
 
-Even though, in the last case we delivered `1.0` which should be equal to `1` it is a value of different type so it will not do (the computer is very strict with respect to you keeping your word).
+Now a question arises. Why would you want to use type declaration (like `::Int` or `Float64`) at all? Well, sometimes it makes more sense to use say integer  instead of string (we add `3` to `3` not `"three"` to `"three"`). So you would like a guarding angel that watches over you and protects you from evil (especially in large programs). Additionally declaring types can make your code run faster.
 
-Now a question arises. Why would you want to use type declaration (like `::Int` or `Float64`) at all? Well, sometimes it makes more sense to use say integer  instead of string (we add `3` to `3` not `three` to `three`). So you would like a guarding angel that watches over you and protects you from evil (especially in big programs). Additionally declaring types may make your code run faster.
+A few more points of notice.
 
-Now a few more points of notice.
+### Meaningful variable names {#sec:julia_meaningful_variable_names}
 
-**Use meaningful variable names**
-
-The variable names I used before are horrible (*mea culpa, mea culpa, mea maxima culpa*). We use named variables (like `x = 1`) instead of loose variables (you can type `1` alone in the Pluto's cell and execute it) to use them later.
+**Name your variables well**. The variable names I used before are horrible (*mea culpa, mea culpa, mea maxima culpa*). We use named variables (like `x = 1`) instead of loose variables (you can type `1` alone in the Pluto's cell and execute it) to use them later.
 
 You can use them later in time (reading and editing your code tomorrow or next month/year) or in space (using it 30 code cells below). If so, the names need to be memorable (actually just meaningful will do :P). So whenever possible use: `studentAge = 19`, `bookTitle = "Dune"` instead of `x = 19`, `y = "Dune"`.
 
 You may want to check [Julia Docs](https://docs.julialang.org/en/v1/) for [allowed variable names](https://docs.julialang.org/en/v1/manual/variables/#man-allowed-variable-names) and their [stylistic conventions](https://docs.julialang.org/en/v1/manual/variables/#Stylistic-Conventions). I prefer to use [camelCaseStyle](https://en.wikipedia.org/wiki/Camel_case) so this is what you gonna see here.
 
-**Be careful with `=` sign**
+### Floats comparisons {#sec:julia_float_comparisons}
 
-In mathematics `=` means `equal to` and `≠` means `not equal to`. In programming `=` is usually an assignment operator.
-If you want to compare for equality you should use `==` (for `equal to`) and (`!=` for `unequal to`), examples:
+**Be careful with `=` sign**. In mathematics `=` means `equal to` and `≠` means `not equal to`. In programming `=` is usually an assignment operator.
+If you want to compare for equality you should use `==` (for `equal to`) and (`!=` for `not equal to`), examples:
 
 ```jl
 s = """
@@ -235,7 +230,15 @@ sco(s)
 
 ```jl
 s = """
-1.0 == 1 # here comparing integer and float works as expected
+1.0 != 1
+"""
+sco(s)
+```
+---
+
+```jl
+s = """
+2 != 2
 """
 sco(s)
 ```
@@ -249,7 +252,7 @@ s = """
 sco(s)
 ```
 
-It is `false` since float numbers cannot be represented exactly in binary (see [this StackOverflow's thread](https://stackoverflow.com/questions/8604196/why-0-1-3-0-3)).
+It is `false` since float numbers cannot be represented exactly in binary (see [this StackOverflow's thread](https://stackoverflow.com/questions/8604196/why-0-1-3-0-3)). This is how `0.1 * 3` looks for computer
 
 
 ```jl
@@ -259,9 +262,9 @@ s = """
 sco(s)
 ```
 
-The same caution applies to other comparison operators, like `>` (`is greater than`), `>=` (`is greater than or equal to`), `<` (`is less than`), `=<` (`is equal to or less than`)
+The same caution applies to other comparison operators, like `>` (`is greater than`), `>=` (`is greater than or equal to`), `<` (`is less than`), `<=` (`is less than or equal to`)
 
-**Other types**
+### Other types {#sec:julia_other_types}
 
 There are also other types (see [Julia Docs](https://docs.julialang.org/en/v1/manual/types/)) but we will use mostly those mentioned in this chapter, i.e.:
 
@@ -274,3 +277,51 @@ There are also other types (see [Julia Docs](https://docs.julialang.org/en/v1/ma
 The briefly mentioned strings are denoted by `::String` and you type them with quotations (`"any text"`).
 
 The last of the mentioned types is denoted as `::Bool` and can take only two values: `true` or `false` (see the results of the comparison operations above).
+
+### Collections {#sec:julia_collections}
+
+Not only do variables store single value but they can also store their collections. The collection type that we will discuss here is `Vector`.
+
+```jl
+s = """
+myChemistryGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
+"""
+sco(s)
+```
+
+Here I declared a variable that stores my mock grades. The `{Float64}` part indicates that each element is of type `Float64`.
+Just like with the variables declared before also here the type declaration is optional. I could declare the variable without `{Float64}` or `::Vector{Float64}` part.
+The variable contains `jl length(myChemistryGrades)` grades in it, which you can check by typing `length(myChemistryGrades)` in a Pluto's cell.
+
+You can retrieve a single element of the vector by typing `myChemistryGrades[i]` where `i` is some integer. E.g.
+
+```jl
+s = """
+myChemistryGrades[3] # returns 3rd element
+"""
+sco(s)
+```
+
+---
+
+```jl
+s = """
+myChemistryGrades[end] # returns last grade
+# the above is equivalent to: myChemistryGrades[7]
+"""
+sco(s)
+```
+
+Or you can get a slice of the vector by typing
+
+```jl
+s = """
+myChemistryGrades[2:3] # returns Vector with two grades (2nd and 3rd)
+# the slicing is [inclusive:inclusive]
+"""
+sco(s)
+```
+
+Be careful though, if You type an none existing index like: `myChemistryGrades[-1]`, `myChemistryGrades[0]`, `myChemistryGrades[10]` you will get an error.
+
+OK, enough about the variables, we will learn more about them as we discuss other topics throughout the book.
