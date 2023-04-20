@@ -489,6 +489,39 @@ begin
 	plts.plot!(ex13pmf.names, ex13pmf.posteriors, label="another goal after 23 mins")
 end
 
+# ╔═╡ 490f055f-bbf6-45d9-8dab-e3f541e39307
+md"#### Ex 1.4
+
+I (BL) was not sure how to 'You will have to think about how to generate predicted goals for a fraction of a game.' had to check it with the answer provided by the author (AD). Still, I'm not 100% sure I get it. 
+"
+
+# ╔═╡ 8d7767ec-1df5-4fb2-a3e0-182642e5fd04
+begin
+	# remaining time (90 - 23) = 67 as fraction of game, so 67 / 90
+	ex14t67 = 67 / 90
+	# had to copy it from the author (AD) solution
+	# not sure why it is correct, especially that part `lam * ex14t67`?!
+	ex14PmfSeqs = [mkPoissonPmf(lam * ex14t67, pmfGoals1.names) for lam in ex13pmf.names]
+end;
+
+# ╔═╡ f129c93a-f08b-482a-9ed6-f7f89860cc65
+ex14predGoals = pmf.mkMixture(ex13pmf, ex14PmfSeqs)
+
+# ╔═╡ c13e2990-e95c-4a97-93f0-8a39b3b0b98e
+begin
+	plts.bar(ex14predGoals.names, ex14predGoals.priors, label="")
+	plts.title!("Prob of num of goals to be shot by Germany\nin remaining 67 min (> 23 min)")
+	plts.xlabel!("Number of goals")
+	plts.ylabel!("PMF")
+	plts.xticks!(0:1:10)
+end
+
+# ╔═╡ 4fc30683-92ef-417f-95de-56f7ef0e7407
+md"#### Ex 1.5"
+
+# ╔═╡ bf3ee1af-dd0c-444c-8d6b-cb36c2cce4b8
+ex1tprobGTEQ5goals = pmf.getPrior(ex14predGoals, collect(5:10)) |> sum
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1679,5 +1712,11 @@ version = "1.4.1+0"
 # ╟─ab3e9628-482b-4143-af62-59d4bd206664
 # ╠═369aee8c-0620-4559-8b4f-9027cda84148
 # ╠═2f53f371-4c73-42ff-a883-a0b61363f308
+# ╟─490f055f-bbf6-45d9-8dab-e3f541e39307
+# ╠═8d7767ec-1df5-4fb2-a3e0-182642e5fd04
+# ╠═f129c93a-f08b-482a-9ed6-f7f89860cc65
+# ╠═c13e2990-e95c-4a97-93f0-8a39b3b0b98e
+# ╟─4fc30683-92ef-417f-95de-56f7ef0e7407
+# ╠═bf3ee1af-dd0c-444c-8d6b-cb36c2cce4b8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
