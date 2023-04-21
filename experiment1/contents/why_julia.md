@@ -59,8 +59,7 @@ What I mean by Julia's simplicity is its nice, friendly and terse syntax.
 For instance to write a simple `Hello world` program all I have to do is type:
 
 <pre>
-# file: hello.jl
-println("Hello World")
+println("Hello World!")
 </pre>
 
 then save and run the file.
