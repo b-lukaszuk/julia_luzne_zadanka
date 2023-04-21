@@ -284,20 +284,20 @@ Not only do variables store single value but they can also store their collectio
 
 ```jl
 s = """
-myChemistryGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
+myMathGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
 """
 sco(s)
 ```
 
 Here I declared a variable that stores my mock grades. The `{Float64}` part indicates that each element is of type `Float64`.
 Just like with the variables declared before also here the type declaration is optional. I could declare the variable without `{Float64}` or `::Vector{Float64}` part.
-The variable contains `jl length(myChemistryGrades)` grades in it, which you can check by typing `length(myChemistryGrades)` in a Pluto's cell.
+The variable contains `jl length(myMathGrades)` grades in it, which you can check by typing `length(myMathGrades)` in a Pluto's cell.
 
-You can retrieve a single element of the vector by typing `myChemistryGrades[i]` where `i` is some integer. E.g.
+You can retrieve a single element of the vector by typing `myMathGrades[i]` where `i` is some integer. E.g.
 
 ```jl
 s = """
-myChemistryGrades[3] # returns 3rd element
+myMathGrades[3] # returns 3rd element
 """
 sco(s)
 ```
@@ -306,8 +306,8 @@ sco(s)
 
 ```jl
 s = """
-myChemistryGrades[end] # returns last grade
-# the above is equivalent to: myChemistryGrades[7]
+myMathGrades[end] # returns last grade
+# the above is equivalent to: myMathGrades[7]
 """
 sco(s)
 ```
@@ -316,12 +316,123 @@ Or you can get a slice of the vector by typing
 
 ```jl
 s = """
-myChemistryGrades[2:3] # returns Vector with two grades (2nd and 3rd)
+myMathGrades[2:3] # returns Vector with two grades (2nd and 3rd)
 # the slicing is [inclusive:inclusive]
 """
 sco(s)
 ```
 
-Be careful though, if You type an none existing index like: `myChemistryGrades[-1]`, `myChemistryGrades[0]`, `myChemistryGrades[10]` you will get an error.
+Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]`, `myMathGrades[10]` you will get an error.
 
 OK, enough about the variables, we will learn more about them as we discuss other topics throughout the book.
+
+## Functions {#sec:julia_language_functions}
+
+Functions are doers, i.e encapsulated pieces of code that do things for you. Optimally, a function should be single minded, i.e. doing one thing only and doing it well. Moreover since they do stuff they names should contain [verbs](https://en.wikipedia.org/wiki/Verb) (whereas variables' names should be composed of [nouns](https://en.wikipedia.org/wiki/Noun)).
+
+We already met one Julia function (see @sec:julia_is_simple), namely `println`. As the name suggests it prints something (like a text) to the standard output device. This is one of many Julia build in functions (for more information see [Julia Docs](https://docs.julialang.org/en/v1/)).
+
+But we can also define some functions on our own:
+
+```jl
+s = """
+function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
+	return lenSideA * lenSideB
+end
+"""
+sco(s)
+```
+
+Here I declared Julia's version of a [mathematical function](https://en.wikipedia.org/wiki/Function_(mathematics)). It is called `getRectangleArea` and it calculates (surprise, surprise, the [area of a rectangle](https://en.wikipedia.org/wiki/Rectangle#Formulae)). To do that I used a keyword `function`. The `function` keyword is followed by the name of the function. Inside the parenthesis are arguments of the function. The function accepts two arguments `lenSideA` (length of one side) and `lenSideB` (length of the other side) and calculates the area of a rectangle. Both `lenSideA` and `lenSideB` are of type `Number` (any numeric type in Julia, it encompasses `Int` and `Float64` that we encountered before). The ending of the first line, `)::Number`, signifies that the function will return a value of type `Number`. The stuff that function returns is preceded by the `return` keyword. The function ends with the `end` keyword.
+
+Note, that you did not need to embed the function in the `begin ... end` tags, since this definition is a single logical piece of code then Pluto is OK with that. Time to run our function and see how it works.
+
+```jl
+s = """
+getRectangleArea(3, 4)
+"""
+sco(s)
+```
+
+Hmm, and how about the [area of a square](https://en.wikipedia.org/wiki/Square#Perimeter_and_area). You got it.
+
+```jl
+s = """
+function getSquareArea(lenSideA::Number)::Number
+	return getRectangleArea(lenSideA, lenSideA)
+end
+"""
+sco(s)
+```
+
+Notice that I reused previously defined `getRectangleArea` (so, functions can use other functions). Let's see how it works.
+
+```jl
+s = """
+getSquareArea(3)
+"""
+sco(s)
+```
+
+Appears to be working just fine.
+
+Now, let's say I want a function `getFirstElt` that accepts a vector and returns its first element (vectors and indexing were briefly discussed in @sec:julia_collections).
+
+```jl
+s = """
+function getFirstElt(vect::Vector{Int})::Int
+	return vect[1]
+end
+"""
+sc(s)
+```
+
+It looks OK (test it in Pluto.jl, e.g. `getFirstElt([1, 2, 3]`). However, the problem is it works only with integers (or maybe not, test it out).
+How to make it work with any type, like `getFirstElt(["Eve", "Tom", "Alex"])` or `getFirstElt([1.1, 2.2, 3.3])`?
+
+One way is to declare separate versions of the functions for different type of inputs, i.e.
+
+```jl
+s = """
+begin
+	function getFirstElt(vect::Vector{Int})::Int
+		return vect[1]
+	end
+
+	function getFirstElt(vect::Vector{Float64})::Float64
+		return vect[1]
+	end
+
+	function getFirstElt(vect::Vector{String})::String
+		return vect[1]
+	end
+end
+"""
+sco(s)
+```
+
+But that is too much of typing (I retyped a few times virtually the same code). The other way is to use no type declarations.
+
+```jl
+s = """
+function getFirstEltVer2(vect)
+	return vect[1]
+end
+"""
+sc(s)
+```
+
+Yet another way is to use so called generic types, like
+
+```jl
+s = """
+function getFirstEltVer3(vect::Vector{T})::T where T
+	return vect[1]
+end
+"""
+sc(s)
+```
+
+Here we said that the vector is of type `T` (see `Vector{T}`) and that the function will return type `T` (see `)::T`). At end we said that this `T` is a custom type and could be any type at all (see `where T`). Replace `T` with some other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should). One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns some value of the same type as the one that builds this vector.
+
+Note that the last function we wrote for fun (it was fun for me, how about you?), in reality Julia already got `first`, a function with a similar functionality (see [Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
