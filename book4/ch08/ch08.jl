@@ -128,6 +128,22 @@ function copyPmf(pmfDist::pmf.Pmf{T}, copyPriors::Bool = true)::pmf.Pmf{T} where
 	end
 end
 
+# ╔═╡ 3683ef46-da98-4145-9424-7b96c3092de3
+ """Make a PMF of an exponential distribution.
+
+    lam: event rate
+    high: upper bound on the interval `t`
+
+    returns: Pmf of the interval between events
+"""
+function mkExpoPmf(lam::A, high::B)::pmf.Pmf{Float64} where {A<:Union{Int, Float64}, B<:Union{Int, Float64}}
+	qs::Vector{Float64} = range(0, high, 101)
+	ps = getExpoPdf.(qs, lam)
+	pmfDist::pmf.Pmf{Float64} = pmf.Pmf(qs, ps)
+	pmfDist.priors = pmfDist.priors ./ sum(pmfDist.priors)
+	return pmfDist
+end
+
 # ╔═╡ 2561b02a-0056-4564-ac78-9afef975eb5a
 md"### Poisson Processes
 
@@ -521,6 +537,13 @@ md"#### Ex 1.5"
 
 # ╔═╡ bf3ee1af-dd0c-444c-8d6b-cb36c2cce4b8
 ex1tprobGTEQ5goals = pmf.getPrior(ex14predGoals, collect(5:10)) |> sum
+
+# ╔═╡ d6827866-958d-4be5-92fd-0ac62917819a
+md" ### Exercise 2
+
+Returning to the first version of the World Cup Problem. Suppose France and Croatia play a rematch. What is the probability that France scores first?
+
+Hint: Compute the posterior predictive distribution for the time until the first goal by making a mixture of exponential distributions. You can use the following function (see mkExpoPmf in: Functionality Developed in Chapter 8) to make a PMF that approximates an exponential distribution."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1661,6 +1684,7 @@ version = "1.4.1+0"
 # ╠═4d2b3a58-5a78-4304-a6c8-9b73f82975be
 # ╠═fa326c0d-8274-4e5a-8129-74444757d677
 # ╠═e0eee2cc-ed27-43ee-a050-6b24d334de92
+# ╠═3683ef46-da98-4145-9424-7b96c3092de3
 # ╟─2561b02a-0056-4564-ac78-9afef975eb5a
 # ╟─8920cd93-bd51-42bc-9010-044dcf80c655
 # ╟─61fa6a56-6078-4ce7-9e40-a8fc682289e9
@@ -1718,5 +1742,6 @@ version = "1.4.1+0"
 # ╠═c13e2990-e95c-4a97-93f0-8a39b3b0b98e
 # ╟─4fc30683-92ef-417f-95de-56f7ef0e7407
 # ╠═bf3ee1af-dd0c-444c-8d6b-cb36c2cce4b8
+# ╟─d6827866-958d-4be5-92fd-0ac62917819a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
