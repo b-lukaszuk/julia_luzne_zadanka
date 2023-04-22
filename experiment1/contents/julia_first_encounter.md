@@ -196,7 +196,7 @@ A few more points of notice.
 
 You can use them later in time (reading and editing your code tomorrow or next month/year) or in space (using it 30 code cells below). If so, the names need to be memorable (actually just meaningful will do :P). So whenever possible use: `studentAge = 19`, `bookTitle = "Dune"` instead of `x = 19`, `y = "Dune"`.
 
-You may want to check [Julia Docs](https://docs.julialang.org/en/v1/) for [allowed variable names](https://docs.julialang.org/en/v1/manual/variables/#man-allowed-variable-names) and their [stylistic conventions](https://docs.julialang.org/en/v1/manual/variables/#Stylistic-Conventions). I prefer to use [camelCaseStyle](https://en.wikipedia.org/wiki/Camel_case) so this is what you gonna see here.
+You may want to check [Julia Docs](https://docs.julialang.org/en/v1/) for [allowed variable names](https://docs.julialang.org/en/v1/manual/variables/#man-allowed-variable-names) and their [stylistic conventions](https://docs.julialang.org/en/v1/manual/variables/#Stylistic-Conventions). Still, I prefer to use [camelCaseStyle](https://en.wikipedia.org/wiki/Camel_case) so this is what you gonna see here.
 
 ### Floats comparisons {#sec:julia_float_comparisons}
 
@@ -330,7 +330,7 @@ OK, enough about the variables, we will learn more about them as we discuss othe
 
 Functions are doers, i.e encapsulated pieces of code that do things for you. Optimally, a function should be single minded, i.e. doing one thing only and doing it well. Moreover since they do stuff they names should contain [verbs](https://en.wikipedia.org/wiki/Verb) (whereas variables' names should be composed of [nouns](https://en.wikipedia.org/wiki/Noun)).
 
-We already met one Julia function (see @sec:julia_is_simple), namely `println`. As the name suggests it prints something (like a text) to the standard output device. This is one of many Julia build in functions (for more information see [Julia Docs](https://docs.julialang.org/en/v1/)).
+We already met one Julia function (see @sec:julia_is_simple), namely `println`. As the name suggests it prints something (like a text) to the [standard output](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)). This is one of many Julia build in functions (for more information see [Julia Docs](https://docs.julialang.org/en/v1/)).
 
 But we can also define some functions on our own:
 
@@ -435,4 +435,74 @@ sc(s)
 
 Here we said that the vector is of type `T` (see `Vector{T}`) and that the function will return type `T` (see `)::T`). At end we said that this `T` is a custom type and could be any type at all (see `where T`). Replace `T` with some other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should). One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns some value of the same type as the one that builds this vector.
 
-Note that the last function we wrote for fun (it was fun for me, how about you?), in reality Julia already got `first`, a function with a similar functionality (see [Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+Note that the last function we wrote for fun (it was fun for me, how about you?), in reality Julia already got `first`, a function with a similar functionality (see [this part of Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+
+Notice that so far we encountered two types of Julia functions:
+
+- those that are used for their side effects (like `println`)
+- those that return some results (like `getRectangleArea`)
+
+The difference between the two may not be that obvious while using Pluto (although). To make it more obvious let's put them to the script like so:
+
+<pre>
+# file: sideEffsVsReturnVals.jl
+
+println("Hello World!")
+
+# you need to define function before you call it
+function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
+    return lenSideA * lenSideB
+end
+
+getRectangleArea(3, 2) # calling the function
+</pre>
+
+After running the code from terminal:
+
+```bash
+cd folder_with_the_sideEffsVsReturnVals.jl/
+julia sideEffsVsReturnVals.jl
+```
+
+I got printed on the screen:
+
+<pre>
+Hello World!
+</pre>
+
+That's it. I got only one line of output, the rectangle area seems to be missing. We must remember that a computer does only what we tell it to do, nothing more, nothing less.
+Here we said:
+
+- print "Hello World!" to the screen (actually [standard output](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)))
+- calculate and return the area of the rectangle but we did nothing with it
+
+It the second case the result went into the void (If a tree falls in a forest and no one's there to see it. Did it really made sound?)
+
+If we want to print both information on the screen we should modify our script to look like:
+
+<pre>
+# file: sideEffsVsReturnVals.jl
+
+# you need to define function before you call it
+function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
+    return lenSideA * lenSideB
+end
+
+println("Hello World!")
+# println takes 0 or more arguments (separated by commas)
+# if necessary arguments are converted to strings and printed
+println("Rectangle area = ", getRectangleArea(3, 2), "[cm^2]")
+</pre>
+
+Now You get:
+
+<pre>
+Hello World!
+Rectangle area = 6 [cm^2]
+</pre>
+
+By default Pluto (v0.19.22) prints the return value at the top of the cell with the code and prints stuff in a mini terminal in the cell below.
+
+More information about functions can be found, e.g. [in this section of Julia Docs](https://docs.julialang.org/en/v1/manual/functions/).
+
+If You ever encounter a build in function that you don't know, you may always search [the docs](https://docs.julialang.org/en/v1/) (search box is on top left corner of the page).
