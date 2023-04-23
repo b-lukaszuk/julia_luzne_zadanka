@@ -44,7 +44,7 @@ Each program counts to 1 billion (1 with 9 zeros) and when it is done it prints 
 Execution times of the scripts on my laptop (the specification is not that important):
 
 1. Julia: ~1 [sec]
-2. R: ~8.5 [sec]
+2. R: ~9 [sec]
 3. Python3: ~27 [sec]
 
 Granted, it's not a proper benchmark, and e.g. Python's [numpy](https://github.com/numpy/numpy) library runs with the speed of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (so a bit faster than Julia). Still, it seems that the code that I write in Julia is consistently ~8-10 times faster than the code I write in the other two programming languages (a subjective feeling).
