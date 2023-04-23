@@ -587,7 +587,7 @@ To demonstrate decision making in action let's say I want to write a function th
 
 ```jl
 s = """
-function int2string(num::Int)::String
+function translateInt2string(num::Int)::String
 	if num == 0
 		return "zero"
 	elseif num == 1
@@ -599,7 +599,7 @@ function int2string(num::Int)::String
 	end
 end
 
-(int2string(0), int2string(2), int2string(5)) # a tuple with results
+(translateInt2string(2), translateInt2string(5)) # a tuple with results
 """
 sco(s)
 ```
@@ -681,3 +681,26 @@ Here I wrote a function that finds minimal value in a vector of integers. If the
 If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function and then returns its first element.
 Note that the `else` block contains two lines of code (it could contain more if necessary, and so could `if` block). I did this for demonstative purposes.
 Alternatively instead those two lines one could write `return sort(vect)[1]` and it would work just fine.
+
+### Ternary expression {#sec:ternary_expression}
+
+If you need only a single `if ... else` in your code you may prefer to replace it with ternary expression. Its general form is `condition_or_Bool ? return_if_true : return_if_false`.
+
+Let me rewrite `getMin` from @sec:julia_language_if_else using ternary expression.
+
+
+```jl
+s = """
+function getMin(vect::Vector{Int}, isSortedAsc::Bool)::Int
+	return isSortedAsc ? vect[1] : sort(vect)[1]
+end
+
+x = [1, 2, 3, 4]
+y = [3, 4, 1, 2]
+
+(getMin(x, true), getMin(y, false))
+"""
+sco(s)
+```
+
+Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to read and process in your head than the good old `if/elseif/else` blocks.
