@@ -112,7 +112,11 @@ You should get the warning like:
 
 > ...
 
-Click the 'begin .. end' hyperlink so that Pluto can fix it for you (again, Pluto tries to protect you from putting more than one logical piece of code into a cell which sometimes may cause problems). Lastly, you should get:
+Click the 'begin .. end' hyperlink so that Pluto can fix it for you (again, Pluto tries to protect you from putting more than one logical piece of code into a cell which sometimes may cause problems).
+
+Now, You now what to do when you encounter that problem (I'm a bit lazy, I may not write the `begin ... end` everywhere throughout this book).
+
+Lastly, you should get:
 
 ```jl
 s = """
@@ -583,11 +587,11 @@ In everyday life people have to make decisions and so do computer programs. This
 
 ### If ..., or Else ... {#sec:julia_language_if_else}
 
-To demonstrate decision making in action let's say I want to write a function that accepts an integer as an argument and returns a its textual representation. Here we go.
+To demonstrate decision making in action let's say I want to write a function that accepts an integer as an argument and returns its textual representation. Here we go.
 
 ```jl
 s = """
-function translateInt2string(num::Int)::String
+function turnInt2string(num::Int)::String
 	if num == 0
 		return "zero"
 	elseif num == 1
@@ -599,7 +603,7 @@ function translateInt2string(num::Int)::String
 	end
 end
 
-(translateInt2string(2), translateInt2string(5)) # a tuple with results
+(turnInt2string(2), turnInt2string(5)) # a tuple with results
 """
 sco(s)
 ```
@@ -612,15 +616,15 @@ if (condition_that_returns_Bool)
 	what_to_do
 elseif (another_condition_that_returns_Bool)
 	what_to_do
-elseif (another condition that returns Bool)
+elseif (another_condition_that_returns_Bool)
 	what_to_do
 else
 	what_to_do
 end
 </pre>
 
-As mentioned in @sec:julia_other_types `Bool` type can have two values `true` or `false`. The code inside `if`/`elseif` clause runs only when the condition is `true`.
-You can have any number of `elseif` clauses inside. If none of the previous claues matches (they are bring `false`) the code in `else` block is executed.
+As mentioned in @sec:julia_other_types `Bool` type can take one of two values `true` or `false`. The code inside `if`/`elseif` clause runs only when the condition is `true`.
+You can have any number of `elseif` clauses. If none of the previous condition matches (each and every one is `false`) the code in `else` block is executed.
 Only `if` and `end` keywords are obligatory, the rest is not, so you may use
 
 <pre>
@@ -656,7 +660,7 @@ end
 
 or ..., nevermind, I think You got the point.
 
-Another example of a function using `if/elseif/else` construct to remember it better.
+Another example of a function using `if/elseif/else` construct (in order to remember it better).
 
 ```jl
 s = """
@@ -677,14 +681,14 @@ y = [3, 4, 1, 2]
 sco(s)
 ```
 
-Here I wrote a function that finds minimal value in a vector of integers. If the vector is sorted in the ascending order it returns the first element.
-If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function and then returns its first element.
+Here I wrote a function that finds a minimal value in a vector of integers. If the vector is sorted in the ascending order it returns the first element.
+If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function and then returns its first element (this may not be the most efficient method).
 Note that the `else` block contains two lines of code (it could contain more if necessary, and so could `if` block). I did this for demonstative purposes.
 Alternatively instead those two lines one could write `return sort(vect)[1]` and it would work just fine.
 
 ### Ternary expression {#sec:ternary_expression}
 
-If you need only a single `if ... else` in your code you may prefer to replace it with ternary expression. Its general form is `condition_or_Bool ? return_if_true : return_if_false`.
+If you need only a single `if ... else` in your code you may prefer to replace it with ternary expression. Its general form is `condition_or_Bool ? result_if_true : result_if_false`.
 
 Let me rewrite `getMin` from @sec:julia_language_if_else using ternary expression.
 
@@ -703,11 +707,11 @@ y = [3, 4, 1, 2]
 sco(s)
 ```
 
-Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to read and process in your head than the good old `if/elseif/else` blocks.
+Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to write, read, and process in your head than the good old `if/elseif/else` blocks.
 
 ### Dictionaries {#sec:julia_language_dictionaries}
 
-[Dictionaries in Julia](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) are a sort of mapping (like in an ordinary dictionary a mapping between a word and its definition). We say that the mapping is between `key` and `value`. For instance let's say I want to define an English-Polish dictionary.
+[Dictionaries in Julia](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) are a sort of mapping (like in an ordinary dictionary is a mapping between a word and its definition). We say that the mapping is between `key` and `value`. For instance let's say I want to define an English-Polish dictionary.
 
 ```jl
 s = """
@@ -717,7 +721,7 @@ engPolDict # the key order is not preserved
 sco(s)
 ```
 
-Here I defined a dictionary of type `Dict{String, String}` so both the key and the value are of textual type (`String`). The order of the keys is not preserved (it is not important for performance of this data structure). So you may see different order of items after typing the code on your computer.
+Here I defined a dictionary of type `Dict{String, String}`, so, both the key and the value are of textual type (`String`). The order of the keys is not preserved (this data structure cares more about lookup performance and not about the order of the keys). Therefore, you may see different order of items after typing the code on your computer.
 
 If I want to now how to say "two" in Polish I type `someDict[key]` (if the key is not there I will get an error), e.g.
 
@@ -728,7 +732,7 @@ engPolDict["two"]
 sco(s)
 ```
 
-To add a new value to a dictionary (or to update the existing value I write) `someDict[key] = newVal` for instance, right now the key "three" does not exist in `engPolDict` so I would get an error (check it out), but if I type:
+To add a new value to a dictionary (or to update the existing value I write) `someDict[key] = newVal`. Right now the key "three" does not exist in `engPolDict` so I would get an error (check it out), but if I type:
 
 ```jl
 s = """
@@ -737,16 +741,16 @@ engPolDict["three"] = "trzy"
 sco(s)
 ```
 
-Now to avoid getting errors due to not existing keys I can use build in [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) function in the form `get(collection, key, default)`, e.g. right now the word "four" (key) is not in a dictionary so I should get an error (check it out). But wait, there is `get`.
+Then I update (or create if it was not there) a new key-value mapping.
+
+Now, to avoid getting errors due to non-existing keys I can use build in [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) function in the form `get(collection, key, default)`, e.g. right now the word "four" (key) is not in a dictionary so I should get an error (check it out). But wait, there is `get`.
 
 ```jl
 s = """
-get(engPolDict, "four", "cztery")
+get(engPolDict, "four", "not found")
 """
 sco(s)
 ```
-
-Still, after this operation the key "four" is still not in `engPolDict`. For that I should have used `get!`. This method checks the dictionary, if the entry is not there it creates it with a default and returns the value for that key [see this part of the docs](https://docs.julialang.org/en/v1/base/collections/#Base.get!). By the way, you remember what the `!` in the name of the function means (if not see @sec:functions_modifying_arguments). Anyway, a lookup with an update (if the key is not there) looks like this.
 
 OK, what anything of it got to do with `if/elseif/else` and decision making. The thing is that if you got a lot of decisions to make then probably you will be better off with a dictionary. Compare
 
@@ -762,7 +766,7 @@ function translateEng2polVer1(engWord::String)::String
 	elseif engWord == "four"
 		return "jeden"
 	else
-		return "unknown"
+		return "not found"
 	end
 end
 
@@ -776,7 +780,7 @@ with
 ```jl
 s = """
 function translateEng2polVer2(engWord::String, someDict::Dict{String, String} = engPolDict)::String
-	return get(someDict, engWord, "unknown")
+	return get(someDict, engWord, "not found")
 end
 
 (translateEng2polVer2("three"), translateEng2polVer2("twelve"))
@@ -784,6 +788,6 @@ end
 sco(s)
 ```
 
-In `translateEng2polVer2` is used so called default value for an argument `someDict::Dict{String, String} = engPolDict` which means that if the function is provided without the second argument then `engPolDict` will be used as one. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`
+In `translateEng2polVer2` I used so called default value for an argument (`someDict::Dict{String, String} = engPolDict`). This means that if the function is provided without the second argument then `engPolDict` will be used as its second argument. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`. Of course, I may to prefer to use some other English-Polish dictionary (perhaps the one found on the internet) like so `translateEng2polVer2("three", betterEngPolDict)` instead of using the default `engPolDict` we got here.
 
 OK, enough of that. If you want to know more about conditional evaluation check [this part of Julia docs](https://docs.julialang.org/en/v1/manual/control-flow/#man-conditional-evaluation).
