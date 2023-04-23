@@ -704,3 +704,86 @@ sco(s)
 ```
 
 Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to read and process in your head than the good old `if/elseif/else` blocks.
+
+### Dictionaries {#sec:julia_language_dictionaries}
+
+[Dictionaries in Julia](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) are a sort of mapping (like in an ordinary dictionary a mapping between a word and its definition). We say that the mapping is between `key` and `value`. For instance let's say I want to define an English-Polish dictionary.
+
+```jl
+s = """
+engPolDict::Dict{String, String} = Dict("one" => "jeden", "two" => "dwa")
+engPolDict # the key order is not preserved
+"""
+sco(s)
+```
+
+Here I defined a dictionary of type `Dict{String, String}` so both the key and the value are of textual type (`String`). The order of the keys is not preserved (it is not important for performance of this data structure). So you may see different order of items after typing the code on your computer.
+
+If I want to now how to say "two" in Polish I type `someDict[key]` (if the key is not there I will get an error), e.g.
+
+```jl
+s = """
+engPolDict["two"]
+"""
+sco(s)
+```
+
+To add a new value to a dictionary (or to update the existing value I write) `someDict[key] = newVal` for instance, right now the key "three" does not exist in `engPolDict` so I would get an error (check it out), but if I type:
+
+```jl
+s = """
+engPolDict["three"] = "trzy"
+"""
+sco(s)
+```
+
+Now to avoid getting errors due to not existing keys I can use build in [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) function in the form `get(collection, key, default)`, e.g. right now the word "four" (key) is not in a dictionary so I should get an error (check it out). But wait, there is `get`.
+
+```jl
+s = """
+get(engPolDict, "four", "cztery")
+"""
+sco(s)
+```
+
+Still, after this operation the key "four" is still not in `engPolDict`. For that I should have used `get!`. This method checks the dictionary, if the entry is not there it creates it with a default and returns the value for that key [see this part of the docs](https://docs.julialang.org/en/v1/base/collections/#Base.get!). By the way, you remember what the `!` in the name of the function means (if not see @sec:functions_modifying_arguments). Anyway, a lookup with an update (if the key is not there) looks like this.
+
+OK, what anything of it got to do with `if/elseif/else` and decision making. The thing is that if you got a lot of decisions to make then probably you will be better off with a dictionary. Compare
+
+```jl
+s = """
+function translateEng2polVer1(engWord::String)::String
+	if engWord == "one"
+		return "jeden"
+	elseif engWord == "two"
+		return "dwa"
+	elseif engWord == "three"
+		return "trzy"
+	elseif engWord == "four"
+		return "jeden"
+	else
+		return "unknown"
+	end
+end
+
+(translateEng2polVer1("three"), translateEng2polVer1("ten"))
+"""
+sco(s)
+```
+
+with
+
+```jl
+s = """
+function translateEng2polVer2(engWord::String, someDict::Dict{String, String} = engPolDict)::String
+	return get(someDict, engWord, "unknown")
+end
+
+(translateEng2polVer2("three"), translateEng2polVer2("twelve"))
+"""
+sco(s)
+```
+
+In `translateEng2polVer2` is used so called default value for an argument `someDict::Dict{String, String} = engPolDict` which means that if the function is provided without the second argument then `engPolDict` will be used as one. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`
+
+OK, enough of that. If you want to know more about conditional evaluation check [this part of Julia docs](https://docs.julialang.org/en/v1/manual/control-flow/#man-conditional-evaluation).
