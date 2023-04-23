@@ -322,7 +322,31 @@ myMathGrades[2:3] # returns Vector with two grades (2nd and 3rd)
 sco(s)
 ```
 
-Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]`, `myMathGrades[10]` you will get an error.
+Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
+
+So I guess you can think about a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes).
+
+One last remark, You can change the elements that are in the vector like this.
+
+```jl
+s = """
+myMathGrades[1] = 2.0
+myMathGrades
+"""
+sco(s)
+```
+
+or like that
+
+```jl
+s = """
+myMathGrades[2:3] = [5.0, 5.0]
+myMathGrades
+"""
+sco(s)
+```
+
+Again, remember about proper indexing, and that what you put inside should be compatible with indexing on the left (`myMathGrades[2:3] = [2.0, 2.0, 2.0]` will produce an error).
 
 OK, enough about the variables, we will learn more about them as we discuss other topics throughout the book.
 
@@ -331,6 +355,8 @@ OK, enough about the variables, we will learn more about them as we discuss othe
 Functions are doers, i.e encapsulated pieces of code that do things for you. Optimally, a function should be single minded, i.e. doing one thing only and doing it well. Moreover since they do stuff they names should contain [verbs](https://en.wikipedia.org/wiki/Verb) (whereas variables' names should be composed of [nouns](https://en.wikipedia.org/wiki/Noun)).
 
 We already met one Julia function (see @sec:julia_is_simple), namely `println`. As the name suggests it prints something (like a text) to the [standard output](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)). This is one of many Julia build in functions (for more information see [Julia Docs](https://docs.julialang.org/en/v1/)).
+
+### Mathematical functions {#sec:mathematical_functions}
 
 But we can also define some functions on our own:
 
@@ -375,6 +401,8 @@ sco(s)
 ```
 
 Appears to be working just fine.
+
+### Functions with generics {#sec:functions_with_generics}
 
 Now, let's say I want a function `getFirstElt` that accepts a vector and returns its first element (vectors and indexing were briefly discussed in @sec:julia_collections).
 
@@ -433,9 +461,51 @@ end
 sc(s)
 ```
 
-Here we said that the vector is of type `T` (see `Vector{T}`) and that the function will return type `T` (see `)::T`). At end we said that this `T` is a custom type and could be any type at all (see `where T`). Replace `T` with some other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should). One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns some value of the same type as the one that builds this vector.
+Here we said that the vector is composed of elements of type `T` (`Vector{T}`) and that the function will return type `T` (see `)::T`). At end we said that this `T` is a custom type (not a Julia build in type) and it can be any type at all (see `where T`). Replace `T` with any other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should). One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns some value of the same type as the type of the elements that build that vector.
 
-Note that the last function we wrote for fun (it was fun for me, how about you?), in reality Julia already got `first`, a function with a similar functionality (see [this part of Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+Note that the last function we wrote for fun (it was fun for me, how about you?). In reality Julia already got `first`, a function with a similar functionality (see [this part of Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+
+### Functions modifying arguments {#sec:functions_modifying_arguments}
+
+Previously (see @sec:julia_collections) we said that you can change elements of the vector. So, let's try to write a function that changes the first element.
+
+```jl
+s = """
+function replaceFirstElt!(vect::Vector{T}, newElt:: T) where T
+	vect[1] = newElt
+	return nothing
+end
+"""
+sc(s)
+```
+
+First thing to notice, the functions name ends with `!` (exclamation mark). This is one of the Julia's conventions. In general, you should try to write a function that does not modify its arguments (it often causes errors in big programs). However, such modifications are sometimes useful, therefore Julia allows you to do so, but you should always be explicit about it. That is why it is customary to end the name of the function with `!` (exclamation mark draws attention). Notice that here `T` can still be any type, but we require `newElt` to be of the same type as the elements in `vect`. Additionally, we also signal the modification of the function's arguments by writing `replaceFirstElt!(vect::Vector{T}, newElt::T)` instead of `replaceFirstElt!(vect::Vector{T}, newElt::T)::T` (we removed the declaration of the returned type by the function, i.e. `)::T`). Additionally, although not required, we wrote `return nothing` to be even more open that the function does not return a value. Ok, let's see it in action.
+
+First `getFirstEltVer3`:
+
+```jl
+s = """
+x = [1, 2, 3]
+y = getFirstEltVer3(x)
+(x, y)
+"""
+sco(s)
+```
+
+and now `replaceFirstElt!`.
+
+```jl
+s = """
+x = [1, 2, 3]
+y = replaceFirstElt!(x, 4)
+(x, y)
+"""
+sco(s)
+```
+
+The `(x, y)` returns `Tuple` and it is there is to show both `x` and `y` in one line. You may think of `Tuple` as something similar to `Vector` but written with parenthesis `()` instead of square brackets `[]`. Additionally, you cannot modify elements of a tuple after it was created (so, if you got `z = (1, 2, 3)`, then `z[2]`) will work just OK, but `z[2] = 8` will produce an error).
+
+### Side Effects vs Returned Values {#sec:side_effects_vs_returned_values}
 
 Notice that so far we encountered two types of Julia functions:
 
