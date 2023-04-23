@@ -576,3 +576,108 @@ By default Pluto (v0.19.22) prints the return value at the top of the cell with 
 More information about functions can be found, e.g. [in this section of Julia Docs](https://docs.julialang.org/en/v1/manual/functions/).
 
 If You ever encounter a build in function that you don't know, you may always search [the docs](https://docs.julialang.org/en/v1/) (search box is on top left corner of the page).
+
+## Decision Making {#sec:julia_language_decision_making}
+
+In everyday life people have to make decisions and so do computer programs. This is the job for `if ... elseif ... else` constructs.
+
+### If ..., or Else ... {#sec:julia_language_if_else}
+
+To demonstrate decision making in action let's say I want to write a function that accepts an integer as an argument and returns a its textual representation. Here we go.
+
+```jl
+s = """
+function int2string(num::Int)::String
+	if num == 0
+		return "zero"
+	elseif num == 1
+		return "one"
+	elseif num == 2
+		return "two"
+	else
+		return "three or above"
+	end
+end
+
+(int2string(0), int2string(2), int2string(5)) # a tuple with results
+"""
+sco(s)
+```
+
+The general structure of the construct goes like this:
+
+<pre>
+# pseudocode, don't run this snippet
+if (condition_that_returns_Bool)
+	what_to_do
+elseif (another_condition_that_returns_Bool)
+	what_to_do
+elseif (another condition that returns Bool)
+	what_to_do
+else
+	what_to_do
+end
+</pre>
+
+As mentioned in @sec:julia_other_types `Bool` type can have two values `true` or `false`. The code inside `if`/`elseif` clause runs only when the condition is `true`.
+You can have any number of `elseif` clauses inside. If none of the previous claues matches (they are bring `false`) the code in `else` block is executed.
+Only `if` and `end` keywords are obligatory, the rest is not, so you may use
+
+<pre>
+# pseudocode, don't run this snippet
+if (condition_that_returns_Bool)
+	what_to_do
+end
+</pre>
+
+or
+
+<pre>
+# pseudocode, don't run this snippet
+if (condition_that_returns_Bool)
+	what_to_do
+else
+	what_to_do
+end
+</pre>
+
+or
+
+<pre>
+# pseudocode, don't run this snippet
+if (condition_that_returns_Bool)
+	what_to_do
+elseif (condition_that_returns_Bool)
+	what_to_do
+else
+	what_to_do
+end
+</pre>
+
+or ..., nevermind, I think You got the point.
+
+Another example of a function using `if/elseif/else` construct to remember it better.
+
+```jl
+s = """
+function getMin(vect::Vector{Int}, isSortedAsc::Bool)::Int
+	if isSortedAsc
+		return vect[1]
+	else
+		sortedVect::Vector{Int} = sort(vect)
+		return sortedVect[1]
+	end
+end
+
+x = [1, 2, 3, 4]
+y = [3, 4, 1, 2]
+
+(getMin(x, true), getMin(y, false))
+"""
+sco(s)
+```
+
+Here I wrote a function that finds minimal value in a vector of integers. If the vector is sorted in the ascending order it returns the first element.
+If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function and then returns its first element.
+Note that the `else` block contains two lines of code (it could contain more if necessary, and so could `if` block). I did this for demonstative purposes.
+Alternatively instead those two lines one could write `return sort(vect)[1]` and it would work just fine.
