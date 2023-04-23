@@ -39,7 +39,7 @@ for (i in 1:1000000000) {
 print("Done. I counted to 1 billion.")
 </pre>
 
-Each program counts to 1 billion (1 with 9 zeros) and when it is done it prints info on the screen.
+Each program counts to 1 billion (1 with 9 zeros) and when it is done it prints info on the screen. BTW. Python and Julia allow to write numbers either like this: `1000` or `1_000`. The other form uses `_`, so more typing, but it is more legible.
 
 Execution times of the scripts on my laptop (the specification is not that important):
 
