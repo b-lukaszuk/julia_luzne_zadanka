@@ -316,19 +316,21 @@ myMathGrades[end] # returns last grade
 sco(s)
 ```
 
-Or you can get a slice of the vector by typing
+Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
+
+Therefore, you can think of a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes). The drawers are labeled with consecutive numbers (indices) starting at 1.
+
+Moreover, you can get a slice (a part) of the vector by typing
 
 ```jl
 s = """
-myMathGrades[2:3] # returns Vector with two grades (2nd and 3rd)
+myMathGrades[2:4] # returns Vector with three grades (2nd, 3rd, and 4th)
 # the slicing is [inclusive:inclusive]
 """
 sco(s)
 ```
 
-Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
-
-So I guess you can think about a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes).
+The `2:4` is Julia's range generator, with default syntax `start:stop` both of which are inclusive (and the default step is equal 1). You may think that under the hood it generates a vector (check it out by typing `collect(2:4)` in a Pluto's cell). So, it gives us the same result as writing `myMathGrades[[2, 3, 4]]` by hand. However, the range syntax is more convenient, let's say I want to print every other grade out of 100 grades, then I can go with `oneHunderedGrades[1:2:end]` and voila, a magic happened thanks to the `start:step:stop` syntax.
 
 One last remark, You can change the elements that are in the vector like this.
 
@@ -366,14 +368,14 @@ But we can also define some functions on our own:
 
 ```jl
 s = """
-function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
+function getRectangleArea(lenSideA::Real, lenSideB::Real)::Real
 	return lenSideA * lenSideB
 end
 """
 sco(s)
 ```
 
-Here I declared Julia's version of a [mathematical function](https://en.wikipedia.org/wiki/Function_(mathematics)). It is called `getRectangleArea` and it calculates (surprise, surprise, the [area of a rectangle](https://en.wikipedia.org/wiki/Rectangle#Formulae)). To do that I used a keyword `function`. The `function` keyword is followed by the name of the function. Inside the parenthesis are arguments of the function. The function accepts two arguments `lenSideA` (length of one side) and `lenSideB` (length of the other side) and calculates the area of a rectangle. Both `lenSideA` and `lenSideB` are of type `Number` (any numeric type in Julia, it encompasses `Int` and `Float64` that we encountered before). The ending of the first line, `)::Number`, signifies that the function will return a value of type `Number`. The stuff that function returns is preceded by the `return` keyword. The function ends with the `end` keyword.
+Here I declared Julia's version of a [mathematical function](https://en.wikipedia.org/wiki/Function_(mathematics)). It is called `getRectangleArea` and it calculates (surprise, surprise, the [area of a rectangle](https://en.wikipedia.org/wiki/Rectangle#Formulae)). To do that I used a keyword `function`. The `function` keyword is followed by the name of the function. Inside the parenthesis are arguments of the function. The function accepts two arguments `lenSideA` (length of one side) and `lenSideB` (length of the other side) and calculates the area of a rectangle. Both `lenSideA` and `lenSideB` are of type `Real` (Julia's represntation of [real number](https://en.wikipedia.org/wiki/Real_number), it encompasses `Int` and `Float64` that we encountered before). The ending of the first line, `)::Real`, signifies that the function will return a value of type `Real`. The stuff that function returns is preceded by the `return` keyword. The function ends with the `end` keyword.
 
 Note, that you did not need to embed the function in the `begin ... end` tags, since this definition is a single logical piece of code then Pluto is OK with that. Time to run our function and see how it works.
 
@@ -384,11 +386,18 @@ getRectangleArea(3, 4)
 sco(s)
 ```
 
+```jl
+s = """
+getRectangleArea(1.5, 2)
+"""
+sco(s)
+```
+
 Hmm, and how about the [area of a square](https://en.wikipedia.org/wiki/Square#Perimeter_and_area). You got it.
 
 ```jl
 s = """
-function getSquareArea(lenSideA::Number)::Number
+function getSquareArea(lenSideA::Real)::Real
 	return getRectangleArea(lenSideA, lenSideA)
 end
 """
