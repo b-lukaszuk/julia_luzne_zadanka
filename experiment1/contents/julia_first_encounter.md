@@ -112,7 +112,7 @@ You should get the warning like:
 
 > ...
 
-Click the 'begin .. end' hyperlink so that Pluto can fix it for you (again, Pluto tries to protect you from putting more than one logical piece of code into a cell which sometimes may cause problems).
+Click the 'begin .. end' hyperlink (`Wrap all code in a begin ... end block.`) so that Pluto can fix it for you (again, Pluto tries to protect you from putting more than one logical piece of code into a cell which sometimes may cause problems).
 
 Now, You now what to do when you encounter that problem (I'm a bit lazy, I may not write the `begin ... end` everywhere throughout this book).
 
@@ -190,7 +190,7 @@ begin
 end
 </pre>
 
-Now a question arises. Why would you want to use type declaration (like `::Int` or `Float64`) at all? Well, sometimes it makes more sense to use say integer  instead of string (we add `3` to `3` not `"three"` to `"three"`). So you would like a guarding angel that watches over you and protects you from evil (especially in large programs). Additionally declaring types can make your code run faster.
+Now a question arises. Why would you want to use type declaration (like `::Int` or `Float64`) at all? Well, sometimes it makes more sense to use integer instead of string (we add `3` to `3` not `"three"` to `"three"`). So you would like a guarding angel that watches over you and protects you from evil (especially in large programs). Additionally declaring types can make your code run faster.
 
 A few more points of notice.
 
@@ -284,7 +284,9 @@ The last of the mentioned types is denoted as `::Bool` and can take only two val
 
 ### Collections {#sec:julia_collections}
 
-Not only do variables store single value but they can also store their collections. The collection type that we will discuss here is `Vector`.
+Not only do variables store single value but they can also store their collections. The collection type that we will discuss here are `Vector` and `Array` (technically `Vector` is a one dimentional `Array` but don't worry about that now).
+
+#### Vectors {#sec:julia_vectors}
 
 ```jl
 s = """
@@ -293,9 +295,7 @@ myMathGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
 sco(s)
 ```
 
-Here I declared a variable that stores my mock grades. The `{Float64}` part indicates that each element is of type `Float64`.
-Just like with the variables declared before also here the type declaration is optional. I could declare the variable without `{Float64}` or `::Vector{Float64}` part.
-The variable contains `jl length(myMathGrades)` grades in it, which you can check by typing `length(myMathGrades)` in a Pluto's cell.
+Here I declared a variable that stores my mock grades. The variable type is `Vector`. You can think of a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes). The drawers are labeled with consecutive numbers (indices) starting at 1 (but we will get to that in a moment). The `{Float64}` part indicates that each element is of type `Float64`. Just like with the variables declared before also here the type declaration is optional. I could declare the variable without `{Float64}` or `::Vector{Float64}` part. The variable contains `jl length(myMathGrades)` grades in it, which you can check by typing `length(myMathGrades)` in a Pluto's cell.
 
 You can retrieve a single element of the vector by typing `myMathGrades[i]` where `i` is some integer. E.g.
 
@@ -306,7 +306,7 @@ myMathGrades[3] # returns 3rd element
 sco(s)
 ```
 
----
+or
 
 ```jl
 s = """
@@ -318,8 +318,6 @@ sco(s)
 
 Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
 
-Therefore, you can think of a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes). The drawers are labeled with consecutive numbers (indices) starting at 1.
-
 Moreover, you can get a slice (a part) of the vector by typing
 
 ```jl
@@ -330,7 +328,7 @@ myMathGrades[2:4] # returns Vector with three grades (2nd, 3rd, and 4th)
 sco(s)
 ```
 
-The `2:4` is Julia's range generator, with default syntax `start:stop` both of which are inclusive (and the default step is equal 1). You may think that under the hood it generates a vector (check it out by typing `collect(2:4)` in a Pluto's cell). So, it gives us the same result as writing `myMathGrades[[2, 3, 4]]` by hand. However, the range syntax is more convenient, let's say I want to print every other grade out of 100 grades, then I can go with `oneHunderedGrades[1:2:end]` and voila, a magic happened thanks to the `start:step:stop` syntax.
+The `2:4` is Julia's range generator, with default syntax `start:stop` both of which are inclusive (and the default step is equal 1). Assume that under the hood it generates a vector. So, it gives us the same result as writing `myMathGrades[[2, 3, 4]]` by hand. However, the range syntax is more convenient (less typing). Let's say I want to print every other grade out of 100 grades, then I can go with `oneHunderedGrades[1:2:end]` and voila, a magic happened thanks to the `start:step:stop` syntax.
 
 One last remark, You can change the elements that are in the vector like this.
 
