@@ -352,6 +352,60 @@ sco(s)
 
 Again, remember about proper indexing, and that what you put inside should be compatible with indexing on the left (`myMathGrades[2:3] = [2.0, 2.0, 2.0]` will produce an error).
 
+#### Arrays {#sec:julia_arrays}
+
+A `Vector` is actually a special case of an `Array`, a multidimentional structure that holds data. The most familiar (and useful) form of it is a two-dimentional `Array` (also called `Matrix`). It has rows and columns. Previously I stored my math grades in a vector, but most likely I would like a place to keep my other grades. Here, I create an array that stores my grades from math (column1) and chemistry (column2).
+
+
+```jl
+s = """
+myGrades = [3.5 3.0; 4.0 3.0; 5.0 2.0]
+myGrades
+"""
+sco(s)
+```
+
+Here, I separate the values between columns with a space character and indicate a new row with a semicolon. Typing it by hand is not very interesting, but they come in handy as we will see later.
+
+As with vectors I can use indexing to get specific element(s) from a matrix. E.g.
+
+```jl
+s = """
+myGrades[:, 2] # returns second column (and all rows)
+"""
+sco(s)
+```
+
+Above, the `:` symbol means all indices in a row.
+
+```jl
+s = """
+myGrades[1, :] # returns first row (and all columns)
+"""
+sco(s)
+```
+
+By analogy, the `:` symbol means all indices in a column.
+
+```jl
+s = """
+myGrades[3, 2] # returns value from third row and second column
+"""
+sco(s)
+```
+
+I can also use the indexing to replace a particular element in a `Matrix`. For instance.
+
+```jl
+s = """
+myGrades[3, 2] = 5
+myGrades
+"""
+sco(s)
+```
+
+---
+
 OK, enough about the variables, we will learn more about them as we discuss other topics throughout the book.
 
 ## Functions {#sec:julia_language_functions}
