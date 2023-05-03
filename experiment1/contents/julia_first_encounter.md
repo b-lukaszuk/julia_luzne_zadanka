@@ -1131,3 +1131,43 @@ sco(s)
 Isn't this nice.
 
 OK, the goodies are great, but require some time of getting used to (I suspect at first you gonna use good old `for` loop syntax). Besides the constructs described in this section are good for simple operations (don't try to put too much logic into them, they are supposed to be one liners).
+
+## Additional libraries {#sec:julia_language_libraries}
+
+OK, there is one more thing I want to briefly talk about, and it is [libraries](https://en.wikipedia.org/wiki/Library_(computing)).
+
+A library is a piece of code that someone else wrote for you.
+At the time I'm writing these words there are over 9'000 libraries (aka packages) in Julia ([see here](https://julialang.org/packages/)) available under different licenses. If the package is under [MIT license](https://en.wikipedia.org/wiki/MIT_License) you may use it rather freely, but without any warranty (don't sue the author(s)).
+
+To install a package you use [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/), i.e. Julia's build in package manager. Click the link in the previous sentence to see how to do it.
+
+Pluto.jl comes with a build-in package manager ([see here](https://plutojl.org/docs/packages/)) so whenever you type, e.g. `using Plots` it will download the package from the internet (if you don't have it yet) and install it on your computer (it may take some time, be patient).
+
+In general there are two ways to use a package in your project:
+
+1. by typing `using Some_pkg_name`
+2. by typing `import Some_pkg_name as abbreviated_pkg_name`
+
+Personally, I prefer the latter.
+
+Let's see how it works. Remember the `getAvg` function that we wrote ourselves. Well, [Statistics](https://docs.julialang.org/en/v1/stdlib/Statistics/) got it for you (here it is named `mean`). To use it I type at the top of my file (it is a good practice to do so):
+
+
+```jl
+s = """
+import Statistics as stat
+"""
+sc(s)
+```
+
+Now I can assess any of its functions by preceding them with `stat` (my abbreviation) and `.` like so
+
+
+```jl
+s = """
+stat.mean([1, 2, 3])
+"""
+sco(s)
+```
+
+And that's it. It just works.
