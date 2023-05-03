@@ -1107,7 +1107,7 @@ Again, I pass function as a first argument to `map`, the second argument is a co
 
 #### Dot operators/functions {#sec:julia_language_dot_functions}
 
-Last but not least. I can use a dot operator. Say I got a vector of numbers and I want to add 10 to each of them. Nothing more simple. I just need to precede the operator with a `.` like so:
+Last but not least. I can use a [dot operator](https://docs.julialang.org/en/v1/manual/mathematical-operations/#man-dot-operators). Say I got a vector of numbers and I want to add 10 to each of them. Nothing more simple. I just need to precede the operator with a `.` like so:
 
 
 ```jl
