@@ -852,3 +852,177 @@ sco(s)
 In `translateEng2polVer2` I used so called default value for an argument (`someDict::Dict{String, String} = engPolDict`). This means that if the function is provided without the second argument then `engPolDict` will be used as its second argument. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`. Of course, I may to prefer to use some other English-Polish dictionary (perhaps the one found on the internet) like so `translateEng2polVer2("three", betterEngPolDict)` instead of using the default `engPolDict` we got here.
 
 OK, enough of that. If you want to know more about conditional evaluation check [this part of Julia docs](https://docs.julialang.org/en/v1/manual/control-flow/#man-conditional-evaluation).
+
+## Repetition {#sec:julia_language_repetition}
+
+Julia, and computers in general, are good at doing boring, repetitive tasks for us without a word of complaint. Let's see some constructs that help us with it.
+
+### For loops {#sec:julia_language_for_loops}
+
+A [for loop](https://en.wikipedia.org/wiki/For_loop) is a standard construct present in many programming languages that do the repetition for us. Its general form in Julia is:
+
+<pre>
+for i in sequence
+	# do_something_useful
+end
+</pre>
+
+The loop is enclosed between `for` and `end` keywords and repeats some specific action(s) (`# do_something_useful`) for every element of a `sequence`. On each turnover of a loop consecutive elements of a sequence are referred to by `i` (I could assign any name, like: `j`, `k`, `whatever`) it would work the same (still, `i` and `j` are quite common in [for loops](https://en.wikipedia.org/wiki/For_loop)).
+
+Let's say I want a program that will print [hip hip hooray](https://en.wikipedia.org/wiki/Hip_hip_hooray) many times for my friend that celebrates some success. I can proceed like this.
+
+
+```jl
+s = """
+function printHoorayNtimes(n::Int)
+	@assert (n > 0) "n needs to be greater than 0"
+	for _ in 1:n
+		println("hip hip hooray!")
+	end
+	return nothing
+end
+"""
+sc(s)
+```
+
+Go ahead, run in in a Pluto's cell (e.g. `printHoorayNtimes(3)`).
+
+Notice two new elements. Here it makes no sense for `n` to be less than of equal to 0. Hence, I used [\@assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) construct to test it and print an error message (`"n needs to be greater than 0"`) if it is. Additionally, I used `_` instead of `i` in the example above (to signal that I don't plan to use it further).
+
+OK, how about another example. You remember `myMathGrades`, right?
+
+```jl
+s = """
+myMathGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
+"""
+sc(s)
+```
+
+Now, since the end of the school year is coming then I would like to know my [average](https://en.wikipedia.org/wiki/Arithmetic_mean) (likely this will be my final grade). In order to get that I need to divide the sum by the number of grades. First the sum.
+
+
+```jl
+s = """
+function getSum(nums::Vector{<:Real})::Real
+	total::Real = 0
+	for i in 1:length(nums)
+		total = total + nums[i]
+	end
+	return total
+end
+
+getSum(myMathGrades)
+"""
+sco(s)
+```
+
+A few explanations regarding the new bits of code here. In arguments list I wrote `::Vector{<:Real}`. Which means that each element of nums is a subtype (`<:`) of the type `Real` (which includes integers and floats). I declared a `total` and initialized it to 0. Then in `for` loop I used `i` to hold numbers from 1 to number of elements in the vector (`length(nums)`). Finally, in the for loop body I added each number from the vector (using indexing see @sec:julia_vectors) to the `total`. The `total = total + nums[i]` means new total is equal to old total + element of the vector with index `i`. Finally, I returned the total.
+
+The body of the `for` loop could be improved. Instead of `for i in 1:length(nums)` I could have written `for i in eachindex(nums)` (notice there is no `1:`). Moreover, instead of `total = total + nums[i]` I could have used `total += nums[i]`. The `+=` is and [update operator](https://docs.julialang.org/en/v1/manual/mathematical-operations/#Updating-operators), i.e. a shortcut for updating old value by adding a new value to it. Take a moment to rewrite the function with those new forms and test it.
+
+Alternatively, I can do this without indexing (although `for` loops with indexing are a kind of classical idiom in programming and it is worth to know them).
+
+```jl
+s = """
+function getSum(nums::Vector{<:Real})::Real
+	total::Real = 0
+	for num in nums
+		total += num
+	end
+	return total
+end
+
+getSum(myMathGrades)
+"""
+sco(s)
+```
+
+Here `num` (I could have left `i` if I wanted to) takes the value of each consecutive element of `nums` and adds it to the total.
+
+OK, and now back to the [average](https://en.wikipedia.org/wiki/Arithmetic_mean).
+
+
+```jl
+s = """
+function getAvg(nums::Vector{<:Real})::Real
+	return getSum(nums) / length(nums)
+end
+
+getAvg(myMathGrades)
+"""
+sco(s)
+```
+
+Ups, not quite 3.5, I'll better present some additional projects to improve my final grade.
+
+OK, two more examples that might be useful and will help you master `for` loops even better.
+
+Let's say I got a vector of temperatures in [Celsius](https://en.wikipedia.org/wiki/Celsius) and want to send it to a friend in the US.
+
+```jl
+s = """
+temperaturesCelsius = [22, 18.3, 20.1, 19.5]
+"""
+sco(s)
+```
+
+To make it easier for him I should probably change it to [Fahrenheit](https://en.wikipedia.org/wiki/Fahrenheit) using [this formula](https://en.wikipedia.org/wiki/Fahrenheit#Conversion_(specific_temperature_point)). I start with writing simple converting function for a single value of the temperature in Celsius.
+
+
+```jl
+s = """
+function degCels2degFahr(tempCels::Real)::Real
+	return tempCels * 1.8 + 32
+end
+
+degCels2degFahr(0)
+"""
+sco(s)
+```
+
+Now let's convert the temperatures in the vector. First I would try something like this:
+
+```jl
+s = """
+function degCels2degFahr!(tempsCels::Vector{<:Real})
+	for i in eachindex(tempsCels)
+		tempsCels[i] = degCels2degFahr(tempsCels[i])
+	end
+	return nothing
+end
+"""
+sc(s)
+```
+
+Notice the `!` in the function name (don't remember what it mean? [see here](https://docs.julialang.org/en/v1/manual/style-guide/#bang-convention)).
+
+Still, this is not good. If I use it (`degCels2degFahr!(temperatureCelsius)`) it will change the values in `temperaturesCelsius` to Fahrenheit which could cause problems (variable name doesn't reflect its contents).
+A better approach is to write a function that produces a new vector and doesn't change the old one.
+
+```jl
+s = """
+function degCels2degFahr(tempsCels::Vector{<:Real})::Vector{<:Real}
+	result::Vector{<:Real} = zeros(length(tempsCels))
+	for i in eachindex(tempsCels)
+		result[i] = degCels2degFahr(tempsCels[i])
+	end
+	return result
+end
+"""
+sco(s)
+```
+
+Now I can use it like that:
+
+```jl
+s = """
+temperaturesFahrenheit = degCels2degFahr(temperaturesCelsius)
+"""
+sco(s)
+```
+
+First of all, notice that so far I defined two functions `degCels2degFahr` one with a single value as an argument (`degCels2degFahr(tempCels::Real)`) and another with a vector as its argument (`degCels2degFahr(tempsCels::Vector{<:Real})`). But since I explicitly declared argument types, Julia will know when to use each version.
+
+In the body of `degCels2degFahr(tempsCels::Vector{<:Real})` first I declare and initialize a variable that will hold the result (hence `result`). I do this using build in [zeros](https://docs.julialang.org/en/v1/base/arrays/#Base.zeros) function. The function returns a new vector with n elements (where n is equal to `length(tempsCels)`) filled with, you got it, 0s. Then, in the `for` loop, I go through all the indices of `result` (`i` holds the current index) and replace each zero (`result[i]`) with a corresponding value in Fahrenheit (`degCels2degFahr(tempsCels[i])`). Here, since I pass a single value (`tempsCels[i]`) Julia knows which version (aka method) of the function `degCels2degFahr` to use (i.e. this one `degCels2degFahr(tempCels::Real)`).
+
+OK, enough for the classic `for` loops. Let's go to some build-in goodies that could help us out with repetition.
