@@ -1026,3 +1026,108 @@ First of all, notice that so far I defined two functions `degCels2degFahr` one w
 In the body of `degCels2degFahr(tempsCels::Vector{<:Real})` first I declare and initialize a variable that will hold the result (hence `result`). I do this using build in [zeros](https://docs.julialang.org/en/v1/base/arrays/#Base.zeros) function. The function returns a new vector with n elements (where n is equal to `length(tempsCels)`) filled with, you got it, 0s. Then, in the `for` loop, I go through all the indices of `result` (`i` holds the current index) and replace each zero (`result[i]`) with a corresponding value in Fahrenheit (`degCels2degFahr(tempsCels[i])`). Here, since I pass a single value (`tempsCels[i]`) Julia knows which version (aka method) of the function `degCels2degFahr` to use (i.e. this one `degCels2degFahr(tempCels::Real)`).
 
 OK, enough for the classic `for` loops. Let's go to some build-in goodies that could help us out with repetition.
+
+### Build-in Goodies {#sec:julia_language_buildin_goodies}
+
+If the operation you want to perform is simple enough you may prefer to use some Julia goodies.
+
+#### Reduce {#sec:julia_language_reduce}
+
+Remember the `getSum` function that we wrote previously. Well it can be much shorter by using the [reduce](https://docs.julialang.org/en/v1/base/collections/#Base.reduce-Tuple{Any,%20Any}) function for instance.
+
+
+```jl
+s = """
+xs = [1, 2, 3]
+reduce((x, y) -> x + y, xs, init=0)
+"""
+sco(s)
+```
+
+As you can see `reduce` accepts 3 arguments: a function, a collection, initial value of the accumulator. Here, I used so called [anonymous function](https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions), so a function without name. The expression `(x, y) -> x + y` means a function that takes two arguments and returns their sum. The `reduce` takes this function and executes it many times, each time:
+
+1. one argument is `init` (if executed for the first time) or the result of previous execution
+2. the other argument is consecutive element of the collection
+
+So, in the case above it goes something like
+
+<pre>
+0 + 1 # (init + current element), result: 1
+1 + 2 # (previous result + current element), result: 3
+3 + 3 # (previous result + current element), result: 6
+# no more elements left, the result of the last operation is returned
+</pre>
+
+In this case `reduce` could be further simplified, but I assume you already have a lot to wrap your head around so I leave it as it is.
+Just remember to type `init=` and then the default argument (no the value alone, since it is a [keyword argument](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)).
+
+#### Comprehensions {#sec:julia_language_comprehensions}
+
+Another useful constructs are [comprehensions](https://docs.julialang.org/en/v1/manual/arrays/#man-comprehensions).
+
+Let's say this time I want to convert inches to centimeters using this function.
+
+```jl
+s = """
+function inch2cm(inch::Real)::Real
+	return inch * 2.54
+end
+
+inch2cm(1)
+"""
+sco(s)
+```
+
+If I want to do it for a bunch of values I can use comprehensions like so.
+
+
+```jl
+s = """
+inches = [10, 20, 30]
+cms = [inch2cm(inch) for inch in inches]
+"""
+sco(s)
+```
+
+On the right I use the familiar `for` loop syntax, i.e. `for sth in collection`. On the left I place a function (named or anonymous) that I want to use and pass consecutive elements (`sth`) to that function. The expression is surrounded with square brackets so that Julia makes a new vector out of it (the old vector is not changed).
+
+#### Map {#sec:julia_language_map}
+
+Comprehensions are nice, but some people find [maps](https://docs.julialang.org/en/v1/base/collections/#Base.map) even better. The example above could be rewritten as:
+
+```jl
+s = """
+inches = [10, 20, 30]
+cms = map(inch2cm, inches)
+"""
+sco(s)
+```
+
+Again, I pass function as a first argument to `map`, the second argument is a collection. Map automatically applies the function to every element of the collection and returns a new collection. Isn't this magic.
+
+#### Dot operators/functions {#sec:julia_language_dot_functions}
+
+Last but not least. I can use a dot operator. Say I got a vector of numbers and I want to add 10 to each of them. Nothing more simple. I just need to precede the operator with a `.` like so:
+
+
+```jl
+s = """
+[1, 2, 3] .+ 10
+"""
+sco(s)
+```
+
+I can do this also for functions (both build-in and written by myself). Notice `.` goes before `(`
+
+
+```jl
+s = """
+inches = [10, 20, 30]
+cms = inch2cm.(inches)
+"""
+sco(s)
+```
+
+Isn't this nice.
+
+OK, the goodies are great, but require some time of getting used to (I suspect at first you gonna use good old `for` loop syntax). Besides the constructs described in this section are good for simple operations (don't try to put too much logic into them, they are supposed to be one liners).
