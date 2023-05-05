@@ -4,6 +4,13 @@
 This file is not included in the PDF.
 ```
 
+Last update
+
+```jl
+import Dates
+Dates.now() |> x -> Dates.format(x, Dates.RFC1123Format)
+```
+
 Hello there. This is an open source/access book entitled: "Romeo and Julia, where Romeo is Basic Statistics".
 So I guess it's gonna be about [Julia](https://julialang.org/) and its usage for basic statistics.
 
