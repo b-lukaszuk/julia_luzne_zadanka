@@ -2,13 +2,13 @@
 
 Before we jump into statistics I think we need to explain why do we use [Julia](https://julialang.org/) and not, e.g. [Python](https://www.python.org/) or [R](https://www.r-project.org/).
 
-Am I mad to use Julia for statistics instead of R (a project developed for statistical computing) or more popular (also in the field of Data Science) Python?
+In other words, mm I mad to use Julia for statistics instead of R (a project developed for statistical computing) or more popular (also in the field of Data Science) Python?
 
 Well, I hope that I'm just biased. I like Julia because:
 
 1. it's fast
 2. it's simple
-3. it gives me pleasure to write programs with it
+3. it's a pleasure to write programs with it
 4. it's a less mainstream language
 5. it's free and open source
 
@@ -39,7 +39,10 @@ for (i in 1:1000000000) {
 print("Done. I counted to 1 billion.")
 </pre>
 
-Each program counts to 1 billion (1 with 9 zeros) and when it is done it prints info on the screen. BTW. Python and Julia allow to write numbers either like this: `1000` or `1_000`. The other form uses `_`, so more typing, but it is more legible.
+*A small remark. Python and Julia allow to write numbers either like this: `1000` or `1_000`. The other form uses `_`, so more typing, but it is more legible.*
+
+Anyway, each program counts to 1 billion (1 with 9 zeros). Once it is done it prints info on the screen.
+
 
 Execution times of the scripts on my laptop (the specification is not that important):
 
@@ -47,7 +50,7 @@ Execution times of the scripts on my laptop (the specification is not that impor
 2. R: ~9 [sec]
 3. Python3: ~27 [sec]
 
-Granted, it's not a proper benchmark, and e.g. Python's [numpy](https://github.com/numpy/numpy) library runs with the speed of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (so a bit faster than Julia). Still, it seems that the code that I write in Julia is consistently ~8-10 times faster than the code I write in the other two programming languages (a subjective feeling).
+Granted, it's not a proper benchmark, and e.g. Python's [numpy](https://github.com/numpy/numpy) library runs with the speed of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (so a bit faster than Julia). Still, the code that I write in Julia is consistently ~8-10 times faster than the code I write in the other two programming languages (a subjective feeling).
 
 **Fun fact**: a human being would need like 32 years to count to 1 billion.
 Test yourself and show why. Hint: try to count/estimate for how long you are alive [in seconds].
@@ -56,7 +59,7 @@ Test yourself and show why. Hint: try to count/estimate for how long you are ali
 
 What I mean by Julia's simplicity is its nice, friendly and terse syntax.
 
-For instance to write a simple `Hello world` program all I have to do is type:
+For instance to write a simple `Hello world` program all I have to do is to type:
 
 <pre>
 println("Hello World!")
@@ -75,13 +78,13 @@ class HelloWorld {
 }
 </pre>
 
-For me too much boilerplate code, the code that I don't want to type, read or process in my head. Additionally, probably it will not run faster than the Julia's equivalent.
+For me too much boilerplate code. The code that I don't want to type, read or process in my head. Additionally, probably it will not run faster than the Julia's equivalent.
 
 ## Pleasure to write {#sec:jl_pleasure_to_write}
 
 According to [stack overflow's survey](https://survey.stackoverflow.co/2022/#section-most-loved-dreaded-and-wanted-programming-scripting-and-markup-languages) Julia got one of the best loved-dreaded ratio among the examined programming languages.
 
-This is also true for me. I like writing programs with Julia.
+This is also true for me. I like writing programs with Julia (hopefully so will you).
 
 ## Not mainstream {#sec:jl_not_mainstream}
 

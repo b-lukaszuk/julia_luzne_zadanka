@@ -24,7 +24,7 @@ VERSION
 sco(s)
 ```
 
-For starters I recommend [Pluto.jl](https://github.com/fonsp/Pluto.jl) as a minimalist and user friendly code editor for Julia. Here, I paste the link to [YouTube video](https://www.youtube.com/watch?v=OOjKEgbt8AI) (copied from the Pluto.jl's web page) with instructions of how to install it. From now on you'll be able to use it to interactively to run some Julia code from this book. If you need it feel free to watch more videos about Pluto.jl.
+For starters I recommend [Pluto.jl](https://github.com/fonsp/Pluto.jl) as a minimalist and user friendly code editor for Julia. Here, I paste the link to [YouTube video](https://www.youtube.com/watch?v=OOjKEgbt8AI) (copied from the Pluto.jl's web page) with instructions how to install it. From now on you'll be able to use it interactively (to run some Julia code from this book). Of course, if necessary feel free to watch more videos about Pluto.jl.
 
 ## Running Pluto Notebook {#sec:julia_running_pluto_notebook}
 
@@ -148,11 +148,16 @@ zz::Float64 = 4.4
 sc(s)
 ```
 
-The `::Int` part informs Julia that you will be storing only [integers](https://en.wikipedia.org/wiki/Integer) (like: ..., -1, 0, 1, ...) in this box. Whereas by typing `::Float64` we declare to store only [floats](https://en.wikipedia.org/wiki/Floating-point_arithmetic) (like: ..., 1.1, 1.0, 0.0, 2.2, 3.14, ...) in that box.
+The `::` is a type declaration. Here by using `::Int` you promise Julia that you will be storing only [integers](https://en.wikipedia.org/wiki/Integer) (like: ..., -1, 0, 1, ...) in this box. Whereas by typing `::Float64` you declare to place only [floats](https://en.wikipedia.org/wiki/Floating-point_arithmetic) (like: ..., 1.1, 1.0, 0.0, 2.2, 3.14, ...) in that box.
 
 ### Optional type declaration {#sec:julia_optional_type_declaration}
 
-**Note the difference.** If you use variable without type definition you can freely reassign values even of different types (*note: in the code below `#` and all the text to the right of it is a comment, the part that is ignored by a computer but read by a human*)
+**In Julia type declaration is optional.** You don't have to do this, Julia will figure them out anyway. Still, sometimes it is worth to declare them (explanation in a moment).
+If you decide to do so, you should declare a variable's type only once (the time it is first created and initialized with a value).
+
+If you use a variable without type declaration then you can freely reassign to it values of different types.
+
+*Note: in the code below `#` and all the text to the right of it is a comment, the part that is ignored by a computer but read by a human*
 
 ```jl
 s = """
@@ -166,7 +171,7 @@ end
 sc(s)
 ```
 
-But you cannot assign a different type to variable than the one you declared (you must keep your promises).
+But you cannot assign a different type to a variable than the one you declared (you must keep your promises).
 Look at the code below.
 
 This is OK
@@ -190,17 +195,36 @@ begin
 end
 </pre>
 
-Now a question arises. Why would you want to use type declaration (like `::Int` or `Float64`) at all? Well, sometimes it makes more sense to use integer instead of string (we add `3` to `3` not `"three"` to `"three"`). So you would like a guarding angel that watches over you and protects you from evil (especially in large programs). Additionally declaring types can make your code run faster.
+Now a question arises. Why would you want to use type declaration (like `::Int` or `::Float64`) at all? Well, sometimes it makes more sense to use integer instead of string (we may wish to multiply `3` to `3` not `"three"` to `"three"`).
 
-A few more points of notice.
+```jl
+s = """
+3 * 3 # works as you intended
+"""
+sco(s)
+```
+
+---
+
+```jl
+s = """
+"three" * "three" # that's surprising (for a beginner) but sometimes useful
+"""
+sco(s)
+```
+
+To avoid such an unexpected situations you would like a guarding angel that watches over you. This is what Julia does when you ask her for it by using type declarations.
+Additionally declaring types can make your code run faster.
+
+Personally, I try to use type declarations especially in my functions (see upcoming @sec:julia_language_functions) to help me reason what they do.
 
 ### Meaningful variable names {#sec:julia_meaningful_variable_names}
 
-**Name your variables well**. The variable names I used before are horrible (*mea culpa, mea culpa, mea maxima culpa*). We use named variables (like `x = 1`) instead of loose variables (you can type `1` alone in the Pluto's cell and execute it) to use them later.
+**Name your variables well**. The variable names I used before are horrible (*mea culpa, mea culpa, mea maxima culpa*). We use named variables (like `x = 1`) instead of 'loose' variables (you can type `1` alone in a Pluto's cell and execute it) to use them later.
 
-You can use them later in time (reading and editing your code tomorrow or next month/year) or in space (using it 30 code cells below). If so, the names need to be memorable (actually just meaningful will do :P). So whenever possible use: `studentAge = 19`, `bookTitle = "Dune"` instead of `x = 19`, `y = "Dune"`.
+You can use them later in time (reading and editing your code tomorrow or next month/year) or in space (using it 30 code cells below). If so, the names need to be memorable (actually just meaningful will do :D). So whenever possible use: `studentAge = 19`, `bookTitle = "Dune"` instead of `x = 19`, `y = "Dune"`.
 
-You may want to check [Julia Docs](https://docs.julialang.org/en/v1/) for [allowed variable names](https://docs.julialang.org/en/v1/manual/variables/#man-allowed-variable-names) and their [stylistic conventions](https://docs.julialang.org/en/v1/manual/variables/#Stylistic-Conventions). Still, I prefer to use [camelCaseStyle](https://en.wikipedia.org/wiki/Camel_case) so this is what you gonna see here.
+You may want to check [Julia Docs](https://docs.julialang.org/en/v1/) for [allowed variable names](https://docs.julialang.org/en/v1/manual/variables/#man-allowed-variable-names) and their [stylistic conventions](https://docs.julialang.org/en/v1/manual/variables/#Stylistic-Conventions). Still, I prefer to use [camelCaseStyle](https://en.wikipedia.org/wiki/Camel_case) so this is what you're gonna see here.
 
 ### Floats comparisons {#sec:julia_float_comparisons}
 
@@ -256,7 +280,7 @@ s = """
 sco(s)
 ```
 
-It is `false` since float numbers cannot be represented exactly in binary (see [this StackOverflow's thread](https://stackoverflow.com/questions/8604196/why-0-1-3-0-3)). This is how `0.1 * 3` looks for computer
+It is `false` since float numbers cannot be represented exactly in binary (see [this StackOverflow's thread](https://stackoverflow.com/questions/8604196/why-0-1-3-0-3)). This is how a computer sees `0.1 * 3`
 
 
 ```jl
@@ -266,7 +290,18 @@ s = """
 sco(s)
 ```
 
-The same caution applies to other comparison operators, like `>` (`is greater than`), `>=` (`is greater than or equal to`), `<` (`is less than`), `<=` (`is less than or equal to`)
+and `0.3`
+
+```jl
+s = """
+0.3
+"""
+sco(s)
+```
+
+The same caution applies to other comparison operators, like `>` (`is greater than`), `>=` (`is greater than or equal to`), `<` (`is less than`), `<=` (`is less than or equal to`).
+
+*We will see how to deal with that later.*
 
 ### Other types {#sec:julia_other_types}
 
@@ -280,7 +315,7 @@ There are also other types (see [Julia Docs](https://docs.julialang.org/en/v1/ma
 
 The briefly mentioned strings are denoted by `::String` and you type them with quotations (`"any text"`).
 
-The last of the mentioned types is denoted as `::Bool` and can take only two values: `true` or `false` (see the results of the comparison operations above).
+The last of the mentioned types is denoted as `::Bool` and can take only two values: `true` or `false` (see the results of the comparison operations above in @sec:julia_float_comparisons).
 
 ### Collections {#sec:julia_collections}
 
@@ -290,14 +325,18 @@ Not only do variables store single value but they can also store their collectio
 
 ```jl
 s = """
-myMathGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
+myMathGrades = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
 """
 sco(s)
 ```
 
-Here I declared a variable that stores my mock grades. The variable type is `Vector`. You can think of a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes). The drawers are labeled with consecutive numbers (indices) starting at 1 (but we will get to that in a moment). The `{Float64}` part indicates that each element is of type `Float64`. Just like with the variables declared before also here the type declaration is optional. I could declare the variable without `{Float64}` or `::Vector{Float64}` part. The variable contains `jl length(myMathGrades)` grades in it, which you can check by typing `length(myMathGrades)` in a Pluto's cell.
+Here I declared a variable that stores my mock grades.
 
-You can retrieve a single element of the vector by typing `myMathGrades[i]` where `i` is some integer. E.g.
+The variable type is `Vector` of numbers (each of type `Float64`, run `typeof(myMathGrades)` in Pluto's cell to check it). I could have declared its type explicitly as `::Vector{Float64}`. Instead I let Julia to figure it out.
+
+You can think of a vector as a [rectangular cuboid](https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid) box with drawers (smaller [cube](https://en.wikipedia.org/wiki/Cube) shaped boxes). The drawers are labeled with consecutive numbers (indices) starting at 1 (we will get to that in a moment). The variable contains `jl length(myMathGrades)` grades in it, which you can check by typing `length(myMathGrades)` in a Pluto's cell.
+
+You can retrieve a single element of the vector by typing `myMathGrades[i]` where `i` is some integer (the aforementioned index). For instance:
 
 ```jl
 s = """
@@ -311,12 +350,12 @@ or
 ```jl
 s = """
 myMathGrades[end] # returns last grade
-# the above is equivalent to: myMathGrades[7]
+# it is equivalent to: myMathGrades[7], but I don't need to count elements
 """
 sco(s)
 ```
 
-Be careful though, if You type an none existing index like: `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
+Be careful though, if You type a none existing index like `myMathGrades[-1]`, `myMathGrades[0]` or `myMathGrades[10]` you will get an error (e.g. `BoundsError: attempt to access 7-element Vector{Int64} at index [0]`).
 
 Moreover, you can get a slice (a part) of the vector by typing
 
@@ -328,7 +367,7 @@ myMathGrades[2:4] # returns Vector with three grades (2nd, 3rd, and 4th)
 sco(s)
 ```
 
-The `2:4` is Julia's range generator, with default syntax `start:stop` both of which are inclusive (and the default step is equal 1). Assume that under the hood it generates a vector. So, it gives us the same result as writing `myMathGrades[[2, 3, 4]]` by hand. However, the range syntax is more convenient (less typing). Let's say I want to print every other grade out of 100 grades, then I can go with `oneHunderedGrades[1:2:end]` and voila, a magic happened thanks to the `start:step:stop` syntax.
+The `2:4` is Julia's range generator, with default syntax `start:stop` (both of which are inclusive). Assume that under the hood it generates a vector. So, it gives us the same result as writing `myMathGrades[[2, 3, 4]]` by hand. However, the range syntax is more convenient (less typing). Let's say I want to print every other grade out of 100 grades, then I can go with `oneHunderedGrades[1:2:end]` and voila, a magic happened thanks to the `start:step:stop` syntax.
 
 One last remark, You can change the elements that are in the vector like this.
 
@@ -350,11 +389,11 @@ myMathGrades
 sco(s)
 ```
 
-Again, remember about proper indexing, and that what you put inside should be compatible with indexing on the left (`myMathGrades[2:3] = [2.0, 2.0, 2.0]` will produce an error).
+Again, remember about proper indexing. What you put inside (right side) should be compatible with indexing (left side), e.g `myMathGrades[2:3] = [2.0, 2.0, 2.0]` will produce an error (placing 3 numbers to 2 slots).
 
 #### Arrays {#sec:julia_arrays}
 
-A `Vector` is actually a special case of an `Array`, a multidimentional structure that holds data. The most familiar (and useful) form of it is a two-dimentional `Array` (also called `Matrix`). It has rows and columns. Previously I stored my math grades in a vector, but most likely I would like a place to keep my other grades. Here, I create an array that stores my grades from math (column1) and chemistry (column2).
+A `Vector` is actually a special case of an `Array`, a multidimentional structure that holds data. The most familiar (and useful) form of it is a two-dimentional `Array` (also called `Matrix`). It has rows and columns. Previously I stored my math grades in a `Vector`, but most likely I would like a place to keep my other grades. Here, I create an array that stores my grades from math (column1) and chemistry (column2).
 
 
 ```jl
@@ -365,7 +404,7 @@ myGrades
 sco(s)
 ```
 
-Here, I separate the values between columns with a space character and indicate a new row with a semicolon. Typing it by hand is not very interesting, but they come in handy as we will see later.
+I separated the values between columns with a space character and indicated a new row with a semicolon. Typing it by hand is not very interesting, but they come in handy as we will see later.
 
 As with vectors I can use indexing to get specific element(s) from a matrix. E.g.
 
@@ -406,7 +445,9 @@ sco(s)
 
 ---
 
-OK, enough about the variables, we will learn more about them as we discuss other topics throughout the book.
+As with a `Vector` also here you must pay attention to proper indexing.
+
+OK, enough about the variables, time to check functions.
 
 ## Functions {#sec:julia_language_functions}
 
@@ -427,9 +468,11 @@ end
 sco(s)
 ```
 
-Here I declared Julia's version of a [mathematical function](https://en.wikipedia.org/wiki/Function_(mathematics)). It is called `getRectangleArea` and it calculates (surprise, surprise, the [area of a rectangle](https://en.wikipedia.org/wiki/Rectangle#Formulae)). To do that I used a keyword `function`. The `function` keyword is followed by the name of the function. Inside the parenthesis are arguments of the function. The function accepts two arguments `lenSideA` (length of one side) and `lenSideB` (length of the other side) and calculates the area of a rectangle. Both `lenSideA` and `lenSideB` are of type `Real` (Julia's represntation of [real number](https://en.wikipedia.org/wiki/Real_number), it encompasses `Int` and `Float64` that we encountered before). The ending of the first line, `)::Real`, signifies that the function will return a value of type `Real`. The stuff that function returns is preceded by the `return` keyword. The function ends with the `end` keyword.
+Here I declared Julia's version of a [mathematical function](https://en.wikipedia.org/wiki/Function_(mathematics)). It is called `getRectangleArea` and it calculates (surprise, surprise, the [area of a rectangle](https://en.wikipedia.org/wiki/Rectangle#Formulae)).
 
-Note, that you did not need to embed the function in the `begin ... end` tags, since this definition is a single logical piece of code then Pluto is OK with that. Time to run our function and see how it works.
+To do that I used a keyword `function`. The `function` keyword is followed by the name of the function. Inside the parenthesis are arguments of the function. The function accepts two arguments `lenSideA` (length of one side) and `lenSideB` (length of the other side) and calculates the area of a rectangle. Both `lenSideA` and `lenSideB` are of type `Real` (Julia's represntation of [real number](https://en.wikipedia.org/wiki/Real_number), it encompasses `Int` and `Float64` that we encountered before). The ending of the first line, `)::Real`, signifies that the function will return a value of type `Real`. The stuff that function returns is preceded by the `return` keyword. The function ends with the `end` keyword.
+
+Note, that you did not need to embed the function in the `begin ... end` tags, since this definition is a single logical piece of code so Pluto is OK with that. Time to run our function and see how it works.
 
 ```jl
 s = """
@@ -480,7 +523,7 @@ end
 sc(s)
 ```
 
-It looks OK (test it in Pluto.jl, e.g. `getFirstElt([1, 2, 3]`). However, the problem is it works only with integers (or maybe not, test it out).
+It looks OK (test it in Pluto, e.g. `getFirstElt([1, 2, 3]`). However, the problem is it works only with integers (or maybe not, test it out).
 How to make it work with any type, like `getFirstElt(["Eve", "Tom", "Alex"])` or `getFirstElt([1.1, 2.2, 3.3])`?
 
 One way is to declare separate versions of the functions for different type of inputs, i.e.
@@ -504,7 +547,7 @@ end
 sco(s)
 ```
 
-But that is too much of typing (I retyped a few times virtually the same code). The other way is to use no type declarations.
+But that is too much typing (I retyped a few times virtually the same code). The other way is to use no type declarations.
 
 ```jl
 s = """
@@ -526,9 +569,11 @@ end
 sc(s)
 ```
 
-Here we said that the vector is composed of elements of type `T` (`Vector{T}`) and that the function will return type `T` (see `)::T`). At end we said that this `T` is a custom type (not a Julia build in type) and it can be any type at all (see `where T`). Replace `T` with any other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should). One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns some value of the same type as the type of the elements that build that vector.
+Here we said that the vector is composed of elements of type `T` (`Vector{T}`) and that the function will return type `T` (see `)::T`). By typing `where T` we let Julia know that `T` is a custom type that we have just created (not a Julia build in type). Replace `T` with any other letter of the alphabet (`A`, `D`, or whatever) and check if the code still works (it should).
 
-Note that the last function we wrote for fun (it was fun for me, how about you?). In reality Julia already got `first`, a function with a similar functionality (see [this part of Julia Docs](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+One last remark, it is customary to write generic types with a single capital letter. Notice that in comparison to the function with no type declarations (`getFirstEltVer2`) the version with generics (`getFirstEltVer3`) is more informative. You know that the function accepts vector of some elements, and you know that it returns a value of the same type as the the elements that build that vector.
+
+Note that the last function we wrote for fun (it was fun for me, how about you?). In reality Julia already got a function with a similar functionality (see [first](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
 
 ### Functions modifying arguments {#sec:functions_modifying_arguments}
 
@@ -536,7 +581,7 @@ Previously (see @sec:julia_collections) we said that you can change elements of 
 
 ```jl
 s = """
-function replaceFirstElt!(vect::Vector{T}, newElt:: T) where T
+function replaceFirstElt!(vect::Vector{T}, newElt::T) where T
 	vect[1] = newElt
 	return nothing
 end
@@ -544,7 +589,11 @@ end
 sc(s)
 ```
 
-First thing to notice, the functions name ends with `!` (exclamation mark). This is one of the Julia's conventions. In general, you should try to write a function that does not modify its arguments (it often causes errors in big programs). However, such modifications are sometimes useful, therefore Julia allows you to do so, but you should always be explicit about it. That is why it is customary to end the name of the function with `!` (exclamation mark draws attention). Notice that here `T` can still be any type, but we require `newElt` to be of the same type as the elements in `vect`. Additionally, we also signal the modification of the function's arguments by writing `replaceFirstElt!(vect::Vector{T}, newElt::T)` instead of `replaceFirstElt!(vect::Vector{T}, newElt::T)::T` (we removed the declaration of the returned type by the function, i.e. `)::T`). Additionally, although not required, we wrote `return nothing` to be even more open that the function does not return a value. Ok, let's see it in action.
+Notice, the functions name ends with `!` (exclamation mark). This is one of the Julia's conventions. In general, you should try to write a function that does not modify its arguments (it often causes errors in big programs). However, such modifications are sometimes useful, therefore Julia allows you to do so, but you should always be explicit about it. That is why it is customary to end the name of the function with `!` (exclamation mark draws attention).
+
+Additionally, observe that `T` can still be of any type, but we require `newElt` to be of the same type as the elements in `vect`. Moreover, since we modify the arguments we wrote `return nothing` and removed returned type after functions name [`) where T` instead of `)::T where T`].
+
+Let's see how the functions work.
 
 First `getFirstEltVer3`:
 
@@ -568,7 +617,7 @@ y = replaceFirstElt!(x, 4)
 sco(s)
 ```
 
-The `(x, y)` returns `Tuple` and it is there is to show both `x` and `y` in one line. You may think of `Tuple` as something similar to `Vector` but written with parenthesis `()` instead of square brackets `[]`. Additionally, you cannot modify elements of a tuple after it was created (so, if you got `z = (1, 2, 3)`, then `z[2]`) will work just OK, but `z[2] = 8` will produce an error).
+The `(x, y)` returns `Tuple` and it is there is to show both `x` and `y` in one line. You may think of `Tuple` as something similar to `Vector` but written with parenthesis `()` instead of square brackets `[]`. Additionally, you cannot modify elements of a tuple after it was created (so, if you got `z = (1, 2, 3)`, then `z[2]` will work just fine, but `z[2] = 8` will produce an error).
 
 ### Side Effects vs Returned Values {#sec:side_effects_vs_returned_values}
 
@@ -577,17 +626,17 @@ Notice that so far we encountered two types of Julia functions:
 - those that are used for their side effects (like `println`)
 - those that return some results (like `getRectangleArea`)
 
-The difference between the two may not be that obvious while using Pluto (although). To make it more obvious let's put them to the script like so:
+The difference between the two may not be clear while using Pluto. To make it more obvious let's put them to the script like so:
 
 <pre>
 # file: sideEffsVsReturnVals.jl
-
-println("Hello World!")
 
 # you need to define function before you call it
 function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
     return lenSideA * lenSideB
 end
+
+println("Hello World!")
 
 getRectangleArea(3, 2) # calling the function
 </pre>
@@ -595,7 +644,7 @@ getRectangleArea(3, 2) # calling the function
 After running the code from terminal:
 
 ```bash
-cd folder_with_the_sideEffsVsReturnVals.jl/
+cd folder_with_the_sideEffsVsReturnVals.jl
 julia sideEffsVsReturnVals.jl
 ```
 
@@ -611,7 +660,7 @@ Here we said:
 - print "Hello World!" to the screen (actually [standard output](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)))
 - calculate and return the area of the rectangle but we did nothing with it
 
-It the second case the result went into the void (If a tree falls in a forest and no one's there to see it. Did it really made sound?)
+It the second case the result went into the void (If a tree falls in a forest and no one's there to see it. Did it really made sound?).
 
 If we want to print both information on the screen we should modify our script to look like:
 
@@ -624,6 +673,7 @@ function getRectangleArea(lenSideA::Number, lenSideB::Number)::Number
 end
 
 println("Hello World!")
+
 # println takes 0 or more arguments (separated by commas)
 # if necessary arguments are converted to strings and printed
 println("Rectangle area = ", getRectangleArea(3, 2), "[cm^2]")
@@ -636,11 +686,11 @@ Hello World!
 Rectangle area = 6 [cm^2]
 </pre>
 
-By default Pluto (v0.19.22) prints the return value at the top of the cell with the code and prints stuff in a mini terminal in the cell below.
+By default Pluto (v0.19.22) prints the return value at the top of the cell with the code and prints stuff in a mini terminal in a cell below.
 
 More information about functions can be found, e.g. [in this section of Julia Docs](https://docs.julialang.org/en/v1/manual/functions/).
 
-If You ever encounter a build in function that you don't know, you may always search [the docs](https://docs.julialang.org/en/v1/) (search box is on top left corner of the page).
+If You ever encounter a build in function that you don't know, you may always search [the docs](https://docs.julialang.org/en/v1/) (search box -> top left corner of the page).
 
 ## Decision Making {#sec:julia_language_decision_making}
 
@@ -685,7 +735,7 @@ end
 </pre>
 
 As mentioned in @sec:julia_other_types `Bool` type can take one of two values `true` or `false`. The code inside `if`/`elseif` clause runs only when the condition is `true`.
-You can have any number of `elseif` clauses. If none of the previous condition matches (each and every one is `false`) the code in `else` block is executed.
+You can have any number of `elseif` clauses. Only the code for first `true` clause runs. If none of the previous condition matches (each and every one is `false`) the code in `else` block is executed.
 Only `if` and `end` keywords are obligatory, the rest is not, so you may use
 
 <pre>
@@ -719,9 +769,24 @@ else
 end
 </pre>
 
+or
+
+<pre>
+# pseudocode, don't run this snippet
+if (condition_that_returns_Bool)
+	what_to_do
+elseif (condition_that_returns_Bool)
+	what_to_do
+elseif (condition_that_returns_Bool)
+	what_to_do
+else
+	what_to_do
+end
+</pre>
+
 or ..., nevermind, I think You got the point.
 
-Another example of a function using `if/elseif/else` construct (in order to remember it better).
+Below I place another example of a function using `if/elseif/else` construct (in order to remember it better).
 
 ```jl
 s = """
@@ -749,7 +814,7 @@ Alternatively instead those two lines one could write `return sort(vect)[1]` and
 
 ### Ternary expression {#sec:ternary_expression}
 
-If you need only a single `if ... else` in your code you may prefer to replace it with ternary expression. Its general form is `condition_or_Bool ? result_if_true : result_if_false`.
+If you need only a single `if ... else` in your code you may prefer to replace it with ternary operator. Its general form is `condition_or_Bool ? result_if_true : result_if_false`.
 
 Let me rewrite `getMin` from @sec:julia_language_if_else using ternary expression.
 
@@ -768,7 +833,7 @@ y = [3, 4, 1, 2]
 sco(s)
 ```
 
-Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to write, read, and process in your head than the good old `if/elseif/else` blocks.
+Much less code, works the same. Still, I would not overuse it. For more than a single condition it is usually harder to write, read, and process in your head than the good old `if/elseif/else` block.
 
 ### Dictionaries {#sec:julia_language_dictionaries}
 
@@ -784,7 +849,7 @@ sco(s)
 
 Here I defined a dictionary of type `Dict{String, String}`, so, both the key and the value are of textual type (`String`). The order of the keys is not preserved (this data structure cares more about lookup performance and not about the order of the keys). Therefore, you may see different order of items after typing the code on your computer.
 
-If I want to now how to say "two" in Polish I type `someDict[key]` (if the key is not there I will get an error), e.g.
+If I want to now how to say "two" in Polish I type `someDict[key]` (if the key is not there you will get an error), e.g.
 
 ```jl
 s = """
@@ -793,7 +858,7 @@ engPolDict["two"]
 sco(s)
 ```
 
-To add a new value to a dictionary (or to update the existing value I write) `someDict[key] = newVal`. Right now the key "three" does not exist in `engPolDict` so I would get an error (check it out), but if I type:
+To add a new value to a dictionary (or to update the existing value) write `someDict[key] = newVal`. Right now the key "three" does not exist in `engPolDict` so I would get an error (check it out), but if I type:
 
 ```jl
 s = """
@@ -802,9 +867,9 @@ engPolDict["three"] = "trzy"
 sco(s)
 ```
 
-Then I update (or create if it was not there) a new key-value mapping.
+Then I create (or update if it was already there) a key-value mapping.
 
-Now, to avoid getting errors due to non-existing keys I can use build in [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) function in the form `get(collection, key, default)`, e.g. right now the word "four" (key) is not in a dictionary so I should get an error (check it out). But wait, there is `get`.
+Now, to avoid getting errors due to non-existing keys I can use a build-in [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) function in the form `get(collection, key, default)`, e.g. right now the word "four" (key) is not in a dictionary so I should get an error (check it out). But wait, there is `get`.
 
 ```jl
 s = """
@@ -849,13 +914,13 @@ end
 sco(s)
 ```
 
-In `translateEng2polVer2` I used so called default value for an argument (`someDict::Dict{String, String} = engPolDict`). This means that if the function is provided without the second argument then `engPolDict` will be used as its second argument. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`. Of course, I may to prefer to use some other English-Polish dictionary (perhaps the one found on the internet) like so `translateEng2polVer2("three", betterEngPolDict)` instead of using the default `engPolDict` we got here.
+In `translateEng2polVer2` I used so called default value for an argument (`someDict::Dict{String, String} = engPolDict`). This means that if the function is provided without the second argument then `engPolDict` will be used as its second argument. If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`. Of course, I may prefer to use some other English-Polish dictionary (perhaps the one found on the internet) like so `translateEng2polVer2("three", betterEngPolDict)` instead of using the default `engPolDict` we got here.
 
 OK, enough of that. If you want to know more about conditional evaluation check [this part of Julia docs](https://docs.julialang.org/en/v1/manual/control-flow/#man-conditional-evaluation).
 
 ## Repetition {#sec:julia_language_repetition}
 
-Julia, and computers in general, are good at doing boring, repetitive tasks for us without a word of complaint. Let's see some constructs that help us with it.
+Julia, and computers in general, are good at doing boring, repetitive tasks for us without a word of complaint (and they do it much faster than we do). Let's see some constructs that help us with it.
 
 ### For loops {#sec:julia_language_for_loops}
 
@@ -867,7 +932,7 @@ for i in sequence
 end
 </pre>
 
-The loop is enclosed between `for` and `end` keywords and repeats some specific action(s) (`# do_something_useful`) for every element of a `sequence`. On each turnover of a loop consecutive elements of a sequence are referred to by `i` (I could assign any name, like: `j`, `k`, `whatever`) it would work the same (still, `i` and `j` are quite common in [for loops](https://en.wikipedia.org/wiki/For_loop)).
+The loop is enclosed between `for` and `end` keywords and repeats some specific action(s) (`# do_something_useful`) for every element of a `sequence`. On each turnover of a loop consecutive elements of a sequence are referred to by `i`. Note. I could assign any name, like: `j`, `k`, `whatever`, it would work the same. Still, `i` and `j` are quite common in [for loops](https://en.wikipedia.org/wiki/For_loop).
 
 Let's say I want a program that will print [hip hip hooray](https://en.wikipedia.org/wiki/Hip_hip_hooray) many times for my friend that celebrates some success. I can proceed like this.
 
@@ -887,13 +952,13 @@ sc(s)
 
 Go ahead, run in in a Pluto's cell (e.g. `printHoorayNtimes(3)`).
 
-Notice two new elements. Here it makes no sense for `n` to be less than of equal to 0. Hence, I used [\@assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) construct to test it and print an error message (`"n needs to be greater than 0"`) if it is. Additionally, I used `_` instead of `i` in the example above (to signal that I don't plan to use it further).
+Notice two new elements. Here it makes no sense for `n` to be less than of equal to 0. Hence, I used [\@assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) construct to test it and print an error message (`"n needs to be greater than 0"`) if it is. The `1:n` is a range similar to the one we used in @sec:julia_vectors. Here, I used `_` instead of `i` in the example above (to signal that I don't plan to use it further).
 
 OK, how about another example. You remember `myMathGrades`, right?
 
 ```jl
 s = """
-myMathGrades::Vector{Float64} = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
+myMathGrades = [3.5, 3.0, 3.5, 2.0, 4.0, 5.0, 3.0]
 """
 sc(s)
 ```
@@ -916,7 +981,9 @@ getSum(myMathGrades)
 sco(s)
 ```
 
-A few explanations regarding the new bits of code here. In arguments list I wrote `::Vector{<:Real}`. Which means that each element of nums is a subtype (`<:`) of the type `Real` (which includes integers and floats). I declared a `total` and initialized it to 0. Then in `for` loop I used `i` to hold numbers from 1 to number of elements in the vector (`length(nums)`). Finally, in the for loop body I added each number from the vector (using indexing see @sec:julia_vectors) to the `total`. The `total = total + nums[i]` means new total is equal to old total + element of the vector with index `i`. Finally, I returned the total.
+A few explanations regarding the new bits of code here.
+
+In arguments list I wrote `::Vector{<:Real}`. Which means that each element of nums is a subtype (`<:`) of the type `Real` (which includes integers and floats). I declared a `total` and initialized it to 0. Then in `for` loop I used `i` to hold numbers from 1 to number of elements in the vector (`length(nums)`). Finally, in the for loop body I added each number from the vector (using indexing see @sec:julia_vectors) to the `total`. The `total = total + nums[i]` means that new total is equal to old total + element of the vector with index `i`. Finally, I returned the total.
 
 The body of the `for` loop could be improved. Instead of `for i in 1:length(nums)` I could have written `for i in eachindex(nums)` (notice there is no `1:`). Moreover, instead of `total = total + nums[i]` I could have used `total += nums[i]`. The `+=` is and [update operator](https://docs.julialang.org/en/v1/manual/mathematical-operations/#Updating-operators), i.e. a shortcut for updating old value by adding a new value to it. Take a moment to rewrite the function with those new forms and test it.
 
@@ -937,7 +1004,7 @@ getSum(myMathGrades)
 sco(s)
 ```
 
-Here `num` (I could have left `i` if I wanted to) takes the value of each consecutive element of `nums` and adds it to the total.
+Here `num` (I could have used `n`, `i` or `whatever` if I wanted to) takes the value of each consecutive element of `nums` and adds it to the total.
 
 OK, and now back to the [average](https://en.wikipedia.org/wiki/Arithmetic_mean).
 
@@ -1021,9 +1088,9 @@ temperaturesFahrenheit = degCels2degFahr(temperaturesCelsius)
 sco(s)
 ```
 
-First of all, notice that so far I defined two functions `degCels2degFahr` one with a single value as an argument (`degCels2degFahr(tempCels::Real)`) and another with a vector as its argument (`degCels2degFahr(tempsCels::Vector{<:Real})`). But since I explicitly declared argument types, Julia will know when to use each version.
+First of all, notice that so far I defined two functions named `degCels2degFahr`. One of them has got a single value as an argument (`degCels2degFahr(tempCels::Real)`) and another a vector as its argument (`degCels2degFahr(tempsCels::Vector{<:Real})`). But since I explicitly declared argument types, Julia will know when to use each version (see next paragraph).
 
-In the body of `degCels2degFahr(tempsCels::Vector{<:Real})` first I declare and initialize a variable that will hold the result (hence `result`). I do this using build in [zeros](https://docs.julialang.org/en/v1/base/arrays/#Base.zeros) function. The function returns a new vector with n elements (where n is equal to `length(tempsCels)`) filled with, you got it, 0s. Then, in the `for` loop, I go through all the indices of `result` (`i` holds the current index) and replace each zero (`result[i]`) with a corresponding value in Fahrenheit (`degCels2degFahr(tempsCels[i])`). Here, since I pass a single value (`tempsCels[i]`) Julia knows which version (aka method) of the function `degCels2degFahr` to use (i.e. this one `degCels2degFahr(tempCels::Real)`).
+In the body of `degCels2degFahr(tempsCels::Vector{<:Real})` first I declare and initialize a variable that will hold the result (hence `result`). I do this using build in [zeros](https://docs.julialang.org/en/v1/base/arrays/#Base.zeros) function. The function returns a new vector with n elements (where n is equal to `length(tempsCels)`) filled with, you got it, 0s. The 0s are just placeholders. Then, in the `for` loop, I go through all the indices of `result` (`i` holds the current index) and replace each zero (`result[i]`) with a corresponding value in Fahrenheit (`degCels2degFahr(tempsCels[i])`). Here, since I pass a single value (`tempsCels[i]`) Julia knows which version (aka method) of the function `degCels2degFahr` to use (i.e. this one `degCels2degFahr(tempCels::Real)`).
 
 OK, enough for the classic `for` loops. Let's go to some build-in goodies that could help us out with repetition.
 
@@ -1033,7 +1100,7 @@ If the operation you want to perform is simple enough you may prefer to use some
 
 #### Reduce {#sec:julia_language_reduce}
 
-Remember the `getSum` function that we wrote previously. Well it can be much shorter by using the [reduce](https://docs.julialang.org/en/v1/base/collections/#Base.reduce-Tuple{Any,%20Any}) function for instance.
+Remember the `getSum` function that we wrote previously. Well, the 'powerhorse code' can be much shorter by using [reduce](https://docs.julialang.org/en/v1/base/collections/#Base.reduce-Tuple{Any,%20Any}).
 
 
 ```jl
@@ -1044,7 +1111,7 @@ reduce((x, y) -> x + y, xs, init=0)
 sco(s)
 ```
 
-As you can see `reduce` accepts 3 arguments: a function, a collection, initial value of the accumulator. Here, I used so called [anonymous function](https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions), so a function without name. The expression `(x, y) -> x + y` means a function that takes two arguments and returns their sum. The `reduce` takes this function and executes it many times, each time:
+As you can see `reduce` accepts 3 arguments: a function, a collection, and initial value. Here, I used so called [anonymous function](https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions), so a function without name. The expression `(x, y) -> x + y` means a function that takes two arguments and returns their sum. The `reduce` takes this function and executes it many times, each time:
 
 1. one argument is `init` (if executed for the first time) or the result of previous execution
 2. the other argument is consecutive element of the collection
@@ -1059,7 +1126,7 @@ So, in the case above it goes something like
 </pre>
 
 In this case `reduce` could be further simplified, but I assume you already have a lot to wrap your head around so I leave it as it is.
-Just remember to type `init=` and then the default argument (no the value alone, since it is a [keyword argument](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)).
+Just remember to type `init=` and then the default argument (not the value alone, since it is a [keyword argument](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)).
 
 #### Comprehensions {#sec:julia_language_comprehensions}
 
@@ -1093,7 +1160,7 @@ On the right I use the familiar `for` loop syntax, i.e. `for sth in collection`.
 
 #### Map {#sec:julia_language_map}
 
-Comprehensions are nice, but some people find [maps](https://docs.julialang.org/en/v1/base/collections/#Base.map) even better. The example above could be rewritten as:
+Comprehensions are nice, but some people find [map](https://docs.julialang.org/en/v1/base/collections/#Base.map) even better. The example above could be rewritten as:
 
 ```jl
 s = """
@@ -1103,11 +1170,11 @@ cms = map(inch2cm, inches)
 sco(s)
 ```
 
-Again, I pass function as a first argument to `map`, the second argument is a collection. Map automatically applies the function to every element of the collection and returns a new collection. Isn't this magic.
+Again, I pass function (note I typed only its name) as a first argument to `map`, the second argument is a collection. Map automatically applies the function to every element of the collection and returns a new collection. Isn't this magic.
 
 #### Dot operators/functions {#sec:julia_language_dot_functions}
 
-Last but not least. I can use a [dot operator](https://docs.julialang.org/en/v1/manual/mathematical-operations/#man-dot-operators). Say I got a vector of numbers and I want to add 10 to each of them. Nothing more simple. I just need to precede the operator with a `.` like so:
+Last but not least. I can use a [dot operator](https://docs.julialang.org/en/v1/manual/mathematical-operations/#man-dot-operators). Say I got a vector of numbers and I want to add 10 to each of them. Doing this for a single number is simple, I would have just typed `1 + 10`. Hmm, but for a vector? Simple as well. I just need to precede the operator with a `.` like so:
 
 
 ```jl
@@ -1130,14 +1197,14 @@ sco(s)
 
 Isn't this nice.
 
-OK, the goodies are great, but require some time of getting used to (I suspect at first you gonna use good old `for` loop syntax). Besides the constructs described in this section are good for simple operations (don't try to put too much logic into them, they are supposed to be one liners).
+OK, the goodies are great, but require some time to get used to them (I suspect at first you're gonna use good old `for` loop syntax). Besides the constructs described in this section are good for simple operations (don't try to put too much logic into them, they are supposed to be one liners).
 
 ## Additional libraries {#sec:julia_language_libraries}
 
 OK, there is one more thing I want to briefly talk about, and it is [libraries](https://en.wikipedia.org/wiki/Library_(computing)).
 
 A library is a piece of code that someone else wrote for you.
-At the time I'm writing these words there are over 9'000 libraries (aka packages) in Julia ([see here](https://julialang.org/packages/)) available under different licenses. If the package is under [MIT license](https://en.wikipedia.org/wiki/MIT_License) you may use it rather freely, but without any warranty (don't sue the author(s)).
+At the time I'm writing these words there are over 9'000 libraries (aka packages) in Julia ([see here](https://julialang.org/packages/)) available under different licenses. If the package is under [MIT license](https://en.wikipedia.org/wiki/MIT_License) then basically you may use it freely, but without any warranty.
 
 To install a package you use [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/), i.e. Julia's build in package manager. Click the link in the previous sentence to see how to do it.
 
@@ -1150,7 +1217,7 @@ In general there are two ways to use a package in your project:
 
 Personally, I prefer the latter.
 
-Let's see how it works. Remember the `getAvg` function that we wrote ourselves. Well, [Statistics](https://docs.julialang.org/en/v1/stdlib/Statistics/) got it for you (here it is named `mean`). To use it I type at the top of my file (it is a good practice to do so):
+Let's see how it works. Remember the `getSum` and `getAvg` functions that we wrote ourselves. Well, Julia got build-in [sum](https://docs.julialang.org/en/v1/base/collections/#Base.sum) and [Statistics](https://docs.julialang.org/en/v1/stdlib/Statistics/) got [mean](https://docs.julialang.org/en/v1/stdlib/Statistics/#Statistics.mean). To use it I type at the top of my file (it is a good practice to do so):
 
 
 ```jl
@@ -1171,3 +1238,7 @@ sco(s)
 ```
 
 And that's it. It just works.
+
+Note that if you type `import Statistics` instead of `import Statistics as stat` then in order to use `mean` you will have to type `Statistics.mean([1, 2, 3])`. That is why it is worth to give some shorter name for an imported package.
+
+OK, end of theory, time for some practice.
