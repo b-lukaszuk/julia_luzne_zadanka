@@ -1374,6 +1374,23 @@ Here are some constructs that might be useful to solve this task:
 
 You may use some or all of them. Or perhaps you can come up with something else. Good luck.
 
+### Exercise 5 {#sec:julia_language_exercise5}
+
+I once heard a story about chess.
+
+According to the story the game was created by a Hindu wise man. He presented his invention to his king which was so impressed that he offered to fulfill his request as a reward.
+
+The wise man said:
+- I want nothing but some wheat grains.
+- How many?
+- Put 1 grain on the first field, 2 grains on the second, 3 on the third, and so on, I want the grains that are on the last field.
+
+A laughingly small request, thought the king. Or is it?
+
+Use Julia to answer how many grains are on the last (64th) field.
+
+*Hint. If you get a strange looking result, use [BigInt](https://docs.julialang.org/en/v1/base/numbers/#BigFloats-and-BigInts) data type instead of [Int](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Integers).*
+
 ## Julia - Solutions {#sec:julia_language_exercises_solutions}
 
 In this sub-chapter you may find possible solutions to the exercises from the previous section.
@@ -1544,4 +1561,78 @@ sc(s2)
 ```
 
 There are probably other more creative [or more (unnecessarily) convoluted] ways to solve this task. Personally, I would be satisfied if you understand the first version.
+
+### Solution to Exercise 5 {#sec:julia_language_exercise5_solution}
+
+For more information about the legend see [this Wikipedia's article](https://en.wikipedia.org/wiki/Sissa_(mythical_brahmin)).
+
+If you want some more detailed mathematical explanation you can read [that Wikipedia's article](https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem).
+
+The Wikipedia's version of the legend differs slightly from mine, but I like my better.
+
+Anyway I'll jump right into some looping.
+
+```jl
+s1 = """
+function getNumOfGrainsOnField64()::Int
+	noOfGrains::Int = 1 # no of grains on field 1
+	for _ in 2:64
+		noOfGrains *= 2
+	end
+	return noOfGrains
+end
+
+getNumOfGrainsOnField64()
+"""
+sco(s1)
+```
+
+Hmm, that's odd, a negative number.
+
+Wait a moment. Now I remember, a computer got finite amount of memory. So in order to work efficiently data is stored in small pre-allocated pieces of it. If the number you put into that small 'memory drawer' is greater than the amount of space you get strange results.
+
+You can read more about it in Julia docs (section: [Integers](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Integers) and [Overflow Behavior](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior)).
+
+You can check the minimum and maximum value for `Int` by typing `typemin(Int)` and `typemax(Int)` on my laptop those are `jl typemin(Int)` and `jl typemax(Int)`, respectively.
+
+It is enough for most calculations, still if you expect a really big number you should use [BigInt](https://docs.julialang.org/en/v1/base/numbers/#BigFloats-and-BigInts).
+
+So let me correct my code
+
+```jl
+s2 = """
+function getNumOfGrainsOnField64()::BigInt
+	noOfGrains::BigInt = 1 # no of grains on field 1
+	for _ in 2:64
+		noOfGrains *= 2
+	end
+	return noOfGrains
+end
+
+getNumOfGrainsOnField64()
+"""
+sco(s2)
+```
+
+Whoa, that number got like `jl length(string(getNumOfGrainsOnField64()))` digits. I don't even know how to name it. It cannot be that big, can it?
+
+OK, quick verification with some mathematical calculation (don't remember `^`? See @sec:julia_language_exercise1_solution).
+
+```jl
+s3 = """
+BigInt(2)^63 # we multiply 2 by 2 by 2, etc. for fields 2:64
+"""
+sco(s3)
+```
+
+Yep, numbers appear to be the same
+
+```jl
+s = """
+getNumOfGrainsOnField64() == BigInt(2)^63
+"""
+sco(s)
+```
+
+So I guess the [aforementioned Wikipedia's article](https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem) is right, it is more than a country (or the world) could produce in a year.
 
