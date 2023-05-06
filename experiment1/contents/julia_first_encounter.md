@@ -1298,6 +1298,20 @@ Write a function with the following signature `areApproxEqual(f1::Float64, f2::F
 
 You may use [round](https://docs.julialang.org/en/v1/base/math/#Base.round-Tuple{Complex{%3C:AbstractFloat},%20RoundingMode,%20RoundingMode}) for that with a precision of, let's say 16 digits.
 
+### Exercise 3 {#sec:julia_language_exercise3}
+
+Remember `getMin` from previous chapter
+
+```jl
+s = """
+function getMin(vect::Vector{Int}, isSortedAsc::Bool)::Int
+    return isSortedAsc ? vect[1] : sort(vect)[1]
+end"""
+sco(s)
+```
+
+Write `getMax` with the following signature `getMax(vect::Vector{Int}, isSortedDesc::Bool)::Int` use only the elements from previous version of the function (you should modify them).
+
 ## Julia - Solutions {#sec:julia_language_exercises_solutions}
 
 In this sub-chapter you may find possible solutions to the exercises from the previous section.
@@ -1390,3 +1404,30 @@ Lesson to be learned here. If you want to do something you can:
 2. look for a function in some library
 3. write a function yourself by using what you already got at your disposal
 
+### Solution to Exercise 3 {#sec:julia_language_exercise3_solution}
+
+Possible solution
+
+```jl
+s1 = """
+function getMax(vect::Vector{Int}, isSortedDesc::Bool)::Int
+    return isSortedDesc ? vect[1] : sort(vect)[end]
+end
+
+(getMax([3, 2, 1], true), getMax([2, 3, 1], false))
+"""
+sco(s1)
+```
+
+or if you read the documentation for [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort)
+
+```jl
+s2 = """
+function getMax(vect::Vector{Int}, isSortedDesc::Bool)::Int
+    return isSortedDesc ? vect[1] : sort(vect, rev=true)[1]
+end
+
+(getMax([3, 2, 1], true), getMax([2, 3, 1], false))
+"""
+sco(s2)
+```
