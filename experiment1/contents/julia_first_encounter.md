@@ -1118,13 +1118,18 @@ If the operation you want to perform is simple enough you may prefer to use some
 
 #### Reduce {#sec:julia_language_reduce}
 
-Remember the `getSum` function that we wrote previously. Well, the 'powerhorse code' can be much shorter by using [reduce](https://docs.julialang.org/en/v1/base/collections/#Base.reduce-Tuple{Any,%20Any}).
+Remember the `getSum` function that we wrote previously. Well, it can be made shorter by using [reduce](https://docs.julialang.org/en/v1/base/collections/#Base.reduce-Tuple{Any,%20Any}).
 
 
 ```jl
 s = """
 xs = [1, 2, 3]
-reduce((x, y) -> x + y, xs, init=0)
+
+function getSum(nums::Vector{<:Real})::Real
+	return reduce((x, y) -> x + y, xs, init=0)
+end
+
+getSum(xs)
 """
 sco(s)
 ```
@@ -1172,26 +1177,52 @@ If I want to do it for a bunch of values I can use comprehensions like so.
 ```jl
 s = """
 inches = [10, 20, 30]
-cms = [inch2cm(inch) for inch in inches]
+
+function inches2cms(inches::Vector{<:Real})::Vector{<:Real}
+	return [inch2cm(inch) for inch in inches]
+end
+
+inches2cms(inches)
 """
 sco(s)
 ```
 
 On the right I use the familiar `for` loop syntax, i.e. `for sth in collection`. On the left I place a function (named or anonymous) that I want to use and pass consecutive elements (`sth`) to that function. The expression is surrounded with square brackets so that Julia makes a new vector out of it (the old vector is not changed).
 
-#### Map {#sec:julia_language_map}
+#### Map and Foreach {#sec:julia_language_map_foreach}
 
 Comprehensions are nice, but some people find [map](https://docs.julialang.org/en/v1/base/collections/#Base.map) even better. The example above could be rewritten as:
 
 ```jl
-s = """
+s1 = """
 inches = [10, 20, 30]
-cms = map(inch2cm, inches)
+
+function inches2cms(inches::Vector{<:Real})::Vector{<:Real}
+	return map(inch2cm, inches)
+end
+
+inches2cms(inches)
 """
-sco(s)
+sco(s1)
 ```
 
 Again, I pass function (note I typed only its name) as a first argument to `map`, the second argument is a collection. Map automatically applies the function to every element of the collection and returns a new collection. Isn't this magic.
+
+If you want to evoke a function on a vector just for side effects (does not return/build a vector) use [foreach](https://docs.julialang.org/en/v1/base/collections/#Base.foreach).
+For instance, `getSum` with `foreach` and an anonymous function would look like this
+
+```jl
+s = """
+function getSum(vect::Vector{<:Real})::Real
+	total::Real = 0
+	foreach(x -> total += x, vect) # side effect is to increase total
+	return total
+end
+
+getSum([1, 2, 3, 4])
+"""
+sco(s)
+```
 
 #### Dot operators/functions {#sec:julia_language_dot_functions}
 
@@ -1209,16 +1240,23 @@ I can do this also for functions (both build-in and written by myself). Notice `
 
 
 ```jl
-s = """
+s2 = """
 inches = [10, 20, 30]
-cms = inch2cm.(inches)
+
+function inches2cms(inches::Vector{<:Real})::Vector{<:Real}
+	return inch2cm.(inches)
+end
+
+inches2cms(inches)
 """
-sco(s)
+sco(s2)
 ```
 
 Isn't this nice.
 
 OK, the goodies are great, but require some time to get used to them (I suspect at first you're gonna use good old `for` loop syntax). Besides the constructs described in this section are good for simple operations (don't try to put too much logic into them, they are supposed to be one liners).
+
+In any case choose a construct that you know how to use and that gets the job done for you, mastering them all will take some time.
 
 ## Additional libraries {#sec:julia_language_libraries}
 
@@ -1272,7 +1310,7 @@ I once heard that in chess you can get only as much as you give. I believe it is
 
 So, here are some exercises that you may want to solve to get from this chapter as much as you can.
 
-*Note. Some of the readers probably will not solve the exercises on their own. Still, I suggest you read the task descriptions and the solutions (and try to understand them). In those sections I may use, e.g. some language constructs that I will not explain again in the upcoming chapters.*
+*Note. Some readers probably will not solve the exercises. They will not want to or will not be able to solve them (in that case my apology for the inapprorpiate difficulty level). Either way, I suggest you read the task descriptions and the solutions (and try to understand them). In those sections I may use, e.g. some language constructs that I will not explain again in the upcoming chapters.*
 
 ### Exercise 1 {#sec:julia_language_exercise1}
 
@@ -1285,7 +1323,7 @@ But you got a dilemma, for exactly \$50 you can either order 2 pizzas 30 cm in d
 
 ### Exercise 2 {#sec:julia_language_exercise2}
 
-When we talked about float comparisons (@sec:julia_float_comparisons) we said to be careful since 
+When we talked about float comparisons (@sec:julia_float_comparisons) we said to be careful since
 
 ```jl
 s = """
