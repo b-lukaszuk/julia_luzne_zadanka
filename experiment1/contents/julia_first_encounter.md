@@ -79,6 +79,8 @@ and press `Ctrl+Enter` to execute the cell and open a new cell below.
 
 This creates a variable (box) named `x` (x is a label on the box) that contains the value `1`. The `=` operator assigns `1` (right side) to `x` (left side) [puts `1` into the box].
 
+*Note. Spaces around mathematical operators like `=` are usually not necessary. Still, they improve legibility of your code*
+
 Now, in the cell below type and execute
 
 ```jl
@@ -228,6 +230,8 @@ To avoid such an unexpected events (especially if instead of `*` you will use yo
 
 Moreover, declaring types can make your code run faster.
 
+Additionally, some [IDEs](https://en.wikipedia.org/wiki/Integrated_development_environment) work better (improved code completions, and hints) when you place type declarations in your code.
+
 Personally, I like to use type declarations in my own functions (see upcoming @sec:julia_language_functions) to help me reason what they do.
 
 ### Meaningful variable names {#sec:julia_meaningful_variable_names}
@@ -313,7 +317,7 @@ sco(s)
 
 The same caution applies to other comparison operators, like `>` (`is greater than`), `>=` (`is greater than or equal to`), `<` (`is less than`), `<=` (`is less than or equal to`).
 
-*We will see how to deal with that later.*
+*We will see how to deal with that later. (see @sec:julia_language_exercise2_solution)*
 
 ### Other types {#sec:julia_other_types}
 
@@ -1279,6 +1283,21 @@ But you got a dilemma, for exactly \$50 you can either order 2 pizzas 30 cm in d
 
 *Hint: You may want to search [the documentation](https://docs.julialang.org/en/v1/) for `Base.MathConstants` and use one of them.*
 
+### Exercise 2 {#sec:julia_language_exercise2}
+
+When we talked about float comparisons (@sec:julia_float_comparisons) we said to be careful since 
+
+```jl
+s = """
+(0.1 * 3) == 0.3
+"""
+sco(s)
+```
+
+Write a function with the following signature `areApproxEqual(f1::Float64, f2::Float64)::Bool`. It should return `true` when called with those numbers (`areApproxEqual(0.1*3, 0.3)`).
+
+You may use [round](https://docs.julialang.org/en/v1/base/math/#Base.round-Tuple{Complex{%3C:AbstractFloat},%20RoundingMode,%20RoundingMode}) for that with a precision of, let's say 16 digits.
+
 ## Julia - Solutions {#sec:julia_language_exercises_solutions}
 
 In this sub-chapter you may find possible solutions to the exercises from the previous section.
@@ -1332,3 +1351,42 @@ sco(s)
 Still, the conclusion is the same.
 
 *Note, I could have used `^`, which is an exponentiation operator in Julia. If I want to raise 2 to the fourth power I can type `2^4` or `2*2*2*2` and get `jl 2^4`.*
+
+### Solution to Exercise 2 {#sec:julia_language_exercise2_solution}
+
+My solution to that problem would look something like
+
+```jl
+s = """
+function areApproxEqual(f1::Float64, f2::Float64)::Bool
+	return round(f1, digits=16) == round(f2, digits=16)
+end
+"""
+sc(s)
+```
+
+Let's put it to the test
+
+```jl
+s = """
+areApproxEqual(0.1*3, 0.3)
+"""
+sco(s)
+```
+
+Seems to be working fine. Still, you may prefer to use Julia's build-in [isapprox](https://docs.julialang.org/en/v1/base/math/#Base.isapprox).
+Example
+
+```jl
+s = """
+isapprox(0.1*3, 0.3)
+"""
+sco(s)
+```
+
+Lesson to be learned here. If you want to do something you can:
+
+1. look for a function in the language documentation
+2. look for a function in some library
+3. write a function yourself by using what you already got at your disposal
+
