@@ -1369,7 +1369,7 @@ Here are some constructs that might be useful to solve this task:
 - for loop (see @sec:julia_language_for_loops)
 - if/elseif/else (see @sec:julia_language_if_else)
 - [modulo operator or rem function](https://docs.julialang.org/en/v1/base/math/#Base.rem)
-- [logical and operator](https://docs.julialang.org/en/v1/manual/missing/#Logical-operators), hint read the docs until you encounter examples with `&&` operator
+- 'logical and', see [this](https://docs.julialang.org/en/v1/manual/missing/#Logical-operators) and [that](https://docs.julialang.org/en/v1/manual/missing/#Control-Flow-and-Short-Circuiting-Operators) section of Julia docs
 - [string function](https://docs.julialang.org/en/v1/base/strings/#Base.string)
 
 You may use some or all of them. Or perhaps you can come up with something else. Good luck.
@@ -1380,10 +1380,9 @@ I once heard a story about chess.
 
 According to the story the game was created by a Hindu wise man. He presented his invention to his king which was so impressed that he offered to fulfill his request as a reward.
 
-The wise man said:
 - I want nothing but some wheat grains.
 - How many?
-- Put 1 grain on the first field, 2 grains on the second, 3 on the third, and so on, I want the grains that are on the last field.
+- Put 1 grain on the first field, 2 grains on the second, 4 on the third, 8 on the fourth, and so on, I want the grains that are on the last field.
 
 A laughingly small request, thought the king. Or is it?
 
@@ -1568,7 +1567,7 @@ For more information about the legend see [this Wikipedia's article](https://en.
 
 If you want some more detailed mathematical explanation you can read [that Wikipedia's article](https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem).
 
-The Wikipedia's version of the legend differs slightly from mine, but I like my better.
+The Wikipedia's version of the legend differs slightly from mine, but I like mine better.
 
 Anyway I'll jump right into some looping.
 
