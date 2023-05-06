@@ -195,11 +195,17 @@ begin
 end
 </pre>
 
-Now a question arises. Why would you want to use type declaration (like `::Int` or `::Float64`) at all? Well, sometimes it makes more sense to use integer instead of string (we may wish to multiply `3` to `3` not `"three"` to `"three"`).
+Now a question arises. Why would you want to use type declaration (like `::Int` or `::Float64`) at all?
+
+In general you put values into variables to use them later. Sometimes, you forget what you placed there and may get the unexpected result (that may go unnoticed).
+For instance it makes more sense to use integer instead of string for some operations (e.g. I may wish to multiply `3` by `3` not `"three"` by `"three"`).
 
 ```jl
 s = """
-3 * 3 # works as you intended
+begin
+	x = 3
+	x * x # works as you intended
+end
 """
 sco(s)
 ```
@@ -208,15 +214,21 @@ sco(s)
 
 ```jl
 s = """
-"three" * "three" # that's surprising (for a beginner) but sometimes useful
+begin
+	x = "three"
+	x * x # the result may be surprising
+end
 """
 sco(s)
 ```
 
-To avoid such an unexpected situations you would like a guarding angel that watches over you. This is what Julia does when you ask her for it by using type declarations.
-Additionally declaring types can make your code run faster.
+The latter example is so called [string concatenation](https://docs.julialang.org/en/v1/manual/strings/#man-concatenation), it may be useful, but probably it is not what you wanted.
 
-Personally, I try to use type declarations especially in my functions (see upcoming @sec:julia_language_functions) to help me reason what they do.
+To avoid such an unexpected events (especially if instead of `*` you will use your own function -> see @sec:julia_language_functions) you would like a guarding angel that watches over you. This is what Julia does when you ask her for it by using type declarations (for now you need to take my word for it).
+
+Moreover, declaring types can make your code run faster.
+
+Personally, I like to use type declarations in my own functions (see upcoming @sec:julia_language_functions) to help me reason what they do.
 
 ### Meaningful variable names {#sec:julia_meaningful_variable_names}
 
@@ -488,7 +500,9 @@ getRectangleArea(1.5, 2)
 sco(s)
 ```
 
-Hmm, and how about the [area of a square](https://en.wikipedia.org/wiki/Square#Perimeter_and_area). You got it.
+*A quick reference to the topic we discussed in @sec:julia_optional_type_declaration. Here typig `getRectangleArea("three", "three")` will produce an error. I can read it now, and based on the error message correct my code so the result is in line with my expectations.*
+
+Hmm, OK, I got `getRectangleArea` and what if I need to calculate the [area of a square](https://en.wikipedia.org/wiki/Square#Perimeter_and_area). You got it.
 
 ```jl
 s = """
@@ -660,7 +674,7 @@ Here we said:
 - print "Hello World!" to the screen (actually [standard output](https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout)))
 - calculate and return the area of the rectangle but we did nothing with it
 
-It the second case the result went into the void (If a tree falls in a forest and no one's there to see it. Did it really made sound?).
+It the second case the result went into the void (If a tree falls in a forest and no one's there to see it. Did it really make the sound?).
 
 If we want to print both information on the screen we should modify our script to look like:
 
@@ -1116,14 +1130,17 @@ As you can see `reduce` accepts 3 arguments: a function, a collection, and initi
 1. one argument is `init` (if executed for the first time) or the result of previous execution
 2. the other argument is consecutive element of the collection
 
-So, in the case above it goes something like
+So, in the case above I imagine it does something like:
 
 <pre>
+# call: reduce((x, y) -> x + y, [1, 2, 3], init=0)
 0 + 1 # (init + current element), result: 1
 1 + 2 # (previous result + current element), result: 3
 3 + 3 # (previous result + current element), result: 6
 # no more elements left, the result of the last operation is returned
 </pre>
+
+*Note. the order of `+` operation is not guaranteed, e.g. it could go innit/result + current or current + innit/result.*
 
 In this case `reduce` could be further simplified, but I assume you already have a lot to wrap your head around so I leave it as it is.
 Just remember to type `init=` and then the default argument (not the value alone, since it is a [keyword argument](https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments)).
@@ -1204,7 +1221,7 @@ OK, the goodies are great, but require some time to get used to them (I suspect 
 OK, there is one more thing I want to briefly talk about, and it is [libraries](https://en.wikipedia.org/wiki/Library_(computing)).
 
 A library is a piece of code that someone else wrote for you.
-At the time I'm writing these words there are over 9'000 libraries (aka packages) in Julia ([see here](https://julialang.org/packages/)) available under different licenses. If the package is under [MIT license](https://en.wikipedia.org/wiki/MIT_License) then basically you may use it freely, but without any warranty.
+At the time I'm writing these words there are over 9'000 libraries (aka packages) in Julia ([see here](https://julialang.org/packages/)) available under different licenses. If the package is under [MIT license](https://en.wikipedia.org/wiki/MIT_License) (a lot of them are) then basically you may use it freely, but without any warranty.
 
 To install a package you use [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/), i.e. Julia's build in package manager. Click the link in the previous sentence to see how to do it.
 
@@ -1213,9 +1230,9 @@ Pluto.jl comes with a build-in package manager ([see here](https://plutojl.org/d
 In general there are two ways to use a package in your project:
 
 1. by typing `using Some_pkg_name`
-2. by typing `import Some_pkg_name as abbreviated_pkg_name`
+2. by typing `import Some_pkg_name`
 
-Personally, I prefer the latter.
+Personally, I prefer the latter. Actually, I use it in the form `import Some_pkg_name as abbreviated_pkg_name` (you will see why in a moment).
 
 Let's see how it works. Remember the `getSum` and `getAvg` functions that we wrote ourselves. Well, Julia got build-in [sum](https://docs.julialang.org/en/v1/base/collections/#Base.sum) and [Statistics](https://docs.julialang.org/en/v1/stdlib/Statistics/) got [mean](https://docs.julialang.org/en/v1/stdlib/Statistics/#Statistics.mean). To use it I type at the top of my file (it is a good practice to do so):
 
@@ -1239,7 +1256,9 @@ sco(s)
 
 And that's it. It just works.
 
-Note that if you type `import Statistics` instead of `import Statistics as stat` then in order to use `mean` you will have to type `Statistics.mean([1, 2, 3])`. That is why it is worth to give some shorter name for an imported package.
+Note that if you type `import Statistics` instead of `import Statistics as stat` then in order to use `mean` you will have to type `Statistics.mean([1, 2, 3])`. So in general is is worth to give some shorter name for an imported package.
+
+Oh yeah, one more thing. In order to know what are the functions in a library and how to use them you should check the library documentation.
 
 OK, end of theory, time for some practice.
 
@@ -1249,10 +1268,12 @@ I once heard that in chess you can get only as much as you give. I believe it is
 
 So, here are some exercises that you may want to solve to get from this chapter as much as you can.
 
+*Note. Some of the readers probably will not solve the exercises on their own. Still, I suggest you read the task descriptions and the solutions (and try to understand them). In those sections I may use, e.g. some language constructs that I will not explain again in the upcoming chapters.*
+
 ### Exercise 1 {#sec:julia_language_exercise1}
 
-Imagine the following situation. You and your friends call to order out a pizza. You got only \$50 dollars and you are pretty hungry.
-But you got a dilemma, for \$50 dollars you can either order 2 pizzas 30 cm in diameter, or 1 pizza 45 cm in diameter. Which one is more worth it?
+Imagine the following situation. You and your friends call to order out a pizza. You got only \$50 and you are pretty hungry.
+But you got a dilemma, for exactly \$50 you can either order 2 pizzas 30 cm in diameter, or 1 pizza 45 cm in diameter. Which one is more worth it?
 
 *Hint: Assume that the pizza is flat and that you are eating its surface.*
 
@@ -1285,13 +1306,14 @@ s = """
 sco(s)
 ```
 
-It seems that I will get more food while ordering the 1 pizza (45 cm in diameter) and not the 2 pizzas (30 cm in diameter each).
+It seems that I will get more food while ordering this one pizza (45 cm in diameter) and not those two pizzas (each 30 cm in diameter).
 
-If the pizzas were [cylinders](https://en.wikipedia.org/wiki/Cylinder) of equal heights (say 2 cm) then I would calculate their volumes like so
+If all the pizzas were [cylinders](https://en.wikipedia.org/wiki/Cylinder) of equal heights (say 2 cm each) then I would calculate their volumes like so
 
 ```jl
 s = """
 function getCylinderVolume(r::Real, h::Real=2)::Real
+	# hmm, is cylinder just many circles stacked one on another?
 	return getCircleArea(r) * h
 end
 """
@@ -1309,4 +1331,4 @@ sco(s)
 
 Still, the conclusion is the same.
 
-*Note, I could have used `^`, which is an exponentiation operator in Julia. If I want to raise 2 to the fourth power I type `2^4` (or `2*2*2*2`) and get `jl 2^4`.*
+*Note, I could have used `^`, which is an exponentiation operator in Julia. If I want to raise 2 to the fourth power I can type `2^4` or `2*2*2*2` and get `jl 2^4`.*
