@@ -1350,6 +1350,30 @@ sco(s)
 
 Write `getMax` with the following signature `getMax(vect::Vector{Int}, isSortedDesc::Bool)::Int` use only the elements from previous version of the function (you should modify them).
 
+### Exercise 4 {#sec:julia_language_exercise4}
+
+Someone once told me that the simplest interview question for a candidate programmer is [fizz buzz](https://en.wikipedia.org/wiki/Fizz_buzz). If a person doesn't know how to do that there is no point of examining them further.
+
+I don't know if that's true, but here we go.
+
+Write a program for a range of numbers 1 to 30.
+If a number is divisible by 3 it prints "Fizz" on the screen.
+If a number is divisible by 5 it prints "Buzz" on the screen.
+If a number is divisible by 3 and 5 it prints "Fizz Buzz" on the screen.
+Otherwise it prints the number itself.
+
+If you feel stuck right now, don't worry. It sounds difficult, because so far you don't know all the necessary elements to solve it. Still, I believe you can do this by reading the Julia docs and using your favorite web search engine.
+
+Here are some constructs that might be useful to solve this task:
+
+- for loop (see @sec:julia_language_for_loops)
+- if/elseif/else (see @sec:julia_language_if_else)
+- [modulo operator or rem function](https://docs.julialang.org/en/v1/base/math/#Base.rem)
+- [logical and operator](https://docs.julialang.org/en/v1/manual/missing/#Logical-operators), hint read the docs until you encounter examples with `&&` operator
+- [string function](https://docs.julialang.org/en/v1/base/strings/#Base.string)
+
+You may use some or all of them. Or perhaps you can come up with something else. Good luck.
+
 ## Julia - Solutions {#sec:julia_language_exercises_solutions}
 
 In this sub-chapter you may find possible solutions to the exercises from the previous section.
@@ -1469,3 +1493,55 @@ end
 """
 sco(s2)
 ```
+
+### Solution to Exercise 4 {#sec:julia_language_exercise4_solution}
+
+Perhaps the most direct version of the program would be
+
+```jl
+s1 = """
+function printFizzBuzz()
+	for i in 1:30
+		if rem(i, 3) == 0 && rem(i, 5) == 0
+			println("Fizz Buzz")
+		elseif rem(i, 3) == 0
+			println("Fizz")
+		elseif rem(i, 5) == 0
+			println("Buzz")
+		else
+			println(i)
+		end
+	end
+	return nothing
+end
+"""
+sc(s1)
+```
+
+Go ahead, test it out.
+
+If you like challenges try to follow the execution of this program
+
+```jl
+s2 = """
+function getFizzBuzz(num::Int)::String
+	return (
+		rem(num, 3) == 0 && rem(num, 5) == 0 ? "Fizz Buzz" :
+		rem(num, 3) == 0 ? "Fizz" :
+		rem(num, 5) == 0 ? "Buzz" :
+		string(num)
+	)
+end
+
+function printFizzBuzz()
+	foreach(x -> println(getFizzBuzz(x)), 1:30)
+	return nothing
+end
+
+# you can use it like so: printFizzBuzz()
+"""
+sc(s2)
+```
+
+There are probably other more creative [or more (unnecessarily) convoluted] ways to solve this task. Personally, I would be satisfied if you understand the first version.
+
