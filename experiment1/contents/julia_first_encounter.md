@@ -1285,9 +1285,9 @@ s = """
 sco(s)
 ```
 
-It seems that I will get more food while ordering the 1 pizza (45 cm in diameter) and not 2 pizzas (30 cm in diameter each).
+It seems that I will get more food while ordering the 1 pizza (45 cm in diameter) and not the 2 pizzas (30 cm in diameter each).
 
-If the pizzas were [cylinders](https://en.wikipedia.org/wiki/Cylinder) of equal heights then I would calculate their volumes like so
+If the pizzas were [cylinders](https://en.wikipedia.org/wiki/Cylinder) of equal heights (say 2 cm) then I would calculate their volumes like so
 
 ```jl
 s = """
