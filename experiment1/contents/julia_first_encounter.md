@@ -1242,3 +1242,71 @@ And that's it. It just works.
 Note that if you type `import Statistics` instead of `import Statistics as stat` then in order to use `mean` you will have to type `Statistics.mean([1, 2, 3])`. That is why it is worth to give some shorter name for an imported package.
 
 OK, end of theory, time for some practice.
+
+## Julia - Exercises {#sec:julia_language_exercises}
+
+I once heard that in chess you can get only as much as you give. I believe it is also true for programming (and most likely many other human activities).
+
+So, here are some exercises that you may want to solve to get from this chapter as much as you can.
+
+### Exercise 1 {#sec:julia_language_exercise1}
+
+Imagine the following situation. You and your friends call to order out a pizza. You got only \$50 dollars and you are pretty hungry.
+But you got a dilemma, for \$50 dollars you can either order 2 pizzas 30 cm in diameter, or 1 pizza 45 cm in diameter. Which one is more worth it?
+
+*Hint: Assume that the pizza is flat and that you are eating its surface.*
+
+*Hint: You may want to search [the documentation](https://docs.julialang.org/en/v1/) for `Base.MathConstants` and use one of them.*
+
+## Julia - Solutions {#sec:julia_language_exercises_solutions}
+
+In this sub-chapter you may find possible solutions to the exercises from the previous section.
+
+### Solution to Exercise 1 {#sec:julia_language_exercise1_solution}
+
+Since I'm eating a surface, and the task description gives me diameters, then I should probably calculate [area of circle](https://en.wikipedia.org/wiki/Area_of_a_circle).
+I will use [Base.MathConstants.pi](https://docs.julialang.org/en/v1/base/numbers/#Base.MathConstants.pi) in my calculations.
+
+```jl
+s = """
+function getCircleArea(r::Real)::Real
+	return pi * r * r
+end
+"""
+sc(s)
+```
+
+---
+
+```jl
+s = """
+(getCircleArea(30/2) * 2, getCircleArea(45/2))
+"""
+sco(s)
+```
+
+It seems that I will get more food while ordering the 1 pizza (45 cm in diameter) and not 2 pizzas (30 cm in diameter each).
+
+If the pizzas were [cylinders](https://en.wikipedia.org/wiki/Cylinder) of equal heights then I would calculate their volumes like so
+
+```jl
+s = """
+function getCylinderVolume(r::Real, h::Real=2)::Real
+	return getCircleArea(r) * h
+end
+"""
+sc(s)
+```
+
+---
+
+```jl
+s = """
+(getCylinderVolume(30/2) * 2, getCylinderVolume(45/2))
+"""
+sco(s)
+```
+
+Still, the conclusion is the same.
+
+*Note, I could have used `^`, which is an exponentiation operator in Julia. If I want to raise 2 to the fourth power I type `2^4` (or `2*2*2*2`) and get `jl 2^4`.*
