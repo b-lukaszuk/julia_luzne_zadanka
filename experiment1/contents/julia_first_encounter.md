@@ -1315,7 +1315,7 @@ So, here are some exercises that you may want to solve to get from this chapter 
 ### Exercise 1 {#sec:julia_language_exercise1}
 
 Imagine the following situation. You and your friends call to order out a pizza. You got only \$50 and you are pretty hungry.
-But you got a dilemma, for exactly \$50 you can either order 2 pizzas 30 cm in diameter, or 1 pizza 45 cm in diameter. Which one is more worth it?
+But you got a dilemma, for exactly \$50 you can either order 2 pizzas 30 cm in diameter each, or 1 pizza 45 cm in diameter. Which one is more worth it?
 
 *Hint: Assume that the pizza is flat and that you are eating its surface.*
 
@@ -1333,8 +1333,7 @@ sco(s)
 ```
 
 Write a function with the following signature `areApproxEqual(f1::Float64, f2::Float64)::Bool`. It should return `true` when called with those numbers (`areApproxEqual(0.1*3, 0.3)`).
-
-You may use [round](https://docs.julialang.org/en/v1/base/math/#Base.round-Tuple{Complex{%3C:AbstractFloat},%20RoundingMode,%20RoundingMode}) for that with a precision of, let's say 16 digits.
+For the task you may use [round](https://docs.julialang.org/en/v1/base/math/#Base.round-Tuple{Complex{%3C:AbstractFloat},%20RoundingMode,%20RoundingMode}) with a precision of, let's say, 16 digits.
 
 ### Exercise 3 {#sec:julia_language_exercise3}
 
@@ -1382,7 +1381,7 @@ According to the story the game was created by a Hindu wise man. He presented hi
 
 - I want nothing but some wheat grains.
 - How many?
-- Put 1 grain on the first field, 2 grains on the second, 4 on the third, 8 on the fourth, and so on, I want the grains that are on the last field.
+- Put 1 grain on the first field, 2 grains on the second, 4 on the third, 8 on the fourth, and so on. I want the grains that are on the last field.
 
 A laughingly small request, thought the king. Or is it?
 
@@ -1510,6 +1509,8 @@ end
 sco(s2)
 ```
 
+*BTW. Julia already got similar functionality see [min](https://docs.julialang.org/en/v1/base/math/#Base.min), [max](https://docs.julialang.org/en/v1/base/math/#Base.max), [minimum](https://docs.julialang.org/en/v1/base/collections/#Base.minimum), and [maximum](https://docs.julialang.org/en/v1/base/collections/#Base.maximum).*
+
 ### Solution to Exercise 4 {#sec:julia_language_exercise4_solution}
 
 Perhaps the most direct version of the program would be
@@ -1590,7 +1591,7 @@ Hmm, that's odd, a negative number.
 
 Wait a moment. Now I remember, a computer got finite amount of memory. So in order to work efficiently data is stored in small pre-allocated pieces of it. If the number you put into that small 'memory drawer' is greater than the amount of space you get strange results.
 
-You can read more about it in Julia docs (section: [Integers](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Integers) and [Overflow Behavior](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior)).
+You can read more about it in Julia docs (sections [Integers](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Integers) and [Overflow Behavior](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior)).
 
 You can check the minimum and maximum value for `Int` by typing `typemin(Int)` and `typemax(Int)` on my laptop those are `jl typemin(Int)` and `jl typemax(Int)`, respectively.
 
