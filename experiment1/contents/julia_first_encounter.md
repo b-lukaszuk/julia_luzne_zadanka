@@ -79,7 +79,7 @@ x = 1
 sc(s)
 ```
 
-and press `Ctrl+Enter` to execute the cell and open a new cell below.
+and press `Ctrl+Enter` to execute the cell and open a new cell below (`Shift+Enter` just runs the cell).
 
 This creates a variable (box) named `x` (x is a label on the box) that contains the value `1`. The `=` operator assigns `1` (right side) to `x` (left side) [puts `1` into the box].
 
@@ -620,7 +620,11 @@ end
 sc(s)
 ```
 
-Yet another way is to use so called generic types, like
+It turns out that you don't have to declare function types in Julia (just like in the case of variables, see @sec:julia_optional_type_declaration) and a function still may work just fine.
+
+*So, if for any reason type declarations (like the one before or the one upcoming) are too much for you, feel free not to use them.*
+
+Still, a die hard 'typist' (if I may call a person this way) would probably use so called generic types, like
 
 ```jl
 s = """
@@ -641,6 +645,8 @@ You know that the function accepts vector of some elements, and you know that it
 
 Note that the last function we wrote for fun (it was fun for me, how about you?).
 In reality Julia already got a function with a similar functionality (see [first](https://docs.julialang.org/en/v1/base/collections/#Base.first)).
+
+Anyway, as I said if you don't want to use types then don't. Still, I prefer to use them for reasons similar to those described in @sec:julia_optional_type_declaration.
 
 ### Functions modifying arguments {#sec:functions_modifying_arguments}
 
@@ -1840,4 +1846,6 @@ getInit([])
 sco(s)
 ```
 
-OK, that's it for now.
+BTW. Try to remove type declarations and see if the function still works (if you do this right then it should).
+
+OK, that's it for now. Let's move to another chapter.
