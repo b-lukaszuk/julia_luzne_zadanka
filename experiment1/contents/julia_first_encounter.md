@@ -1500,6 +1500,42 @@ Use Julia to answer how many grains are on the last (64th) field.
 
 *Hint. If you get a strange looking result, use [BigInt](https://docs.julialang.org/en/v1/base/numbers/#BigFloats-and-BigInts) data type instead of [Int](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Integers).*
 
+### Exercise 6 {#sec:julia_language_exercise6}
+
+Lastly, to cool down a little write a function `getInit` that takes a vector of any type as an argument and returns the vector without its last element.
+
+You may either use the generics (preferred way to solve it, see @sec:functions_with_generics) or write the function without type declarations (acceptable solution).
+
+Remember about the indexing (see @sec:julia_vectors). Think (or search for the answer e.g. in the internet) how to get one but last element of an array.
+
+Usage examples:
+
+<pre>
+getInit([1, 2, 3, 4])
+[1, 2, 3]
+</pre>
+
+---
+
+<pre>
+getInit(["ab", "cd", "ef", "gh"])
+["ab", "cd", "ef"]
+</pre>
+
+---
+
+<pre>
+getInit([3.3])
+Float64[]
+</pre>
+
+---
+
+<pre>
+getInit([])
+Any[]
+</pre>
+
 ## Julia - Solutions {#sec:julia_language_exercises_solutions}
 
 In this sub-chapter you may find possible solutions to the exercises from the previous section.
@@ -1753,3 +1789,55 @@ sco(s)
 
 So I guess the [aforementioned Wikipedia's article](https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem) is right, it is more than a country (or the world) could produce in a year.
 
+### Solution to Exercise 6 {#sec:julia_language_exercise6_solution}
+
+A possible solution with generics looks something like that
+
+```jl
+s = """
+function getInit(vect::Vector{T})::Vector{T} where T
+	return vect[1:(end-1)]
+end
+"""
+sco(s)
+```
+
+The parenthesis around `(end-1)` are not necessary. I added them for better clarity of how the last by one index is calculated.
+
+Tests:
+
+```jl
+s = """
+getInit([1, 2, 3, 4])
+"""
+sco(s)
+```
+
+---
+
+```jl
+s = """
+getInit(["ab", "cd", "ef", "gh"])
+"""
+sco(s)
+```
+
+---
+
+```jl
+s = """
+getInit([3.3])
+"""
+sco(s)
+```
+
+---
+
+```jl
+s = """
+getInit([])
+"""
+sco(s)
+```
+
+OK, that's it for now.
