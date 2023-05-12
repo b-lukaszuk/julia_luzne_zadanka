@@ -7,6 +7,7 @@ This file is not included in the PDF.
 Last update
 
 ```jl
+include("./src/data.jl")
 getTimeStamp()
 ```
 
