@@ -7,8 +7,7 @@ This file is not included in the PDF.
 Last update
 
 ```jl
-import Dates
-Dates.now() |> x -> Dates.format(x, Dates.RFC1123Format)
+getTimeStamp()
 ```
 
 Hello there. This is an open source/access book entitled: "Romeo and Julia, where Romeo is Basic Statistics".

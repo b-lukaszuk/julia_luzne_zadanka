@@ -1,3 +1,5 @@
-function example_dataframe()
-    return DataFrame(A = 1:6, B = 1:6, C = 1:6)
+import Dates
+
+function getTimeStamp()::String
+    return Dates.now() |> x -> Dates.format(x, Dates.RFC1123Format)
 end

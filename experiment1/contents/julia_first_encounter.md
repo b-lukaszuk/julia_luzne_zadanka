@@ -893,11 +893,10 @@ sco(s)
 ```
 
 Here I wrote a function that finds a minimal value in a vector of integers. If the vector is sorted in the ascending order it returns the first element.
-If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function.
-Once sorted it returns its first element (this may not be the most efficient method).
+If it is not, it sorts the vector using build in [sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort) function and returns its first element (*this may not be the most efficient method*).
 Note that the `else` block contains two lines of code (it could contain more if necessary, and so could `if` block).
 I did this for demonstative purposes.
-Alternatively instead those two lines one could write `return sort(vect)[1]` and it would work just fine.
+Alternatively instead those two lines (in `else` block) one could write `return sort(vect)[1]` and it would work just fine.
 
 ### Ternary expression {#sec:ternary_expression}
 
@@ -1014,6 +1013,8 @@ In `translateEng2polVer2` I used so called default value for an argument (`someD
 This means that if the function is provided without the second argument then `engPolDict` will be used as its second argument.
 If I defined the function as `translateEng2polVer2(engWord::String, someDict::Dict{String, String})` then while running the function I would have to write `(translateEng2polVer2("three", engPolDict), translateEng2polVer2("twelve", engPolDict))`.
 Of course, I may prefer to use some other English-Polish dictionary (perhaps the one found on the internet) like so `translateEng2polVer2("three", betterEngPolDict)` instead of using the default `engPolDict` we got here.
+
+*In general, the more `if ... elseif ... else` comparisons you got to the better off you are when you use dictionaries (especially that they could be written by someone else, you just use them).*
 
 OK, enough of that. If you want to know more about conditional evaluation check [this part of Julia docs](https://docs.julialang.org/en/v1/manual/control-flow/#man-conditional-evaluation).
 
@@ -1452,7 +1453,7 @@ For the task you may use [round](https://docs.julialang.org/en/v1/base/math/#Bas
 
 ### Exercise 3 {#sec:julia_language_exercise3}
 
-Remember `getMin` from previous chapter
+Remember `getMin` from previous chapter (see @sec:ternary_expression)
 
 ```jl
 s = """
@@ -1661,6 +1662,31 @@ end
 """
 sco(s2)
 ```
+
+Sorting an array to get the maximum (or minimum) value is not the most effective (sorting is based on rearanging elements and takes quite some time). Traveling through an array only once should be faster. Therefore probably a better solution (in terms of performance) would be something like
+
+```jl
+s2 = """
+function getMaxUnsorted(unsortedVect::Vector{Int})::Int
+	maxVal::Int = unsortedVect[1]
+	for elt in unsortedVect[2:end]
+		if maxVal < elt
+			maxVal = elt
+		end
+	end
+	return maxVal
+end
+
+function getMax(vect::Vector{Int}, isSortedDesc::Bool)::Int
+    return isSortedDesc ? vect[1] : getMaxUnsorted(vect)
+end
+
+(getMax([3, 2, 1], true), getMax([2, 3, 1], false))
+"""
+sco(s2)
+```
+
+Read it carefully and try to figure out how it works.
 
 *BTW. Julia already got similar functionality to `getMin`, `getMax` that we developed ourselves.
 See [min](https://docs.julialang.org/en/v1/base/math/#Base.min),

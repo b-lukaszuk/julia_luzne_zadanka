@@ -11,7 +11,7 @@ using Reexport: @reexport
     select!,
     select
 
-export M, example_dataframe
+export M, getTimeStamp
 
 include("data.jl")
 
