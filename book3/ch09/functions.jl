@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -45,7 +45,7 @@ begin
     import HypothesisTests as ht
     import MultipleTesting as mt
     import Pingouin as pg
-	import PlutoUI
+    import PlutoUI
 end
 
 # ╔═╡ 74449f97-871c-46ab-b03d-6140b3eff8c8
@@ -60,19 +60,19 @@ function get_avg(vals::Vector{<:Number})::Float64
 end
 
 # ╔═╡ b7b41906-106b-480a-91b1-7b3197940496
-function get_sd(vals::Vector{<:Number})::Float64
-    avg::Float64 = get_avg(vals)
-    diffs_squared::Vector{<:Float64} = [(v - avg)^2 for v in vals]
-    return sqrt(sum(diffs_squared) / (length(vals) - 1))
+function getSd(vals::Vector{<:Number})::Float64
+    avg::Float64 = getAvg(vals)
+    diffsSquared::Vector{<:Float64} = [(v - avg)^2 for v in vals]
+    return sqrt(sum(diffsSquared) / (length(vals) - 1))
 end
 
 # ╔═╡ 6e9959ba-7d3b-40ad-aa2b-c11560e530ca
-function are_eql_vars(vals1::Vector{<:Number}, vals2::Vector{<:Number}; alpha::Float64=0.05)::Bool
+function areEqlVars(vals1::Vector{<:Number}, vals2::Vector{<:Number}; alpha::Float64=0.05)::Bool
     return ht.pvalue(ht.LeveneTest(vals1, vals2)) >= alpha
 end
 
 # ╔═╡ 2bd67ebd-cad6-4ed8-a5ed-9e44227a0c6d
-function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05)::Bool
+function areAllNormDistributed(vals::Vector{<:Number}...; alpha::Float64=0.05)::Bool
     for v in vals
         if (pg.normality(v).pval[1] < alpha)
             return false
@@ -82,23 +82,23 @@ function are_all_norm_distributed(vals::Vector{<:Number}...; alpha::Float64=0.05
 end
 
 # ╔═╡ ec8f7c6d-7dfa-4908-bc9c-9fc73f5b9bb4
-function run_paired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
-	diffs::Vector{<:Number} = vals1 .- vals2
-	norm_dist::Bool = are_all_norm_distributed(diffs)
-	if norm_dist
-		return ht.pvalue(ht.OneSampleTTest(diffs))
-	else
-		return ht.pvalue(ht.SignedRankTest(diffs))
-	end
+function runPairedTestGetPVal(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+    diffs::Vector{<:Number} = vals1 .- vals2
+    normDist::Bool = areAllNormDistributed(diffs)
+    if normDist
+        return ht.pvalue(ht.OneSampleTTest(diffs))
+    else
+        return ht.pvalue(ht.SignedRankTest(diffs))
+    end
 end
 
 # ╔═╡ 13daaaa1-cf7f-4127-8b86-3fbf85aa268f
-function run_unpaired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
-    eq_vars::Bool = are_eql_vars(vals1, vals2)
-    norm_dists::Bool = are_all_norm_distributed(vals1, vals2)
-    if !norm_dists
+function runUnpairedTestGetPVal(vals1::Vector{<:Number}, vals2::Vector{<:Number})::Float64
+    eqVars::Bool = areEqlVars(vals1, vals2)
+    normDists::Bool = areAllNormDistributed(vals1, vals2)
+    if !normDists
         return ht.pvalue(ht.MannWhitneyUTest(vals1, vals2))
-    elseif eq_vars
+    elseif eqVars
         return ht.pvalue(ht.EqualVarianceTTest(vals1, vals2))
     else
         return ht.pvalue(ht.UnequalVarianceTTest(vals1, vals2))
@@ -106,67 +106,70 @@ function run_unpaired_test_get_p_val(vals1::Vector{<:Number}, vals2::Vector{<:Nu
 end
 
 # ╔═╡ 36f6328e-6a87-4a2c-ad79-5591ce222c29
-function split_by_group(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
-    gr_names::Vector{String} = unique(groups)
+function splitByGroup(values::Vector{<:Number}, groups::Vector{String})::Dict{String,Vector{<:Number}}
+    grNames::Vector{String} = unique(groups)
     result::Dict{String,Vector{<:Number}} = Dict()
-    for gr in gr_names
+    for gr in grNames
         result[gr] = values[findall(x -> x == gr, groups)]
     end
     return result
 end
 
 # ╔═╡ 6977116a-757a-4f54-a8fc-262e2717de56
-function should_choose_paired(ids1::Vector{<:Number}, ids2::Vector{<:Number}, cutoff::Float64=0.7)
-	no_of_similarities::Int = length(intersect(ids1, ids2))
-	ids_avg_length::Float64 = (length(ids1) + length(ids2)) / 2
-	perc_of_silimarities::Float64 = no_of_similarities / ids_avg_length
-	return perc_of_silimarities >= cutoff
+function shouldChoosePaired(ids1::Vector{<:Number}, ids2::Vector{<:Number}, cutoff::Float64=0.7)
+    noOfSimilarities::Int = length(intersect(ids1, ids2))
+    idsAvgLength::Float64 = (length(ids1) + length(ids2)) / 2
+    percOfSilimarities::Float64 = noOfSimilarities / idsAvgLength
+    return percOfSilimarities >= cutoff
 end
 
 # ╔═╡ 8ba2ffa3-23fd-4009-a894-1d6269a16933
 # each element of bs should have 0 or 1 occurence in cs
-function where_are_bs_in_cs(bs::Vector{<:Number}, cs::Vector{<:Number})
-	return filter(!isnothing, [findfirst(x -> x == b, cs) for b in bs])
+function whereAreBsInCs(bs::Vector{<:Number}, cs::Vector{<:Number})
+    return filter(!isnothing, [findfirst(x -> x == b, cs) for b in bs])
 end
 
 # ╔═╡ fd7469ca-c659-41ca-837b-dfafb562fb97
-function get_paired_vals(vals1::Vector{<:Number}, vals2::Vector{<:Number}, ids1::Vector{<:Number}, ids2::Vector{<:Number})::Tuple{Vector{<:Number}, Vector{<:Number}}
-	same_ids::Vector = intersect(ids1, ids2)
-	return (
-	vals1[where_are_bs_in_cs(same_ids, ids1)],
-	vals2[where_are_bs_in_cs(same_ids, ids2)]
-	)
+function getPairedVals(vals1::Vector{<:Number}, vals2::Vector{<:Number},
+                       ids1::Vector{<:Number}, ids2::Vector{<:Number})::Tuple{Vector{<:Number}, Vector{<:Number}}
+
+    sameIds::Vector = intersect(ids1, ids2)
+    return (
+        vals1[whereAreBsInCs(sameIds, ids1)],
+        vals2[whereAreBsInCs(sameIds, ids2)]
+    )
 end
 
 # ╔═╡ 4e6c2b53-75a0-439f-a70e-302b242e9e11
-function run_pairwise_compars_get_p_vals(
+function runPairwiseComparsGetPVals(
 	vals::Vector{<:Number}, grs::Vector{<:String}, ids::Vector{<:Number},
-	adjust::Bool=true, adjustment_mt=mt.BenjaminiHochberg)::Dict{String,Float64}
-    grouped_vals::Dict{String,Vector{<:Number}} = split_by_group(vals, grs)
-	grouped_ids::Dict{String, Vector{<:Number}} = split_by_group(ids, grs)
-    groups::Vector{String} = collect(keys(grouped_vals))
+	adjust::Bool=true, adjustmentMt=mt.BenjaminiHochberg)::Dict{String,Float64}
+
+    groupedVals::Dict{String,Vector{<:Number}} = splitByGroup(vals, grs)
+    groupedIds::Dict{String, Vector{<:Number}} = splitByGroup(ids, grs)
+    groups::Vector{String} = collect(keys(groupedVals))
     comparisons::Vector{String} = []
-    p_values::Vector{Float64} = []
-	paired::Bool = false
+    pValues::Vector{Float64} = []
+    paired::Bool = false
     for i in eachindex(groups)
         for j in (i+1):length(groups)
             gi, gj = groups[i], groups[j]
-			paired = should_choose_paired(grouped_ids[gi], grouped_ids[gj])
+            paired = shouldChoosePaired(groupedIds[gi], groupedIds[gj])
             push!(comparisons, "$(gi) vs. $(gj)")
-			if paired
-				push!(p_values, run_paired_test_get_p_val(
-					get_paired_vals(grouped_vals[gi], grouped_vals[gj],
-					grouped_ids[gi], grouped_ids[gj])...
-				))
-			else
-				push!(p_values, run_unpaired_test_get_p_val(grouped_vals[gi], grouped_vals[gj]))
-			end
+            if paired
+                push!(pValues, runPairedTestGetPVal(
+                    getPairedVals(groupedVals[gi], groupedVals[gj],
+                                    groupedIds[gi], groupedIds[gj])...
+                                        ))
+            else
+                push!(pValues, runUnpairedTestGetPVal(groupedVals[gi], groupedVals[gj]))
+            end
         end
     end
     if adjust
-        p_values = mt.adjust(p_values, adjustment_mt())
+        pValues = mt.adjust(pValues, adjustmentMt())
     end
-    return Dict(k => v for (k, v) in zip(comparisons, p_values))
+    return Dict(k => v for (k, v) in zip(comparisons, pValues))
 end
 
 # ╔═╡ 47ef6176-803b-429d-8008-2d20bb2cf88b
@@ -178,8 +181,8 @@ begin
     # table 9.10 Red cell folate levels (ug/l) in three groups of cardiac
     # bypass patients given different levels of nitrous oxide ventilation (Ames et al., 1978)
     follate=[243, 251, 275, 291, 347, 354, 380, 392, 206, 210, 226, 249, 255, 273, 285, 295, 309, 241, 258, 270, 293, 328]
-    follate_gr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
-    run_pairwise_compars_get_p_vals(follate, follate_gr, collect(1:length(follate)), true, mt.Bonferroni)
+    follateGr=vcat(fill.(["gr1", "gr2", "gr3"], [8, 9, 5])...)
+    runPairwiseComparsGetPVals(follate, follateGr, collect(1:length(follate)), true, mt.Bonferroni)
 	# the output is compatible with the one calculated 'by hand'
 end
 
@@ -187,13 +190,13 @@ end
 begin
 	# from D. Altman "Practical Statistics for Medical Research"
     # table 9.3 + some random group, random values, random ids
-	intake_kJ = [5260, 5470, 5640, 6180, 6390, 6515, 6805, 7515, 7515, 8230, 8770, 3910, 4220, 3885, 5160, 5645, 4680, 5265, 5975, 6790, 6900, 7335]
-	intake_gr = repeat(["premenopause", "postmenopause"], inner = 11)
-	intake_id = repeat(1:11, outer = 11)
-	push!(intake_kJ, [5192, 4186, 4516, 4752, 5176]...)
-	push!(intake_gr, ["rand", "rand", "rand", "rand", "rand"]...)
-	push!(intake_id, [12, 13, 14, 15, 16]...)
-	run_pairwise_compars_get_p_vals(intake_kJ, intake_gr, intake_id, false, mt.Bonferroni)
+    intakeKJ = [5260, 5470, 5640, 6180, 6390, 6515, 6805, 7515, 7515, 8230, 8770, 3910, 4220, 3885, 5160, 5645, 4680, 5265, 5975, 6790, 6900, 7335]
+    intakeGr = repeat(["premenopause", "postmenopause"], inner = 11)
+    intakeId = repeat(1:11, outer = 11)
+    push!(intakeKJ, [5192, 4186, 4516, 4752, 5176]...)
+    push!(intakeGr, ["rand", "rand", "rand", "rand", "rand"]...)
+    push!(intakeId, [12, 13, 14, 15, 16]...)
+    runPairwiseComparsGetPVals(intakeKJ, intakeGr, intakeId, false, mt.Bonferroni)
 	# the output is compatible with the one calculated 'by hand'
 end
 
