@@ -30,20 +30,23 @@ import CairoMakie as plt
 import PlutoUI as pui
 
 # ╔═╡ 15ad033b-7398-47de-861b-6244dfdcb2eb
-pui.TableOfContents()
+pui.TableOfContents(depth=4)
 
 # ╔═╡ 8dfb5286-d61a-41b9-8051-355c9942bafe
 md"""## Solution
 NO GUARANTEE IT WILL WORK OR WORKS CORRECTLY! USE IT AT YOUR OWN RISK!
 """
 
+# ╔═╡ 06785ce4-ac5d-4a86-acb2-7e04cf564eb0
+md"### Functions"
+
 # ╔═╡ 90766310-8bdb-4371-aada-f25779dab389
 function throw2DiceTheor()::Vector{Int}
-	result::Vector{Int} = []
-	for i in 1:6, j in 1:6
-		push!(result, i+j)
-	end
-	return result
+    result::Vector{Int} = []
+    for i in 1:6, j in 1:6
+        push!(result, i+j)
+    end
+    return result
 end
 
 # ╔═╡ eb20ac91-ea75-4997-9933-32758fa6ecfb
@@ -57,38 +60,63 @@ end
 
 # ╔═╡ b90af225-4ad0-420b-b7f7-4cdce7c0ae5c
 function getProbs(counts::Dict{T, Int})::Dict{T, Float64} where {T}
-	total::Int = sum(values(counts))
-	return Dict(k => counts[k]/total for k in keys(counts))
+    total::Int = sum(values(counts))
+    return Dict(k => counts[k]/total for k in keys(counts))
 end
 
 # ╔═╡ 7192e1ad-bea9-4425-9233-75bab4c416c4
 function getXYFromCounts(counts::Dict{Int, T})::Tuple{Vector{Int}, Vector{T}} where T<:Union{Int, Float64}
-	ks::Vector{Int} = sort(collect(keys(counts)))
-	vs::Vector{T} = [counts[k] for k in ks]
-	return (ks, vs)
+    ks::Vector{Int} = sort(collect(keys(counts)))
+    vs::Vector{T} = [counts[k] for k in ks]
+    return (ks, vs)
 end
+
+# ╔═╡ 7855499a-9996-427e-a60e-977fd9fe3532
+md"### Distributions"
+
+# ╔═╡ 00e1e220-4a5d-4d4f-a547-58562579c86a
+md"#### Theoretical"
 
 # ╔═╡ dffc2e54-3b4d-4169-b020-98b4e1d4a981
 twoDiceTheor = getCounts(throw2DiceTheor())
 
+# ╔═╡ 60a5856e-a256-43e6-b80b-900e7b2d42a3
+md"#### Practical"
+
+# ╔═╡ 9b007690-d9cd-40f7-8f3d-31850ca0313c
+nThrows = 1000
+
+# ╔═╡ 9605b15f-b3ea-4d54-9bc5-5390a93317e7
+twoDicePract = sum(rand(1:6, nThrows, 2), dims=2) |> vec |> getCounts
+
+# ╔═╡ c8a34066-bd0a-4aea-8354-4e22f4e0c556
+md"#### Barplot of counts"
+
 # ╔═╡ 5c94cf52-a987-41ab-9a60-1ff89e496c6d
 begin
-	f, ax, b = plt.barplot(getXYFromCounts(twoDiceTheor)...)
-	ax.title = "Two dice throw - theoretical distribution"
-	ax.xlabel = "Sum of eyes thrown"
-	ax.ylabel = "# times observed"
-	ax.xticks = 0:14
-	f
+    f, ax, b = plt.barplot(getXYFromCounts(twoDiceTheor)...)
+    ax.title = "Two dice throw - theoretical distribution"
+    ax.xlabel = "Sum of eyes thrown"
+    ax.ylabel = "# times observed"
+    ax.xticks = 0:14
+    f
 end
+
+# ╔═╡ 10ed8fd9-32c3-4de3-9077-ef3eb6296b69
+md"#### Barplot of proportions"
 
 # ╔═╡ 7d768e15-d949-4297-b98e-c8b8a8430324
 begin
-	f2, ax2, b2 = plt.barplot(getXYFromCounts(getProbs(twoDiceTheor))...)
-	ax2.title = "Two dice throw - theoretical distribution"
-	ax2.xlabel = "Sum of eyes thrown"
-	ax2.ylabel = "Proportion of times observed"
-	ax2.xticks = 0:14
-	f2
+    tx, ty = getXYFromCounts(getProbs(twoDiceTheor))
+    px, py = getXYFromCounts(getProbs(twoDicePract))
+    f2, ax2, b2 = plt.barplot(tx .- 0.25, ty; width=0.25, label="theor dist")
+    b3 = plt.barplot!(px .+ 0.25, py; width=0.25, label="pract dist ($nThrows throws)")
+    ax2.title = "Two dice throw"
+    ax2.xlabel = "Sum of eyes thrown"
+    ax2.ylabel = "Proportion of times observed"
+    ax2.xticks = 0:14
+    plt.axislegend()
+    f2
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1413,12 +1441,20 @@ version = "3.5.0+0"
 # ╠═fffcbeb2-00b4-4c3a-a7f1-07a428e6ddb1
 # ╠═15ad033b-7398-47de-861b-6244dfdcb2eb
 # ╟─8dfb5286-d61a-41b9-8051-355c9942bafe
+# ╟─06785ce4-ac5d-4a86-acb2-7e04cf564eb0
 # ╠═90766310-8bdb-4371-aada-f25779dab389
 # ╠═eb20ac91-ea75-4997-9933-32758fa6ecfb
 # ╠═b90af225-4ad0-420b-b7f7-4cdce7c0ae5c
 # ╠═7192e1ad-bea9-4425-9233-75bab4c416c4
+# ╟─7855499a-9996-427e-a60e-977fd9fe3532
+# ╟─00e1e220-4a5d-4d4f-a547-58562579c86a
 # ╠═dffc2e54-3b4d-4169-b020-98b4e1d4a981
+# ╟─60a5856e-a256-43e6-b80b-900e7b2d42a3
+# ╠═9b007690-d9cd-40f7-8f3d-31850ca0313c
+# ╠═9605b15f-b3ea-4d54-9bc5-5390a93317e7
+# ╟─c8a34066-bd0a-4aea-8354-4e22f4e0c556
 # ╠═5c94cf52-a987-41ab-9a60-1ff89e496c6d
+# ╟─10ed8fd9-32c3-4de3-9077-ef3eb6296b69
 # ╠═7d768e15-d949-4297-b98e-c8b8a8430324
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
