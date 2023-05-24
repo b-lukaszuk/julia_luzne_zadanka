@@ -39,7 +39,10 @@ md"""## Imports"""
 import CairoMakie as plt
 
 # ╔═╡ fffcbeb2-00b4-4c3a-a7f1-07a428e6ddb1
-import PlutoUI
+import PlutoUI as pui
+
+# ╔═╡ 15ad033b-7398-47de-861b-6244dfdcb2eb
+pui.TableOfContents()
 
 # ╔═╡ 8dfb5286-d61a-41b9-8051-355c9942bafe
 md"""## Solution
@@ -59,7 +62,7 @@ function getPrimes(upto::Int = 100)
 end
 
 # ╔═╡ 6ad3615d-ba64-40c9-aa4a-d46590475ff5
-@bind upto PlutoUI.Slider(10:10:300, default=30)
+@bind upto pui.Slider(10:10:300, default=30)
 
 # ╔═╡ 24b1ea64-9183-4420-be54-0219d2b87216
 begin
@@ -1391,6 +1394,7 @@ version = "3.5.0+0"
 # ╟─511eab66-90c7-4166-b894-4111cf314f30
 # ╠═0f7feeb3-da72-48c0-a95b-5632d768e292
 # ╠═fffcbeb2-00b4-4c3a-a7f1-07a428e6ddb1
+# ╠═15ad033b-7398-47de-861b-6244dfdcb2eb
 # ╟─8dfb5286-d61a-41b9-8051-355c9942bafe
 # ╠═d3d93f75-5877-4fc9-a067-e8c5d091ef58
 # ╠═6ad3615d-ba64-40c9-aa4a-d46590475ff5
