@@ -65,7 +65,7 @@ function getProbs(counts::Dict{T, Int})::Dict{T, Float64} where {T}
 end
 
 # ╔═╡ 7192e1ad-bea9-4425-9233-75bab4c416c4
-function getXYFromCounts(counts::Dict{Int, T})::Tuple{Vector{Int}, Vector{T}} where T<:Union{Int, Float64}
+function getKeysVals(counts::Dict{Int, T})::Tuple{Vector{Int}, Vector{T}} where T<:Union{Int, Float64}
     ks::Vector{Int} = sort(collect(keys(counts)))
     vs::Vector{T} = [counts[k] for k in ks]
     return (ks, vs)
@@ -94,7 +94,7 @@ md"#### Barplot of counts"
 
 # ╔═╡ 5c94cf52-a987-41ab-9a60-1ff89e496c6d
 begin
-    f, ax, b = plt.barplot(getXYFromCounts(twoDiceTheor)...)
+    f, ax, b = plt.barplot(getKeysVals(twoDiceTheor)...)
     ax.title = "Two dice throw - theoretical distribution"
     ax.xlabel = "Sum of eyes thrown"
     ax.ylabel = "# times observed"
@@ -107,8 +107,8 @@ md"#### Barplot of proportions"
 
 # ╔═╡ 7d768e15-d949-4297-b98e-c8b8a8430324
 begin
-    tx, ty = getXYFromCounts(getProbs(twoDiceTheor))
-    px, py = getXYFromCounts(getProbs(twoDicePract))
+    tx, ty = getKeysVals(getProbs(twoDiceTheor))
+    px, py = getKeysVals(getProbs(twoDicePract))
     f2, ax2, b2 = plt.barplot(tx .- 0.25, ty; width=0.25, label="theor dist")
     b3 = plt.barplot!(px .+ 0.25, py; width=0.25, label="pract dist ($nThrows throws)")
     ax2.title = "Two dice throw"
