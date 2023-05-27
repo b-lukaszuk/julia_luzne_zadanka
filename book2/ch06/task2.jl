@@ -35,6 +35,98 @@ NO GUARANTEE IT WILL WORK OR WORKS CORRECTLY! USE IT AT YOUR OWN RISK!
 # ╔═╡ 06785ce4-ac5d-4a86-acb2-7e04cf564eb0
 md"### Functions"
 
+# ╔═╡ 7caf30d9-5497-4d9e-b159-5600cd4a7153
+ints2words = Dict(
+    0 => "zero",
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    4 => "four",
+    5 => "five",
+    6 => "six",
+    7 => "seven",
+    8 => "eight",
+    9 => "nine",
+    10 => "ten",
+    11 => "eleven",
+    12 => "twelve",
+    13 => "thirteen",
+    14 => "fourteen",
+    15 => "fifteen",
+    16 => "sixteen",
+    17 => "seventeen",
+    18 => "eighteen",
+    19 => "nineteen",
+    20 => "twenty",
+    30 => "thirty",
+    40 => "forty",
+    50 => "fifty",
+    60 => "sixty",
+    70 => "seventy",
+    80 => "eighty",
+    90 => "ninety",
+    100 => "hundered",
+)
+
+# ╔═╡ 16d2f0b9-d2ec-4054-9de1-4684f6193925
+function translUnitsToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
+	@assert 0 <= n < 10 "n must to be between 0 and 9"
+	return "$(dict[n])"
+end
+
+# ╔═╡ e76f970a-392b-420d-887d-99a26f844eea
+function translTeensToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
+	@assert 9 < n < 100 "n must to be between 10 and 99"
+	return "$(dict[n])"
+end
+
+# ╔═╡ 7630d8c8-b46e-461f-9ffd-c957737397b9
+function translTensToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
+	@assert 19 < n < 100 "n must be between 20 and 99"
+	t, u = divrem(n, 10)
+	return (
+	"$(dict[t*10])" * ((u == 0) ? "" : "-$(translUnitsToStr(u))")
+	)
+end
+
+# ╔═╡ 15667968-6d7a-4494-a49a-97336bd06f06
+function translHundredsToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
+	@assert 99 < n < 1000 "n must to be between 100 and 999"
+	h, t = divrem(n, 100)
+	return "$(dict[div(n, 100)]) hundred" *
+	(
+	t == 0 ? "" :
+	t < 10 ? " $(translUnitsToStr(t))" :
+	t < 20 ? " $(translTeensToStr(t))" :
+	" $(translTensToStr(t))"
+ 	)
+end
+
+# ╔═╡ ac3d580a-d5ba-47dd-bc64-cfb75cd2608f
+function translIntToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
+	h, t = divrem(n, 100)
+	u = t - (div(t, 10) * 10)
+	return (
+	h > 0 ? translHundredsToStr(n) :
+	t > 19 ? translTensToStr(t) :
+	9 < t < 20 ? translTeensToStr(t) :
+	translUnitsToStr(u)
+	)
+end
+
+# ╔═╡ 0593b89c-9fac-4243-b277-5fb75a5c3e34
+md"### Testing"
+
+# ╔═╡ f94b5a0e-5b39-4f0e-a63f-9f86611cd9d3
+for i in 0:30
+	println("$i => $(translIntToStr(i))")
+end
+
+# ╔═╡ cf1f221d-84d7-4b3b-b367-5be4099463c5
+for i in rand(1:999, 20)
+	println("$i => $(translIntToStr(i))")
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -307,5 +399,14 @@ version = "17.4.0+0"
 # ╠═15ad033b-7398-47de-861b-6244dfdcb2eb
 # ╟─8dfb5286-d61a-41b9-8051-355c9942bafe
 # ╟─06785ce4-ac5d-4a86-acb2-7e04cf564eb0
+# ╠═7caf30d9-5497-4d9e-b159-5600cd4a7153
+# ╠═16d2f0b9-d2ec-4054-9de1-4684f6193925
+# ╠═e76f970a-392b-420d-887d-99a26f844eea
+# ╠═7630d8c8-b46e-461f-9ffd-c957737397b9
+# ╠═15667968-6d7a-4494-a49a-97336bd06f06
+# ╠═ac3d580a-d5ba-47dd-bc64-cfb75cd2608f
+# ╟─0593b89c-9fac-4243-b277-5fb75a5c3e34
+# ╠═f94b5a0e-5b39-4f0e-a63f-9f86611cd9d3
+# ╠═cf1f221d-84d7-4b3b-b367-5be4099463c5
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
