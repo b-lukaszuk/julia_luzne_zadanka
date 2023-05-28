@@ -84,7 +84,7 @@ end
 function translTensToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
     @assert 19 < n < 100 "n must be between 20 and 99"
     t, u = divrem(n, 10)
-    return dict[t*10] * (u == 0 ? "" : "-$(translUnitsToStr(u))")
+    return dict[t*10] * (u == 0 ? "" : "-$(translUnitsToStr(u, dict))")
 end
 
 # ╔═╡ 15667968-6d7a-4494-a49a-97336bd06f06
@@ -93,18 +93,18 @@ function translHundredsToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
     h, t = divrem(n, 100)
     return dict[h] * " hundered" * (
         t == 0 ? "" :
-        t < 10 ? " " * translUnitsToStr(t) :
-        t < 20 ? " " * translTeensToStr(t) :
-        " " * translTensToStr(t)
+        t < 10 ? " " * translUnitsToStr(t, dict) :
+        t < 20 ? " " * translTeensToStr(t, dict) :
+        " " * translTensToStr(t, dict)
     )
 end
 
 # ╔═╡ ac3d580a-d5ba-47dd-bc64-cfb75cd2608f
 function translIntToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
     return (
-        n > 99 ? translHundredsToStr(n) :
-        19 < n < 100 ? translTensToStr(n) :
-        9 < n < 20 ? translTeensToStr(n) :
+        n > 99 ? translHundredsToStr(n, dict) :
+        19 < n < 100 ? translTensToStr(n, dict) :
+        9 < n < 20 ? translTeensToStr(n, dict) :
         translUnitsToStr(n)
     )
 end
