@@ -70,48 +70,43 @@ ints2words = Dict(
 
 # ╔═╡ 16d2f0b9-d2ec-4054-9de1-4684f6193925
 function translUnitsToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
-	@assert 0 <= n < 10 "n must to be between 0 and 9"
-	return "$(dict[n])"
+    @assert 0 <= n < 10 "n must to be between 0 and 9"
+    return dict[n]
 end
 
 # ╔═╡ e76f970a-392b-420d-887d-99a26f844eea
 function translTeensToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
-	@assert 9 < n < 100 "n must to be between 10 and 99"
-	return "$(dict[n])"
+    @assert 9 < n < 20 "n must to be between 10 and 19"
+    return dict[n]
 end
 
 # ╔═╡ 7630d8c8-b46e-461f-9ffd-c957737397b9
 function translTensToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
-	@assert 19 < n < 100 "n must be between 20 and 99"
-	t, u = divrem(n, 10)
-	return (
-	"$(dict[t*10])" * ((u == 0) ? "" : "-$(translUnitsToStr(u))")
-	)
+    @assert 19 < n < 100 "n must be between 20 and 99"
+    t, u = divrem(n, 10)
+    return dict[t*10] * (u == 0 ? "" : "-$(translUnitsToStr(u))")
 end
 
 # ╔═╡ 15667968-6d7a-4494-a49a-97336bd06f06
 function translHundredsToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
-	@assert 99 < n < 1000 "n must to be between 100 and 999"
-	h, t = divrem(n, 100)
-	return "$(dict[div(n, 100)]) hundred" *
-	(
-	t == 0 ? "" :
-	t < 10 ? " $(translUnitsToStr(t))" :
-	t < 20 ? " $(translTeensToStr(t))" :
-	" $(translTensToStr(t))"
- 	)
+    @assert 99 < n < 1000 "n must to be between 100 and 999"
+    h, t = divrem(n, 100)
+    return dict[h] * " hundered" * (
+        t == 0 ? "" :
+        t < 10 ? " " * translUnitsToStr(t) :
+        t < 20 ? " " * translTeensToStr(t) :
+        " " * translTensToStr(t)
+    )
 end
 
 # ╔═╡ ac3d580a-d5ba-47dd-bc64-cfb75cd2608f
 function translIntToStr(n::Int, dict::Dict{Int, String}=ints2words)::String
-	h, t = divrem(n, 100)
-	u = t - (div(t, 10) * 10)
-	return (
-	h > 0 ? translHundredsToStr(n) :
-	t > 19 ? translTensToStr(t) :
-	9 < t < 20 ? translTeensToStr(t) :
-	translUnitsToStr(u)
-	)
+    return (
+        n > 99 ? translHundredsToStr(n) :
+        19 < n < 100 ? translTensToStr(n) :
+        9 < n < 20 ? translTeensToStr(n) :
+        translUnitsToStr(n)
+    )
 end
 
 # ╔═╡ 0593b89c-9fac-4243-b277-5fb75a5c3e34
@@ -119,12 +114,12 @@ md"### Testing"
 
 # ╔═╡ f94b5a0e-5b39-4f0e-a63f-9f86611cd9d3
 for i in 0:30
-	println("$i => $(translIntToStr(i))")
+    println("$i => $(translIntToStr(i))")
 end
 
 # ╔═╡ cf1f221d-84d7-4b3b-b367-5be4099463c5
 for i in rand(1:999, 20)
-	println("$i => $(translIntToStr(i))")
+    println("$i => $(translIntToStr(i))")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
