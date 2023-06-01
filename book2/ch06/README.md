@@ -8,6 +8,7 @@
 1. [Task 1](#task-1)
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
+4. [Task 4](#task-4)
 
 ---
 
@@ -61,6 +62,24 @@ Create a Bingo Card
 
 ## Description
 
-A [Bingo card](<https://en.wikipedia.org/wiki/Bingo_(American_version)#Bingo_cards>) consists of 5 columns of 5 numbers. The columns are labeled with the letters B, I, N, G and O. There are 15 numbers that can appear under each letter. In particular, the numbers that can appear under the B range from 1 to 15, the numbers that can appear under the I range from 16 to 30, the numbers that can appear under the N range from 31 to 45, and so on.
+A [Bingo card](https://en.wikipedia.org/wiki/Bingo_(American_version)#Bingo_cards) consists of 5 columns of 5 numbers. The columns are labeled with the letters B, I, N, G and O. There are 15 numbers that can appear under each letter. In particular, the numbers that can appear under the B range from 1 to 15, the numbers that can appear under the I range from 16 to 30, the numbers that can appear under the N range from 31 to 45, and so on.
 
 Write a function that creates a random Bingo card [...]. [...] write a program that displays a random Bingo card.
+
+# Task 4
+
+[Go to: Table of contents](#table-of-contents)
+
+## Title
+
+Checking for a Winning Card
+
+(Part 1, Exercise 139 from the book)
+
+## Description
+
+A winning Bingo card contains a line of 5 numbers that have all been called. [...] we will mark that a number has been called by replacing it with a 0 in the Bingo card dictionary.
+
+Write a function that takes a dictionary representing a Bingo card as its only parameter. If the card contains a line of five zeros (vertical, horizontal or diagonal) then your function should return True, indicating that the card has won. Otherwise the function should return False.
+
+[...] You will probably want to import your solution to Exercise 138 when completing this exercise.
