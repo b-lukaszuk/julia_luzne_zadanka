@@ -9,6 +9,7 @@
 2. [Task 2](#task-2)
 3. [Task 3](#task-3)
 4. [Task 4](#task-4)
+5. [Task 5](#task-5)
 
 ---
 
@@ -83,3 +84,21 @@ A winning Bingo card contains a line of 5 numbers that have all been called. [..
 Write a function that takes a dictionary representing a Bingo card as its only parameter. If the card contains a line of five zeros (vertical, horizontal or diagonal) then your function should return True, indicating that the card has won. Otherwise the function should return False.
 
 [...] You will probably want to import your solution to Exercise 138 when completing this exercise.
+
+# Task 5
+
+[Go to: Table of contents](#table-of-contents)
+
+## Title
+
+Play Bingo
+
+(Part 1, Exercise 140 from the book)
+
+## Description
+
+In this exercise you will write a program that simulates a game of Bingo [...]. Begin by generating a list of all of the valid Bingo calls (B1 through O75). [...] Then your program should consume calls out of the list, crossing out numbers on the card, until the card contains a crossed out line (horizontal, vertical or diagonal). Simulate 1,000 games and report the minimum, maximum and average number of calls that must be made before the card wins.
+
+## My notes
+
+Not sure what the 'all of the valid Bingo calls (B1 through O75)' means. I think I should generate a sequence of numbers 1:75, shuffle them, and draw one at a time until a random bingo card is filled (that's what I will do).
