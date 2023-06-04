@@ -1,6 +1,6 @@
 using Printf
 
-function get_from_user(prompt_msg::String, input_type::DataType)
+function get_from_user(prompt_msg::String, input_type::Type{T})::T where T
     while true
         try
             print(prompt_msg)
