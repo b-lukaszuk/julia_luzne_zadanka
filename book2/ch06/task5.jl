@@ -11,7 +11,7 @@ import StatsBase as sb
 function getRandBingoCard()::Dict{String, Vector{Int}}
     bingoCard::Dict{String, Vector{Int}} = Dict()
     for (k, i) in zip(["B", "I", "N", "G", "O"], [1, 16, 31, 46, 61])
-        bingoCard[k] = sb.sample(i:i+14, 5)
+        bingoCard[k] = sb.sample(i:i+14, 5, replace=false)
     end
     bingoCard["N"][3] = 0
     return bingoCard
