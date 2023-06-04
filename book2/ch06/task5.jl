@@ -91,6 +91,7 @@ function markNumberOnBingo!(bingoCard::Dict{String, Vector{Int}}, num::Int)
         for i in 1:5
             if bingoCard[k][i] == num
                 bingoCard[k][i] = 0
+                break # "there can be only 1" such number on the card :)
             end
         end
     end
