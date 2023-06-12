@@ -11,11 +11,11 @@ function getFileContents(filePath::String, addLineNum::Bool = true)::String
 end
 
 function getCounts(v::Vector{T})::Dict{T,Int} where {T}
-    result::Dict{T,Int} = Dict()
+    counts::Dict{T,Int} = Dict()
     for elt in v
-        result[elt] = get(result, elt, 0) + 1
+        counts[elt] = get(counts, elt, 0) + 1
     end
-    return result
+    return counts
 end
 
 function countCharsInStr(
@@ -43,10 +43,11 @@ end
 function main()
     f2Read::String = ARGS[1]
     fContents::String = ""
+    freqs::Dict{String,Float64} = Dict()
     if isfile(f2Read)
         fContents = getFileContents(f2Read)
         println("Reading contents of '$f2Read'. Done.")
-        freqs::Dict{String,Float64} = countCharsInStr(fContents) |> counts2Freqs
+        freqs = countCharsInStr(fContents) |> counts2Freqs
         print("Counting frequencies of letters (case insensitive) in '$f2Read'. ")
         println("Done.\nResult:")
         printFreqs(freqs)
