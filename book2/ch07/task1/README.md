@@ -1,7 +1,5 @@
 # Task 1
 
-[Go to: Table of contents](#table-of-contents)
-
 ## Title
 
 Number the Lines in a File

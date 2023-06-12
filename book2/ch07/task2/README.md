@@ -1,7 +1,5 @@
 # Task 2
 
-[Go to: Table of contents](#table-of-contents)
-
 ## Title
 
 Letter Frequencies
