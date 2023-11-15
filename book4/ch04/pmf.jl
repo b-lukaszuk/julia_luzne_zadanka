@@ -1,29 +1,34 @@
 module ProbabilityMassFunction
 
-import DataFrames as pd
+import CairoMakie as Cmk
+import DataFrames as Dfs
 
 mutable struct Pmf{T}
-    names::Vector{T}
+    names::Vector{T} # names of hypotheses
     priors::Vector{Float64}
     likelihoods::Vector{Float64}
-    unnorms::Vector{Float64}
-    norm::Float64
     posteriors::Vector{Float64}
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
+    Pmf(ns::Vector{Int}, prs) =
+        (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+        new{Int}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{Float64}, prs) = (length(ns) != length(prs)) ?
+    Pmf(ns::Vector{Float64}, prs) =
+        (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+        new{Float64}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
+    Pmf(ns::Vector{String}, prs) =
+        (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
-        new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+        new{String}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
 end
 
 function Base.show(io::IO, pmf::Pmf)
@@ -34,82 +39,94 @@ function Base.show(io::IO, pmf::Pmf)
     print(io, result)
 end
 
-function get_counts(v::Vector{T})::Dict{T, Int} where T
-    result::Dict{T, Int} = Dict()
+function getCounts(v::Vector{T})::Dict{T,Int} where {T}
+    result::Dict{T,Int} = Dict()
     for elt in v
         result[elt] = get(result, elt, 0) + 1
     end
     return result
 end
 
-function mk_pmf_from_seq(seq::Vector{T})::Pmf where T
-    counts::Dict{T, Int} = get_counts(seq)
-    total::Int = sum(values(counts))
-    names::Vector{T} = unique(seq)
-    priors::Vector{Float64} = [counts[n]/total for n in names]
-    return Pmf(names, priors)
+function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
+    counts::Dict{T,Int} = getCounts(seq)
+    sortedKeys::Vector{T} = keys(counts) |> collect |> sort
+    sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
 end
 
-function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, default) where T
+function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) where {T}
     ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
-    return isnothing(ind) ? default : getproperty(pmf, Symbol(field_name))[ind]
+    return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
 end
 
-function get_prior(pmf::Pmf, name::Union{Int, String, Float64})::Float64
-    return get_field_vals_eq_name(pmf, name, "priors", 0.0)
+function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
+    return getFieldValsEqName(pmf, name, "priors", 0.0)
 end
 
-function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
-    return [get_prior(pmf, n) for n in names]
+function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
+    return map(n -> getPriorByName(pmf, n), names)
 end
 
-# normalizes unnorms (unnormalized posteriors) and puts them into posteriors (normalized posteriors, they add up to 1)
-function normalize!(pmf::Pmf)
-    pmf.norm = sum(pmf.unnorms)
-    if (pmf.norm == 0)
-        pmf.posteriors = [0 for _ in pmf.names]
-    else
-        pmf.posteriors = pmf.unnorms ./ pmf.norm
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64}) where {T}
+    pmf.posteriors = newPosteriors
+end
+
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64}) where {T}
+    pmf.likelihoods = newLikelihoods
+end
+
+# normalizes pmf.posteriors so they add up to 1
+function normalizePosteriors!(pmf::Pmf{T}) where {T}
+    pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
+end
+
+# updates posteriors (priors .* likeliehoods)
+# if normalize = true, then posteriors are normalized
+function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
+    setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
+    if normalize
+        normalizePosteriors!(pmf)
     end
 end
 
-# calculates posteriors for created priors and likelihoods
-# if likelihoods were not set since struct creation then posteriors are equal priors
-# consider renaming it to calculate_posteriors!(pmf)
-function update!(pmf::Pmf)
-    pmf.unnorms = pmf.priors .* pmf.likelihoods
-    normalize!(pmf)
+function drawLinesPosteriors(pmf::Pmf{T},
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    fig = Cmk.Figure(resolution=(600, 400))
+    ax1, l1 = Cmk.lines(fig[1, 1],
+        pmf.names, pmf.posteriors, color="navy",
+        axis=(;
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+        ))
+    Cmk.axislegend(ax1,
+        [l1],
+        ["posterior"],
+        position=:lt
+    )
+    return fig
 end
 
-# updates posterior that was once calculated by likelihoods
-# if posteriors were not updated before then the distribution of posteriors is uniform
-# consider renaming it to: update posteriors(pmf, new_likelihoods)
-function update!(pmf::Pmf, likelihoods::Vector{Float64})
-    pmf.likelihoods = likelihoods
-    pmf.unnorms = pmf.posteriors .* pmf.likelihoods
-    normalize!(pmf)
+function getIdMaxPosterior(pmf::Pmf)::Int
+    maxProb::Float64 = max(pmf.posteriors...)
+    return findfirst(x -> x == maxProb, pmf.posteriors)
 end
 
-function pmf2df(pmf::Pmf)::pd.DataFrame
-    df = pd.DataFrame((;pmf.names, pmf.priors, pmf.likelihoods, pmf.posteriors))
-    return df
+function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIdMaxPosterior(pmf)]
 end
 
-function get_posterior(pmf::Pmf{T}, name::T)::Float64 where T
-    return get_field_vals_eq_name(pmf, name, "posteriors", 0.0)
-end
-
-function get_posterior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where T
-    return [get_posterior(pmf, n) for n in names]
-end
-
-function get_id_max_posterior(pmf::Pmf)::Int
-    max_prob::Float64 = max(pmf.posteriors...)
-    return findfirst(x->x==max_prob, pmf.posteriors)
-end
-
-function get_name_max_posterior(pmf::Pmf{T})::T where T
-    return pmf.names[get_id_max_posterior(pmf)]
+function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
+    return Dfs.DataFrame(
+        (;
+        names=pmf.names,
+        priors=pmf.priors,
+        likelihoods=pmf.likelihoods,
+        posteriors=pmf.posteriors
+    )
+    )
 end
 
 end
