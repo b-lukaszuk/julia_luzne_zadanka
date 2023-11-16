@@ -2,6 +2,7 @@ module ProbabilityMassFunction
 
 import CairoMakie as Cmk
 import DataFrames as Dfs
+import Distributions as Dsts
 
 mutable struct Pmf{T}
     names::Vector{T} # names of hypotheses
@@ -75,13 +76,19 @@ function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64}) where {T}
     pmf.likelihoods = newLikelihoods
 end
 
-# normalizes pmf.posteriors so they add up to 1
+
+"""
+        normalizes pmf.posteriors so they add up to 1
+"""
 function normalizePosteriors!(pmf::Pmf{T}) where {T}
     pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
 end
 
-# updates posteriors (priors .* likeliehoods)
-# if normalize = true, then posteriors are normalized
+
+"""
+        updates posteriors (priors .* likeliehoods)
+        if normalize = true, then posteriors are normalized
+"""
 function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
     setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
     if normalize
@@ -89,13 +96,14 @@ function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
     end
 end
 
-function drawLinesPosteriors(pmf::Pmf{T},
-    title::String,
-    xlabel::String,
-    ylabel::String)::Cmk.Figure where {T}
+function drawLinesPmf(pmf::Pmf{T},
+                      pmfFieldForYs::String,
+                      title::String,
+                      xlabel::String,
+                      ylabel::String)::Cmk.Figure where T
     fig = Cmk.Figure(resolution=(600, 400))
     ax1, l1 = Cmk.lines(fig[1, 1],
-        pmf.names, pmf.posteriors, color="navy",
+        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
             title=title,
             xlabel=xlabel,
@@ -107,15 +115,48 @@ function drawLinesPosteriors(pmf::Pmf{T},
         position=:lt
     )
     return fig
+    
+end
+
+function drawLinesPosteriors(pmf::Pmf{T},
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
+end
+
+function drawLinesPriors(pmf::Pmf{T},
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
+end
+
+function getIdMaxField(pmf::Pmf, field::String)::Int
+    maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
+    return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
 end
 
 function getIdMaxPosterior(pmf::Pmf)::Int
-    maxProb::Float64 = max(pmf.posteriors...)
-    return findfirst(x -> x == maxProb, pmf.posteriors)
+    return getIdMaxField(pmf, "posteriors")
+end
+
+function getIdMaxPrior(pmf::Pmf)::Int
+    return getIdMaxField(pmf, "priors")
+end
+
+function getNameMaxPrior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIdMaxPrior(pmf)]
 end
 
 function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
     return pmf.names[getIdMaxPosterior(pmf)]
+end
+
+function getTotalProbGEName(pmf::Pmf{T}, field::String, name::T)::Float64 where {T}
+    ge::BitVector =  pmf.names .>= name
+    total::Float64 = getproperty(pmf, Symbol(field))[ge] |> sum
+    return total
 end
 
 function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
@@ -127,6 +168,17 @@ function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
         posteriors=pmf.posteriors
     )
     )
+end
+
+
+"""
+        Make a binomial Pmf.
+"""
+function getBinomialPmf(n::Int, p::Float64)::Pmf{Int}
+    ks::Vector{Int}  = 0:1:n |> collect
+    ps::Vector{Float64} = Dsts.pdf.(Dsts.Binomial(n, p), ks)
+    ps = map(x -> round(x, digits=6), ps)
+    return Pmf(ks, ps)
 end
 
 end
