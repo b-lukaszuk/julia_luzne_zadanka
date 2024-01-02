@@ -173,6 +173,8 @@ end
 
 """
         Make a binomial Pmf.
+        n - number of trials
+        p - probability of success in single trial
 """
 function getBinomialPmf(n::Int, p::Float64)::Pmf{Int}
     ks::Vector{Int}  = 0:1:n |> collect
