@@ -97,11 +97,11 @@ function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
 end
 
 function drawLinesPmf(pmf::Pmf{T},
-                      pmfFieldForYs::String,
-                      title::String,
-                      xlabel::String,
-                      ylabel::String)::Cmk.Figure where T
-    fig = Cmk.Figure(resolution=(600, 400))
+    pmfFieldForYs::String,
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    fig = Cmk.Figure(size=(600, 400))
     ax1, l1 = Cmk.lines(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
@@ -109,13 +109,8 @@ function drawLinesPmf(pmf::Pmf{T},
             xlabel=xlabel,
             ylabel=ylabel,
         ))
-    Cmk.axislegend(ax1,
-        [l1],
-        ["posterior"],
-        position=:lt
-    )
     return fig
-    
+
 end
 
 function drawLinesPosteriors(pmf::Pmf{T},
@@ -154,7 +149,7 @@ function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
 end
 
 function getTotalProbGEName(pmf::Pmf{T}, field::String, name::T)::Float64 where {T}
-    ge::BitVector =  pmf.names .>= name
+    ge::BitVector = pmf.names .>= name
     total::Float64 = getproperty(pmf, Symbol(field))[ge] |> sum
     return total
 end
@@ -177,7 +172,7 @@ end
         p - probability of success in single trial
 """
 function getBinomialPmf(n::Int, p::Float64)::Pmf{Int}
-    ks::Vector{Int}  = 0:1:n |> collect
+    ks::Vector{Int} = 0:1:n |> collect
     ps::Vector{Float64} = Dsts.pdf.(Dsts.Binomial(n, p), ks)
     ps = map(x -> round(x, digits=6), ps)
     return Pmf(ks, ps)
