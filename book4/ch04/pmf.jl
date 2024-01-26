@@ -132,25 +132,25 @@ function drawLinesPriors(pmf::Pmf{T},
     return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
 end
 
-function getIdMaxField(pmf::Pmf, field::String)::Int
+function getIndMaxField(pmf::Pmf, field::String)::Int
     maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
     return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
 end
 
-function getIdMaxPosterior(pmf::Pmf)::Int
-    return getIdMaxField(pmf, "posteriors")
+function getIndMaxPosterior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "posteriors")
 end
 
-function getIdMaxPrior(pmf::Pmf)::Int
-    return getIdMaxField(pmf, "priors")
+function getIndMaxPrior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "priors")
 end
 
 function getNameMaxPrior(pmf::Pmf{T})::T where {T}
-    return pmf.names[getIdMaxPrior(pmf)]
+    return pmf.names[getIndMaxPrior(pmf)]
 end
 
 function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
-    return pmf.names[getIdMaxPosterior(pmf)]
+    return pmf.names[getIndMaxPosterior(pmf)]
 end
 
 function getTotalProbGEName(pmf::Pmf{T}, field::String, name::T)::Float64 where {T}
