@@ -154,7 +154,7 @@ function getTotalProbGEName(pmf::Pmf{T}, field::String, name::T)::Float64 where 
     return total
 end
 
-function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
+function convertPmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
     return Dfs.DataFrame(
         (;
         names=pmf.names,
