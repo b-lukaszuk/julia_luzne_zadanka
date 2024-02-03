@@ -227,4 +227,8 @@ function updateBinomial!(binomPmf::Pmf{Float64}, k::Int, n::Int)
     return nothing
 end
 
+function getMeanPosterior(pmf::Pmf{T})::Float64 where {T<:Union{Int,Float64}}
+    return sum(pmf.posteriors .* pmf.names)
+end
+
 end
