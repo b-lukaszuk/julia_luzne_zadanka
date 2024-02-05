@@ -231,4 +231,9 @@ function getMeanPosterior(pmf::Pmf{T})::Float64 where {T<:Union{Int,Float64}}
     return sum(pmf.posteriors .* pmf.names)
 end
 
+function getPosteriorsProbLEQ(pmf::Pmf{T}, x::T)::Float64 where {T<:Union{Int, Float64}}
+    indOfX::Union{Int,Nothing} = findfirst(y -> y == x, pmf.names)
+    return isnothing(indOfX) ? -99.0 : sum(pmf.posteriors[1:indOfX])
+end
+
 end
