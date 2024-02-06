@@ -14,21 +14,21 @@ mutable struct Pmf{T}
         (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Int}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
         )
 
     Pmf(ns::Vector{Float64}, prs) =
         (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Float64}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
         )
 
     Pmf(ns::Vector{String}, prs) =
         (length(ns) != length(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{String}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
         )
 end
 
@@ -231,7 +231,7 @@ function getMeanPosterior(pmf::Pmf{T})::Float64 where {T<:Union{Int,Float64}}
     return sum(pmf.posteriors .* pmf.names)
 end
 
-function getPosteriorsProbLEQ(pmf::Pmf{T}, x::T)::Float64 where {T<:Union{Int, Float64}}
+function getPosteriorsProbLEQ(pmf::Pmf{T}, x::T)::Float64 where {T<:Union{Int,Float64}}
     indOfX::Union{Int,Nothing} = findfirst(y -> y == x, pmf.names)
     return isnothing(indOfX) ? -99.0 : sum(pmf.posteriors[1:indOfX])
 end
