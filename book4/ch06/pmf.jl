@@ -1,62 +1,47 @@
 module ProbabilityMassFunction
 
-import DataFrames as pd
-import Distributions as dst
-import Plots as plts
+import CairoMakie as Cmk
+import DataFrames as Dfs
+import Distributions as Dsts
 
-"""
-Pmf - probability mass function object with functionality similar to Python's empiricaldist's (library) Pmf
-
-Fields:
-
-Pmf.names - Vector{<:Union{String, Int, Float64}} - names of hypothesis, e.g. choosing side 1-6 from a die
-
-Pmf.priors - Vector{Float64} - prior probabilities (between 0-1), so P(H)
-
-Pmf.likelihoods - Vector{Float64} - probabilities (likelihoods), so P(D|H)
-
-Pmf.unnorms - Vector{Float64} - probabilities not scaled (e.g. their sum is different from 1)
-
-Pmf.norm - Float64 - skalar for unnorms so they can sum up to 1, so I guess it is normalizing constant P(D)
-
-Pmf.posteriors - Vector{Float64} - posterior probabilities, so P(H|D)
-"""
 mutable struct Pmf{T}
-    names::Vector{T}
+    names::Vector{T} # names of hypotheses
     priors::Vector{Float64}
     likelihoods::Vector{Float64}
-    unnorms::Vector{Float64}
-    norm::Float64
     posteriors::Vector{Float64}
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{Int}, prs) = (length(ns) != length(prs)) ?
-                                error("length(names) must be equal length(priors)") :
-                                new{Int}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+    Pmf(ns::Vector{Int}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Int}(
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
+        )
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{Float64}, prs) = (length(ns) != length(prs)) ?
-                                    error("length(names) must be equal length(priors)") :
-                                    new{Float64}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+    Pmf(ns::Vector{Float64}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Float64}(
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
+        )
 
-    # posteriors are uniform, i.e. initially each prior is equally likely
-    Pmf(ns::Vector{String}, prs) = (length(ns) != length(prs)) ?
-                                   error("length(names) must be equal length(priors)") :
-                                   new{String}(ns, prs, ones(length(ns)), ones(length(ns)), 0, ones(length(ns)))
+    Pmf(ns::Vector{String}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{String}(
+            ns, (prs ./ sum(prs)), ones(length(ns)), ones(length(ns))
+        )
 end
 
 function Base.show(io::IO, pmf::Pmf)
-    result = "names: $(join(pmf.names, ", "))\n"
-    result = result * "priors: $(join(map(x -> round(x, digits=3) |> string, pmf.priors), ", "))\n"
-    result = result * "likelihoods: $(join(map(x -> round(x, digits=3) |> string, pmf.likelihoods), ", "))\n"
-    result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, pmf.posteriors), ", "))\n"
+    trim::Bool = length(pmf.names) > 10
+    result::String = "names: $(join(trim ? pmf.names[1:10] : pmf.names, ", "))$(trim ? ", ..." : "")\n"
+    result = result * "priors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.priors[1:10] : pmf.priors), ", "))$(trim ? ", ..." : "")\n"
+    result = result * "likelihoods: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.likelihoods[1:10] : pmf.likelihoods), ", "))$(trim ? ", ..." : "")\n"
+    result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.posteriors[1:10] : pmf.posteriors),  ", "))$(trim ? ", ..." : "")\n"
     print(io, result)
 end
 
-"""
-gets counts of elements in a vector{T}, returns Dict{T, count}
-"""
-function get_counts(v::Vector{T})::Dict{T,Int} where {T}
+function getCounts(v::Vector{T})::Dict{T,Int} where {T}
     result::Dict{T,Int} = Dict()
     for elt in v
         result[elt] = get(result, elt, 0) + 1
@@ -64,171 +49,243 @@ function get_counts(v::Vector{T})::Dict{T,Int} where {T}
     return result
 end
 
-function mk_pmf_from_seq(seq::Vector{T})::Pmf where {T}
-    counts::Dict{T,Int} = get_counts(seq)
-    total::Int = sum(values(counts))
-    names::Vector{T} = unique(seq)
-    priors::Vector{Float64} = [counts[n] / total for n in names]
-    return Pmf(names, priors)
+function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
+    counts::Dict{T,Int} = getCounts(seq)
+    sortedKeys::Vector{T} = keys(counts) |> collect |> sort
+    sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
 end
 
-function get_field_vals_eq_name(pmf::Pmf{T}, name::T, field_name::String, default) where {T}
+function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) where {T}
     ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
-    return isnothing(ind) ? default : getproperty(pmf, Symbol(field_name))[ind]
+    return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
 end
 
-function get_prior(pmf::Pmf, name::Union{Int,String,Float64})::Float64
-    return get_field_vals_eq_name(pmf, name, "priors", 0.0)
+function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
+    return getFieldValsEqName(pmf, name, "priors", 0.0)
 end
 
-function get_prior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
-    return [get_prior(pmf, n) for n in names]
+function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
+    return map(n -> getPriorByName(pmf, n), names)
 end
 
-""""Normalizes Pmf.unnorms (unnormalized posteriors) and puts them into Pmf.posteriors
-(normalized posteriors, they add up to 1)"""
-function normalize!(pmf::Pmf)
-    pmf.norm = sum(pmf.unnorms)
-    if (pmf.norm == 0)
-        pmf.posteriors = [0 for _ in pmf.names]
-    else
-        pmf.posteriors = pmf.unnorms ./ pmf.norm
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64}) where {T}
+    pmf.posteriors = newPosteriors
+end
+
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64}) where {T}
+    pmf.likelihoods = newLikelihoods
+end
+
+
+"""
+        normalizes pmf.posteriors so they add up to 1
+"""
+function normalizePosteriors!(pmf::Pmf{T}) where {T}
+    pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
+end
+
+
+"""
+        updates posteriors (priors .* likeliehoods)
+        if normalize = true, then posteriors are normalized
+"""
+function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
+    setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
+    if normalize
+        normalizePosteriors!(pmf)
     end
 end
 
+function drawLinesPmf(pmf::Pmf{T},
+    pmfFieldForYs::String,
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    fig = Cmk.Figure(size=(600, 400))
+    ax1, l1 = Cmk.lines(fig[1, 1],
+        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
+        axis=(;
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+        ))
+    return fig
+
+end
+
+function drawLinesPosteriors(pmf::Pmf{T},
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
+end
+
+function drawLinesPriors(pmf::Pmf{T},
+    title::String,
+    xlabel::String,
+    ylabel::String)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
+end
+
+function getIndMaxField(pmf::Pmf, field::String)::Int
+    maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
+    return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
+end
+
+function getIndMaxPosterior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "posteriors")
+end
+
+function getIndMaxPrior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "priors")
+end
+
+function getNameMaxPrior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIndMaxPrior(pmf)]
+end
+
+function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIndMaxPosterior(pmf)]
+end
+
+function getTotalProbGEName(pmf::Pmf{T}, field::String, name::T)::Float64 where {T}
+    ge::BitVector = pmf.names .>= name
+    total::Float64 = getproperty(pmf, Symbol(field))[ge] |> sum
+    return total
+end
+
+function convertPmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
+    return Dfs.DataFrame(
+        (;
+        names=pmf.names,
+        priors=pmf.priors,
+        likelihoods=pmf.likelihoods,
+        posteriors=pmf.posteriors
+    )
+    )
+end
+
+
 """
-Calculates posteriors from priors and likelihoods (priors * likelihoods)
-if likelihoods were not set since struct creation then posteriors will be equal priors
+        Make a binomial Pmf.
+        n - number of trials
+        p - probability of success in single trial
 """
-function calculate_posteriors!(pmf::Pmf)
-    pmf.unnorms = pmf.priors .* pmf.likelihoods
-    normalize!(pmf)
-end
-
-function update_likelihoods!(pmf::Pmf, new_likelihoods::Vector{Float64})
-    pmf.likelihoods .*= new_likelihoods
-end
-
-"""
-Updates posteriors (posteriors * likelihoods) and normalizes them
-if posteriors were not updated before then the distribution of posteriors is uniform
-"""
-function update_posteriors!(pmf::Pmf)
-    pmf.unnorms = pmf.likelihoods .* pmf.posteriors
-    normalize!(pmf)
-end
-
-function pmf2df(pmf::Pmf)::pd.DataFrame
-    df = pd.DataFrame((; pmf.names, pmf.priors, pmf.likelihoods, pmf.posteriors))
-    return df
-end
-
-function get_posterior(pmf::Pmf{T}, name::T)::Float64 where {T}
-    return get_field_vals_eq_name(pmf, name, "posteriors", 0.0)
-end
-
-function get_posterior(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
-    return [get_posterior(pmf, n) for n in names]
-end
-
-function get_id_max_posterior(pmf::Pmf)::Int
-    max_prob::Float64 = max(pmf.posteriors...)
-    return findfirst(x -> x == max_prob, pmf.posteriors)
-end
-
-function get_name_max_posterior(pmf::Pmf{T})::T where {T}
-    return pmf.names[get_id_max_posterior(pmf)]
-end
-
-"""
-Creates a Pmf struct for a binomial with names
-0:n and their coresponding probabilities as priors
-"""
-function mk_binomial_pmf(n::Int, p::Float64)::Pmf{Int}
-    ks::Vector{Int} = collect(0:n)
-    ps::Vector{Float64} = dst.pdf.(dst.Binomial(n, p), ks)
+function getBinomialPmf(n::Int, p::Float64)::Pmf{Int}
+    ks::Vector{Int} = 0:1:n |> collect
+    ps::Vector{Float64} = Dsts.pdf.(Dsts.Binomial(n, p), ks)
+    ps = map(x -> round(x, digits=6), ps)
     return Pmf(ks, ps)
 end
 
+
 """
-Reads data from dataset, updates likelihood based on prob_mapping,
-then calculates and updates posteriors (old posteriors are discarded)
+    Update binormial pmf with a given sequence of:
+           succeses ('s' or other letter) and failures ('f' or other letter)
+
+    binomPmf.names - e.g. probs of success (e.g. different coins to get heads)
+    dataset - result of an experiment (string of form "ffsfss")
+    probMapping - keys: 'f', 's',
+                  vals: probability vector of getting 'f' or 's' for each
+                  hypothesis (binomPmf.names)
+                  
 """
-function calculate_posteriors!(pmf::Pmf{T}, dataset::String,
-    prob_mapping::Dict{Char,Vector{Float64}}) where {T<:Union{Int,String,Float64}}
-    for datum in dataset
-        pmf.likelihoods = pmf.likelihoods .* prob_mapping[datum]
+function updateBinomPmf!(
+    binomPmf::Pmf{Float64},
+    dataset::String,
+    probMapping::Dict{Char,Vector{Float64}})
+
+    binomPmf.likelihoods .= 1
+    for data in dataset
+        binomPmf.likelihoods .*= probMapping[data]
     end
-    calculate_posteriors!(pmf)
+    updatePosteriors!(binomPmf, true)
+
+    return nothing
+
 end
 
-"""
-Calculates likelihoods for binomial with n trials, k successes, p - prob. of success (taken from priors)
-then it updates posteriors (old posteriors * new likelihoods) and normalizes them
-"""
-function update_binomial!(binom_pmf::Pmf{T}, data::Dict{String,Int}) where {T<:Union{Int,String,Float64}}
-    ps::Vector{Float64} = binom_pmf.priors
-    likelihood::Vector{Float64} = dst.pdf.(dst.Binomial.(data["n"], ps), data["k"])
-    update_likelihoods!(binom_pmf, likelihood)
-    update_posteriors!(binom_pmf)
-end
 
 """
-Draws posteriors (Y-axis) and names (X-axis) if they are numeric, uses Plots
-"""
-function draw_posteriors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where {T<:Union{Int,Float64}}
-    plts.plot(pmf.names, pmf.posteriors, label=label)
-    plts.title!(title)
-    plts.xlabel!(xlab)
-    plts.ylabel!(ylab)
-end
+    Update binormial binomPmf based on the result of an experiment
 
+    binomPmf.names - e.g. probs of success (e.g. different coins to get heads)
+    (n, k) - results of an experiment, where:
+        n - number of trials
+        k - number of success
 """
-Draws priors (Y-axis) and names (X-axis) if they are numeric, uses Plots
-"""
-function draw_priors(pmf::Pmf{T}, title::String, xlab::String, ylab::String, label::String) where {T<:Union{Int,Float64}}
-    plts.plot(pmf.names, pmf.priors, label=label)
-    plts.title!(title)
-    plts.xlabel!(xlab)
-    plts.ylabel!(ylab)
-end
+function updateBinomial!(binomPmf::Pmf{Float64}, k::Int, n::Int)
 
-function get_mean_posterior(pmf::Pmf{<:Union{Int,Float64}})::Float64
-    return sum(pmf.posteriors .* pmf.names)
-end
+    @assert (k <= n) "k must be <= n"
 
-function get_name_for_quantile(pmf::Pmf{<:Union{Int,Float64}},
-    cum_posterior_prob::Float64)::Union{Int,Float64}
-    @assert (0 <= cum_posterior_prob <= 1)
-    total::Float64 = 0
-    for i in eachindex(pmf.names)
-        total += pmf.posteriors[i]
-        if total >= cum_posterior_prob
-            return pmf.names[i]
-        end
-    end
+    likelihoods::Vector{Float64} = Dsts.pdf.(
+        Dsts.Binomial.(n, binomPmf.names), k)
+    setLikelihoods!(binomPmf, likelihoods)
+    updatePosteriors!(binomPmf, true)
+
     return nothing
 end
 
-function get_name_for_quantile(pmf::Pmf{<:Union{Int,Float64}},
-    cum_posterior_probs::Vector{Float64})::Vector{<:Union{Int,Float64}}
-    return [get_name_for_quantile(pmf, p) for p in cum_posterior_probs]
+function getMeanPosterior(pmf::Pmf{T})::Float64 where {T<:Union{Int,Float64}}
+    return sum(pmf.posteriors .* pmf.names)
 end
 
-function get_credible_interval(pmf::Pmf{<:Union{Int,Float64}},
-    prob::Float64)::Vector{<:Union{Int,Float64}}
-    @assert (0 <= prob <= 1)
-    half_prob::Float64 = prob / 2
-    return get_name_for_quantile(pmf, [0.5 - half_prob, 0.5 + half_prob])
+function getPosteriorsProbLEQ(pmf::Pmf{T}, x::T)::Float64 where {T<:Union{Int,Float64}}
+    indOfX::Union{Int,Nothing} = findfirst(y -> y == x, pmf.names)
+    return isnothing(indOfX) ? -99.0 : sum(pmf.posteriors[1:indOfX])
 end
 
-function update_with_data!(pmf::Pmf{Int}, data::Int)
-    hypos = pmf.names
-    likelihood = 1 ./ hypos
-    impossible = (data .> hypos)
+
+"""
+    Update Pmf (names are hypothesized max counts)
+
+    data - observed counts
+"""
+function updateCounts!(pmf::Pmf{Int}, data::Int)
+
+    # the chance of seeing any number out of postulated N (max counts)
+    # is 1/N (Ns are in pmf.names)
+    likelihood::Vector{<:Float64} = 1 ./ pmf.names
+    impossible::BitVector = data .> pmf.names
     likelihood[impossible] .= 0
     pmf.likelihoods .*= likelihood
-    pmf.calculate_posteriors!(pmf)
+    Pmf.updatePosteriors!(pmf, true)
+    
+    return nothing
+end
+
+
+"""
+    Update Pmf (names are hypothesized max counts)
+
+    data - observed counts
+"""
+function updateCounts!(pmf::Pmf{Int}, data::Vector{<:Int})
+    foreach(d -> updateCounts!(pmf, d), data)
+    return nothing
+end
+
+
+"""
+    Compute a quantile with the given prob.
+"""
+function getQuantile(pmf::Pmf{T}, prob::Float64)::Float64 where {T<:Union{Int, Float64}}
+    @assert (0 <= prob <= 1) "prob must be in range [0-1]"
+    totalProb::Float64 = 0
+    for (q, p) in zip(pmf.names, pmf.posteriors)
+        totalProb += p
+        if totalProb >= prob
+            return q
+        end
+    end
+    return -99.0
+end
+
+function getCredibleInterval(pmf::Pmf{T}, ci::Float64)::Vector{T} where {T<:Union{Int, Float64}}
+    @assert (0.5 <= ci <= 0.99) "ci must be in range [0.5 - 0.99]"
+    halfCI::Float64 = ci / 2
+    return [getQuantile(pmf, q) for q in [0.5 - halfCI, 0.5 + halfCI]]
 end
 
 end
