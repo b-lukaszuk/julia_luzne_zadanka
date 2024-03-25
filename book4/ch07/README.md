@@ -46,6 +46,6 @@ Or even better, open the file in interactive mode (with REPL) in VSCode or Emacs
 
 # Additional info
 
-**Zawartość niniejszego katalogu może być nieprawidłowa, błędna czy szkodliwa. Używaj na własne ryzyko.**
+**Zawartość niniejszego katalogu może być nieprawidłowa, błędna czy szkodliwa. Używaj na własne ryzyko.**
 
 **The content of this folder may be incorrect, erroneous and/or harmful. Use it at Your own risk.**
