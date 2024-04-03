@@ -61,12 +61,12 @@ function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) wh
     return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
 end
 
-function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
-    return getFieldValsEqName(pmf, name, "priors", 0.0)
+function getPriorByName(pmf::Pmf{T}, name::T, defVal::Float64 = 0.0)::Float64 where {T}
+    return getFieldValsEqName(pmf, name, "priors", defVal)
 end
 
-function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
-    return map(n -> getPriorByName(pmf, n), names)
+function getPriorsByNames(pmf::Pmf{T}, names::Vector{T}, defVal::Float64 = 0.0)::Vector{Float64} where {T}
+    return map(n -> getPriorByName(pmf, n, defVal), names)
 end
 
 function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64}) where {T}
