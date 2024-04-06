@@ -254,7 +254,7 @@ function updateCounts!(pmf::Pmf{Int}, data::Int)
     impossible::BitVector = data .> pmf.names
     likelihood[impossible] .= 0
     pmf.likelihoods .*= likelihood
-    Pmf.updatePosteriors!(pmf, true)
+    updatePosteriors!(pmf, true)
     
     return nothing
 end
@@ -320,7 +320,7 @@ function convolveDist(pmf1::Pmf{Int}, pmf2::Pmf{Int}, fn::Function)::Pmf{Int}
 end
 
 function addDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
-    return Pmf.Pmf(pmf1.names .+ x, pmf1.priors)
+    return Pmf(pmf1.names .+ x, pmf1.priors)
 end
 
 function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
@@ -328,7 +328,7 @@ function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
 end
 
 function subtractDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
-    return Pmf.Pmf(pmf1.names .- x, pmf1.priors)
+    return Pmf(pmf1.names .- x, pmf1.priors)
 end
 
 function subtractDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
@@ -336,7 +336,7 @@ function subtractDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
 end
 
 function multDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
-    return Pmf.Pmf(pmf1.names .* x, pmf1.priors)
+    return Pmf(pmf1.names .* x, pmf1.priors)
 end
 
 function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
