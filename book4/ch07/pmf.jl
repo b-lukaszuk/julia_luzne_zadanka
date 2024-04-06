@@ -1,4 +1,13 @@
-module ProbabilityMassFunction
+# module ProbabilityMassFunction
+# export Pmf, getPmfFromSeq, getFieldValsEqName, getPriorByName,
+#     getPriorsByNames, setPosteriors!, setLikelihoods!,
+#     normalizePosteriors!, updatePosteriors!, drawLinesPriors,
+#     drawLinesPosteriors, getIndMaxPrior, getIndMaxPosterior,
+#     getNameMaxPrior, getNameMaxPosterior, getTotalProbGEName,
+#     convertPmf2df, getBinomialPmf, updateBinomial!, updateBinomPmf!,
+#     getMean, getPosteriorsProbLEQ, updateCounts!, getQuantile,
+#     getCredibleInterval, sumProbsByNames, addDist, subtractDist,
+#     multDist
 
 import CairoMakie as Cmk
 import DataFrames as Dfs
@@ -343,4 +352,4 @@ function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return convolveDist(pmf1, pmf2, *)
 end
 
-end
+# end

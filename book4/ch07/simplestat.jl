@@ -1,4 +1,5 @@
-module SimpleStatistics
+# module SimpleStatistics
+# export prob2odds, odds2prob
 
 function prob2odds(prob::T)::T where T<:Union{Float64, Rational}
     @assert (0 <= prob <= 1)
@@ -27,4 +28,4 @@ function odds2prob(yes::T, no::T)::T where T<:Union{Float64, Rational}
     return yes / (yes+no)
 end
 
-end
+# end
