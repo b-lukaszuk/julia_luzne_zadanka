@@ -1,4 +1,12 @@
-module ProbabilityMassFunction
+# module ProbabilityMassFunction
+# export Pmf, getPmfFromSeq, getFieldValsEqName, getPriorByName,
+#     getPriorsByNames, setPosteriors!, setLikelihoods!,
+#     normalizePosteriors!, updatePosteriors!, drawLinesPriors,
+#     drawLinesPosteriors, getIndMaxPrior, getIndMaxPosterior,
+#     getNameMaxPrior, getNameMaxPosterior, getTotalProbGEName,
+#     convertPmf2df, getBinomialPmf, updateBinomial!, updateBinomPmf!,
+#     getPosteriorsProbLEQ, updateCounts!, getQuantile,
+#     getCredibleInterval
 
 import CairoMakie as Cmk
 import DataFrames as Dfs
@@ -103,7 +111,7 @@ function drawLinesPmf(pmf::Pmf{T},
     xlabel::String,
     ylabel::String)::Cmk.Figure where {T}
     fig = Cmk.Figure(size=(600, 400))
-    ax1, l1 = Cmk.lines(fig[1, 1],
+    Cmk.lines(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
             title=title,
@@ -250,7 +258,7 @@ function updateCounts!(pmf::Pmf{Int}, data::Int)
     impossible::BitVector = data .> pmf.names
     likelihood[impossible] .= 0
     pmf.likelihoods .*= likelihood
-    Pmf.updatePosteriors!(pmf, true)
+    updatePosteriors!(pmf, true)
     
     return nothing
 end
@@ -288,4 +296,4 @@ function getCredibleInterval(pmf::Pmf{T}, ci::Float64)::Vector{T} where {T<:Unio
     return [getQuantile(pmf, q) for q in [0.5 - halfCI, 0.5 + halfCI]]
 end
 
-end
+# end
