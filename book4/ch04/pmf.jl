@@ -1,4 +1,10 @@
-module ProbabilityMassFunction
+# module ProbabilityMassFunction
+# export Pmf, getPmfFromSeq, getFieldValsEqName, getPriorByName,
+#     getPriorsByNames, setPosteriors!, setLikelihoods!,
+#     normalizePosteriors!, updatePosteriors!, drawLinesPriors,
+#     drawLinesPosteriors, getIndMaxPrior, getIndMaxPosterior,
+#     getNameMaxPrior, getNameMaxPosterior, getTotalProbGEName,
+#     convertPmf2df, getBinomialPmf
 
 import CairoMakie as Cmk
 import DataFrames as Dfs
@@ -179,4 +185,4 @@ function getBinomialPmf(n::Int, p::Float64)::Pmf{Int}
     return Pmf(ks, ps)
 end
 
-end
+# end
