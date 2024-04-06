@@ -1,4 +1,11 @@
-module ProbabilityMassFunction
+# module ProbabilityMassFunction
+# export Pmf, getPmfFromSeq, getFieldValsEqName, getPriorByName,
+#     getPriorsByNames, setPosteriors!, setLikelihoods!,
+#     normalizePosteriors!, updatePosteriors!, drawLinesPriors,
+#     drawLinesPosteriors, getIndMaxPrior, getIndMaxPosterior,
+#     getNameMaxPrior, getNameMaxPosterior, getTotalProbGEName,
+#     convertPmf2df, getBinomialPmf, updateBinomial!, updateBinomPmf!,
+#     getPosteriorsProbLEQ
 
 import CairoMakie as Cmk
 import DataFrames as Dfs
@@ -103,7 +110,7 @@ function drawLinesPmf(pmf::Pmf{T},
     xlabel::String,
     ylabel::String)::Cmk.Figure where {T}
     fig = Cmk.Figure(size=(600, 400))
-    ax1, l1 = Cmk.lines(fig[1, 1],
+    Cmk.lines(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
             title=title,
@@ -236,4 +243,4 @@ function getPosteriorsProbLEQ(pmf::Pmf{T}, x::T)::Float64 where {T<:Union{Int,Fl
     return isnothing(indOfX) ? -99.0 : sum(pmf.posteriors[1:indOfX])
 end
 
-end
+# end

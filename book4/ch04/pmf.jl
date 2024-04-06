@@ -109,7 +109,7 @@ function drawLinesPmf(pmf::Pmf{T},
     xlabel::String,
     ylabel::String)::Cmk.Figure where {T}
     fig = Cmk.Figure(size=(600, 400))
-    ax1, l1 = Cmk.lines(fig[1, 1],
+    Cmk.lines(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
             title=title,
