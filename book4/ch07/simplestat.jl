@@ -6,14 +6,8 @@ function prob2odds(prob::T)::T where T<:Union{Float64, Rational}
     return prob / (1-prob)
 end
 
-function prob2odds(prob::T)::T where T<:Union{Float64, Rational}
-    @assert (0 <= prob <= 1)
-    return prob / (1-prob)
-end
-
-function prob2odds(prob::T)::T where T<:Union{Float64, Rational}
-    @assert (0 <= prob <= 1)
-    return prob / (1-prob)
+function odds2prob(odds::T)::Float64 where T<:Union{Float64, Int}
+    return odds / (1+odds)
 end
 
 function odds2prob(yes::T, no::T)::T where T<:Union{Float64, Rational}
