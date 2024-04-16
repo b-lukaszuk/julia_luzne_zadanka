@@ -283,10 +283,12 @@ end
 """
     Compute a quantile with the given prob.
 """
-function getQuantile(pmf::Pmf{T}, prob::Float64)::Float64 where {T<:Union{Int, Float64}}
+function getQuantile(pmf::Pmf{T}, prob::Float64,
+                     usePriors::Bool=false)::Float64 where {T<:Union{Int, Float64}}
     @assert (0 <= prob <= 1) "prob must be in range [0-1]"
     totalProb::Float64 = 0
-    for (q, p) in zip(pmf.names, pmf.posteriors)
+    for (q, p) in zip(pmf.names,
+                      usePriors ? pmf.priors : pmf.posteriors)
         totalProb += p
         if totalProb >= prob
             return q
@@ -295,10 +297,12 @@ function getQuantile(pmf::Pmf{T}, prob::Float64)::Float64 where {T<:Union{Int, F
     return -99.0
 end
 
-function getCredibleInterval(pmf::Pmf{T}, ci::Float64)::Vector{T} where {T<:Union{Int, Float64}}
+function getCredibleInterval(
+    pmf::Pmf{T}, ci::Float64, usePriors::Bool=false
+    )::Vector{T} where {T<:Union{Int, Float64}}
     @assert (0.5 <= ci <= 0.99) "ci must be in range [0.5 - 0.99]"
     halfCI::Float64 = ci / 2
-    return [getQuantile(pmf, q) for q in [0.5 - halfCI, 0.5 + halfCI]]
+    return [getQuantile(pmf, q, usePriors) for q in [0.5 - halfCI, 0.5 + halfCI]]
 end
 
 function sumProbsByNames(names::Vector{Int}, probs::Vector{Float64})::Dict{Int,Float64}
