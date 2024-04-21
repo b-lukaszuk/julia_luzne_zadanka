@@ -13,6 +13,8 @@ import CairoMakie as Cmk
 import DataFrames as Dfs
 import Distributions as Dsts
 
+Num = Union{Int, Float64} # custom type
+
 mutable struct Pmf{T}
     names::Vector{T} # names of hypotheses
     priors::Vector{Float64}
@@ -463,7 +465,11 @@ function getMinCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where T
     return Cdf(cdfDist.names |> copy, probLEqN) 
 end
 
-"""getMixture(pmfDist::Pmf{Int}, pmfSeq::Vector{Pmf{Int}})::Dfs.DataFrame
+"""getMixture(pmfDist::Pmf{Num},
+        pmfSeq::Vector{Pmf{Num}},
+        pmfSeqNames::Vector{String},
+        outcomes::Vector{Int}
+        usePriors::Bool)::Dfs.DataFrame
 
 	Make a mixture of distributions.
 
@@ -471,15 +477,20 @@ end
 	args:
 		pmfDist: probs of getting a dist in pmfSeq (names and priors)
 		pmfSeq: pmfDists and their probs (priors), names betw seqs should overlap
+                pmfSeqNames: names (strings) to be prepended to priors in Df colnames
+                outcomes: what outcomes in each pmf from pmfSeq we are looking for
+                usePriors: should use priors or posteriors from PmfDist
 	"""
-function getMixture(pmfDist::Pmf{Int}, pmfSeq::Vector{Pmf{Int}}, pmfSeqNames::Vector{String})::Dfs.DataFrame
-    maxLen::Int = max([length(p.names) for p in pmfSeq]...)
-    df::Dfs.DataFrame = Dfs.DataFrame(outcome=1:maxLen)
+function getMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}},
+                    pmfSeqNames::Vector{String},
+                    outcomes::Vector{Int},
+                    usePriors::Bool = false)::Dfs.DataFrame where {A<:Num, B<:Num}
+    df::Dfs.DataFrame = Dfs.DataFrame(outcome=outcomes)
     for (i, pmf) in enumerate(pmfSeq)
         df[:, string(pmfSeqNames[i], " priors")] = getPriorsByNames(pmf, df[:, :outcome])
     end
     for rowNum in 1:Dfs.nrow(df)
-        df[rowNum, 2:end] = Vector(df[rowNum, 2:end]) .* pmfDist.priors
+        df[rowNum, 2:end] = Vector(df[rowNum, 2:end]) .* (usePriors ? pmfDist.priors : pmfDist.posteriors)
     end;
     df.posteriors = df[:, 2:end] |> Array |> a -> sum(a, dims=2) |> vec;
     df.posteriors .= df.posteriors ./ sum(df.posteriors)
