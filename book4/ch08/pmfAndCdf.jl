@@ -477,9 +477,9 @@ end
 	args:
 		pmfDist: probs of getting a dist in pmfSeq (names and priors)
 		pmfSeq: pmfDists and their probs (priors), names betw seqs should overlap
-                pmfSeqNames: names (strings) to be prepended to priors in Df colnames
-                outcomes: what outcomes in each pmf from pmfSeq we are looking for
-                usePriors: should use priors or posteriors from PmfDist
+        pmfSeqNames: names (strings) to be prepended to priors in Df colnames
+        outcomes: what outcomes in each pmf from pmfSeq we are looking for
+        usePriors: should use priors or posteriors from PmfDist
 	"""
 function getMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}},
                     pmfSeqNames::Vector{String},
