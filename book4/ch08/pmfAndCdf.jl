@@ -13,7 +13,7 @@ import CairoMakie as Cmk
 import DataFrames as Dfs
 import Distributions as Dsts
 
-Num = Union{Int, Float64} # custom type
+Num = Union{Int,Float64} # custom type
 
 mutable struct Pmf{T}
     names::Vector{T} # names of hypotheses
@@ -72,11 +72,11 @@ function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) wh
     return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
 end
 
-function getPriorByName(pmf::Pmf{T}, name::T, defVal::Float64 = 0.0)::Float64 where {T}
+function getPriorByName(pmf::Pmf{T}, name::T, defVal::Float64=0.0)::Float64 where {T}
     return getFieldValsEqName(pmf, name, "priors", defVal)
 end
 
-function getPriorsByNames(pmf::Pmf{T}, names::Vector{T}, defVal::Float64 = 0.0)::Vector{Float64} where {T}
+function getPriorsByNames(pmf::Pmf{T}, names::Vector{T}, defVal::Float64=0.0)::Vector{Float64} where {T}
     return map(n -> getPriorByName(pmf, n, defVal), names)
 end
 
@@ -238,7 +238,7 @@ function updateBinomial!(binomPmf::Pmf{Float64}, k::Int, n::Int)
     return nothing
 end
 
-function getMean(pmf::Pmf{T}, usePriors::Bool=false)::Float64 where {T<:Union{Int, Float64}}
+function getMean(pmf::Pmf{T}, usePriors::Bool=false)::Float64 where {T<:Union{Int,Float64}}
     if usePriors
         return sum(pmf.priors .* pmf.names)
     else
@@ -266,7 +266,7 @@ function updateCounts!(pmf::Pmf{Int}, data::Int)
     likelihood[impossible] .= 0
     pmf.likelihoods .*= likelihood
     updatePosteriors!(pmf, true)
-    
+
     return nothing
 end
 
@@ -286,11 +286,11 @@ end
     Compute a quantile with the given prob.
 """
 function getQuantile(pmf::Pmf{T}, prob::Float64,
-                     usePriors::Bool=false)::Float64 where {T<:Union{Int, Float64}}
+    usePriors::Bool=false)::Float64 where {T<:Union{Int,Float64}}
     @assert (0 <= prob <= 1) "prob must be in range [0-1]"
     totalProb::Float64 = 0
     for (q, p) in zip(pmf.names,
-                      usePriors ? pmf.priors : pmf.posteriors)
+        usePriors ? pmf.priors : pmf.posteriors)
         totalProb += p
         if totalProb >= prob
             return q
@@ -301,7 +301,7 @@ end
 
 function getCredibleInterval(
     pmf::Pmf{T}, ci::Float64, usePriors::Bool=false
-    )::Vector{T} where {T<:Union{Int, Float64}}
+)::Vector{T} where {T<:Union{Int,Float64}}
     @assert (0.5 <= ci <= 0.99) "ci must be in range [0.5 - 0.99]"
     halfCI::Float64 = ci / 2
     return [getQuantile(pmf, q, usePriors) for q in [0.5 - halfCI, 0.5 + halfCI]]
@@ -328,7 +328,7 @@ function convolveDist(pmf1::Pmf{Int}, pmf2::Pmf{Int}, fn::Function)::Pmf{Int}
     # Iterators.product(vec1, vec2) gives cartesian product of two vects [(v1.0, v2.0), (v1.0, v2.1), etc.]
     newNames::Vector{Int} = [[fn(a, b) for (a, b) in Iterators.product(pmf1.names, pmf2.names)]...]
     newPriors::Vector{Float64} = [[a * b for (a, b) in Iterators.product(pmf1.priors, pmf2.priors)]...]
-    probs::Dict{Int, Float64} = sumProbsByNames(newNames, newPriors)
+    probs::Dict{Int,Float64} = sumProbsByNames(newNames, newPriors)
     orderedKeys::Vector{Int64} = sort(collect(keys(probs)))
     orderedVals::Vector{Float64} = [probs[k] for k in orderedKeys]
     return Pmf(orderedKeys, orderedVals ./ sum(orderedVals))
@@ -397,18 +397,18 @@ end
 		usePiors: if true then pmfDist.priors are used to construct cdf
 				otherwise pmfDist.posteriors are used to construct cdf
 """
-function convertPmf2Cdf(pmfDist::Pmf{T}, usePriors::Bool=true)::Cdf{T} where T
-	if usePriors
-		return Cdf(pmfDist.names, cumsum(pmfDist.priors))
-	else
-		return Cdf(pmfDist.names, cumsum(pmfDist.posteriors))
-	end
+function convertPmf2Cdf(pmfDist::Pmf{T}, usePriors::Bool=true)::Cdf{T} where {T}
+    if usePriors
+        return Cdf(pmfDist.names, cumsum(pmfDist.priors))
+    else
+        return Cdf(pmfDist.names, cumsum(pmfDist.posteriors))
+    end
 end
 
-function convertCdf2Pmf(cdfDist::Cdf{T})::Pmf{T} where T
-	diffs::Vector{Float64} = diff(cdfDist.posteriors)
-	prepend!(diffs, cdfDist.posteriors[1])
-	return Pmf(cdfDist.names, diffs)
+function convertCdf2Pmf(cdfDist::Cdf{T})::Pmf{T} where {T}
+    diffs::Vector{Float64} = diff(cdfDist.posteriors)
+    prepend!(diffs, cdfDist.posteriors[1])
+    return Pmf(cdfDist.names, diffs)
 end
 
 
@@ -417,19 +417,19 @@ end
 
 	returns name from cdfDist.names that is >= posterior
 """
-function getNameGtEqPosterior(cdfDist::Cdf{T}, posterior::Float64)::T where T
-	@assert 0 <= posterior <= 1
-	return cdfDist.names[findfirst(x -> x >= posterior, cdfDist.posteriors)]
+function getNameGtEqPosterior(cdfDist::Cdf{T}, posterior::Float64)::T where {T}
+    @assert 0 <= posterior <= 1
+    return cdfDist.names[findfirst(x -> x >= posterior, cdfDist.posteriors)]
 end
 
-function getPosteriorGtEqName(cdfDist::Cdf{T}, name::T)::Float64 where {T<:Union{Int, Float64}}
-	return cdfDist.posteriors[findfirst(x -> x == name, cdfDist.names)]
+function getPosteriorGtEqName(cdfDist::Cdf{T}, name::T)::Float64 where {T<:Union{Int,Float64}}
+    return cdfDist.posteriors[findfirst(x -> x == name, cdfDist.names)]
 end
 
-function getCredibleInterval(cdfDist::Cdf{T}, prob::Float64)::Vector{T} where T
-	@assert 0 <= prob <= 1
-	probs::Vector{Float64} = [0.5 - prob / 2, 0.5 + prob / 2]
-	return [getNameGtEqPosterior(cdfDist, p) for p in probs]
+function getCredibleInterval(cdfDist::Cdf{T}, prob::Float64)::Vector{T} where {T}
+    @assert 0 <= prob <= 1
+    probs::Vector{Float64} = [0.5 - prob / 2, 0.5 + prob / 2]
+    return [getNameGtEqPosterior(cdfDist, p) for p in probs]
 end
 
 
@@ -441,9 +441,9 @@ end
 		n: Int, drawing n times from cdfDist,
 			returns cdf where cdf(x) prob. that all n of drawings are <= to x
 """
-function getMaxCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where T
-	cdfMaxN::Vector{Float64} = cdfDist.posteriors .^ n
-	return Cdf(cdfDist.names, cdfMaxN)
+function getMaxCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where {T}
+    cdfMaxN::Vector{Float64} = cdfDist.posteriors .^ n
+    return Cdf(cdfDist.names, cdfMaxN)
 end
 
 
@@ -455,14 +455,14 @@ args:
     n: Int, drawing n times from cdfDist(x),
             returns cdf where cdf(x) prob. that all n of drawings are >= x
 """
-function getMinCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where T
+function getMinCdfDist(cdfDist::Cdf{T}, n::Int)::Cdf{T} where {T}
     # prob that a val from cdfDist is greater than x (a given cdfDist.name)
     probGt::Vector{<:Float64} = 1 .- cdfDist.posteriors
     # prob that all n vals drawn from dist exceed x
     # (their min exceeds x)
-    probGtN::Vector{ <:Float64 } = probGt .^ n
+    probGtN::Vector{<:Float64} = probGt .^ n
     probLEqN::Vector{<:Float64} = 1 .- probGtN
-    return Cdf(cdfDist.names |> copy, probLEqN) 
+    return Cdf(cdfDist.names |> copy, probLEqN)
 end
 
 """getMixture(pmfDist::Pmf{Num},
@@ -482,17 +482,17 @@ end
         usePriors: should use priors or posteriors from PmfDist
 	"""
 function getMixture(pmfDist::Pmf{A}, pmfSeq::Vector{Pmf{B}},
-                    pmfSeqNames::Vector{String},
-                    outcomes::Vector{Int},
-                    usePriors::Bool = false)::Dfs.DataFrame where {A<:Num, B<:Num}
+    pmfSeqNames::Vector{String},
+    outcomes::Vector{C},
+    usePriors::Bool=false)::Dfs.DataFrame where {A<:Num,B<:Num,C<:Num}
     df::Dfs.DataFrame = Dfs.DataFrame(outcome=outcomes)
     for (i, pmf) in enumerate(pmfSeq)
         df[:, string(pmfSeqNames[i], " priors")] = getPriorsByNames(pmf, df[:, :outcome])
     end
     for rowNum in 1:Dfs.nrow(df)
         df[rowNum, 2:end] = Vector(df[rowNum, 2:end]) .* (usePriors ? pmfDist.priors : pmfDist.posteriors)
-    end;
-    df.posteriors = df[:, 2:end] |> Array |> a -> sum(a, dims=2) |> vec;
+    end
+    df.posteriors = df[:, 2:end] |> Array |> a -> sum(a, dims=2) |> vec
     df.posteriors .= df.posteriors ./ sum(df.posteriors)
     return df
 end
@@ -503,24 +503,24 @@ end
 
 function getStd(
     pmfDist::Pmf{T},
-    usePriors::Bool=true)::Float64 where T<:Union{Int, Float64}
+    usePriors::Bool=true)::Float64 where {T<:Union{Int,Float64}}
 
     avg::Float64 = getMean(pmfDist, usePriors)
     diffs::Vector{Float64} = pmfDist.names .- avg
     ps::Vector{Float64} = usePriors ? pmfDist.priors : pmfDist.posteriors
-    var:: Float64 = sum((diffs.^2) .* ps)
+    var::Float64 = sum((diffs .^ 2) .* ps)
     return sqrt(var)
 end
 
 function getStd(
     cdfDist::Cdf{T},
-    usePriors::Bool=true)::Float64 where T<:Union{Int, Float64}
+    usePriors::Bool=true)::Float64 where {T<:Union{Int,Float64}}
 
     pmfDist::Pmf{T} = convertCdf2Pmf(cdfDist)
     return getStd(pmfDist)
 end
 
-function getPosteriorEqName(cdfDist::Cdf{T}, name::T)::Float64 where {T<:Union{Int, Float64}}
+function getPosteriorEqName(cdfDist::Cdf{T}, name::T)::Float64 where {T<:Union{Int,Float64}}
     ind::Int = findfirst(isapprox(name), cdfDist.names)
     return cdfDist.posteriors[ind]
 end
