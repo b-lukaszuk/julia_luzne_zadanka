@@ -1,6 +1,6 @@
 # Description
 
-Selected bits/tasks from "Grokking algorithms" by Aditya Y. Bhargava used for educational purposes.
+Selected bits/tasks from "Grokking algorithms" by Aditya Y. Bhargava used for educational purposes. They may be modified at will.
 
 For training I will solve them with [Julia](https://julialang.org/), despite the fact that the code examples from the book are written in [Python](https://www.python.org/).
 
