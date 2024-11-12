@@ -32,7 +32,7 @@ sum(x)
 x = collect(1:6)
 x
 x_reshaped = reshape(x, (2, 3)) # colum major, not row major
-# currently v1.10.5, no change to row major possible
+# currently v1.10.6, no change to row major possible
 x_reshaped # be careful, changing x elts, changes x_reshaped
 # so it acts similarily to python
 
@@ -53,6 +53,10 @@ function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     end
     return m
 end
+
+reshapeVec(x, 2, 3, false)
+x_reshaped
+reshapeVec(x, 2, 3, true)
 
 x_reshaped[1, 1]
 x_reshaped[2, 3]
@@ -87,6 +91,7 @@ Stats.var(y), Stats.std(y), Stats.mean(y)
 # matrix
 Rand.seed!(3)
 y = Rand.rand(Dsts.Normal(), (10, 3))
+y = [1 2 3; 4 5 6]
 Stats.mean(y)
 Stats.mean(y, dims=1) # col-major first
 Stats.mean(y, dims=2) # row-major second
