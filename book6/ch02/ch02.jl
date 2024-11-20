@@ -114,3 +114,27 @@ fig
 
 #Cmk.save("figure.png", fig)
 #Cmk.save("figure.pdf", fig)
+
+# contourplots
+x = range(-π, π, 50)
+y = range(-π, π, 50)
+# from: https://en.wikipedia.org/wiki/Outer_product
+# outer product (≈ np.multiply.outer) of vectors x and y is: x *- y'
+f = cos.(y) *- (1 ./ (1 .+ x.^2))'
+
+# x and y axes are swapped compared to python
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1]);
+Cmk.contour!(ax, x, y, f);
+fig
+
+# x and y axes are swapped compared to python
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1]);
+Cmk.contour!(ax, f; levels=45);
+fig
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1]);
+Cmk.contourf!(ax, f; levels=100, colormap=:viridis);
+fig
