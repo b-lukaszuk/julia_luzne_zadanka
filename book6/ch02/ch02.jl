@@ -100,16 +100,16 @@ Stats.mean(y, dims=2) # row-major second
 x = Rand.rand(Dsts.Normal(), 100)
 y = Rand.rand(Dsts.Normal(), 100)
 fig = Cmk.Figure();
-Cmk.scatter(fig[1, 2], x, y,
-            marker=:circle,
-            axis=(;title="Plot of X vs Y",
-                  xlabel="this is the x-axis",
-                  ylabel="this is the y-axis"));
-Cmk.scatter(fig[2, 3], x, y, marker=:cross,
-            axis=(;title="Plot of X vs Y",
-                  xlabel="this is the x-axis",
-                  ylabel="this is the y-axis")
-            );
+ax1 = Cmk.Axis(fig[1, 2],
+               title="Plot of X vs Y",
+               xlabel="this is the x-axis",
+               ylabel="this is the y-axis");
+Cmk.scatter!(ax1, x, y, marker=:circle);
+ax2 = Cmk.Axis(fig[2, 3],
+               title="Plot of X vs Y",
+               xlabel="this is the x-axis",
+               ylabel="this is the y-axis");
+Cmk.scatter!(ax2, x, y, marker=:cross);
 fig
 
 #Cmk.save("figure.png", fig)
