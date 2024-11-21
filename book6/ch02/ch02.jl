@@ -39,7 +39,7 @@ x_reshaped # be careful, changing x elts, changes x_reshaped
 
 # elts of Matrix{T} are copies of v
 function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
-    len::Int = length(x)
+    len::Int = length(v)
     @assert (len == r*c)
     m::Matrix{T} = Matrix{T}(undef, r, c)
     stepBegin::Int = 1
