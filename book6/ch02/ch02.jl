@@ -160,3 +160,37 @@ seq2 = 0:10 |> collect # In [53]
 
 # In [54]
 "hello world"[4:5]
+
+## 2.3.6 Indexing Data
+A = reshapeVec(0:15 |> collect, 4, 4, true) # In [56]
+
+A[2, 3] # In [57]
+
+### Indexing Rows, Columns, and Submatrices
+A[[2, 4], :] # In [58]
+A[:, [1, 3]] # In [59]
+A[[2, 4], [1, 3]] # In [60] - In [63]
+A[[2, 4], [1, 3, 4]] # In [64]
+A[2:2:4, 1:2:3] # In [65]
+
+### Boolean indexing
+keep_rows = zeros(Bool, size(A)[1]) # In [66]
+keep_rows[[2, 4]] .= true # In [67]
+keep_rows # In [67]
+
+# In [68]
+all(keep_rows .== Vector{Int}([0, 1, 0, 1]))
+all(keep_rows .== Vector{Bool}([true, false, true, false]))
+
+# In [69]
+A[Vector{Int}([0, 1, 0, 1])] # error, Julia is 1-indexed
+
+A[keep_rows, :] # In [70]
+
+# In [71]
+keep_cols = zeros(Bool, size(A)[2])
+keep_cols[[1, 3, 4]] .= true
+A[keep_rows, keep_cols]
+
+# In [72]
+A[[2, 4], keep_cols]
