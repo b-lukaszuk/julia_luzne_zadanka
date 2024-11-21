@@ -153,3 +153,10 @@ fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1]);
 Cmk.contourf!(ax, f; levels=100, colormap=:viridis);
 fig
+
+## 2.3.5 Sequences and Slice Notation
+seq1 = 0:10 |> collect # In [52]
+seq2 = 0:10 |> collect # In [53]
+
+# In [54]
+"hello world"[4:5]
