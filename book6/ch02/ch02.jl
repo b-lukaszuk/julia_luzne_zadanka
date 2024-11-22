@@ -1,8 +1,13 @@
+import CSV as Csv
 import CairoMakie as Cmk
+import DataFrames as Dfs
 import Distributions as Dsts
 import Random as Rand
 import Statistics as Stats
 
+const F64 = Float64
+const I64 = Int64
+const Str = String
 const Vec = Vector
 
 # 2.3 Lab: Introduction to Python
@@ -194,3 +199,42 @@ A[keep_rows, keep_cols]
 
 # In [72]
 A[[2, 4], keep_cols]
+
+## 2.3.7 Loading Data
+
+### Reading in a Data Set
+
+# In [73]
+auto = Csv.read("./Auto.csv", Dfs.DataFrame)
+first(auto, 2)
+
+# In [74]
+# workaround, still, better to use *.csv
+# delimiters are spaces (multiple) or tabs
+auto = Csv.read(
+    IOBuffer(replace(read("./Auto.data"), UInt8('\t') => UInt8(' '))),
+    Dfs.DataFrame, delim=" ", ignorerepeated=true,
+    types=[F64, I64, F64, F64, F64, F64, I64, I64, Str])
+first(auto, 2)
+
+# In [74]
+auto.horsepower # or
+# auto[!, "horsepower"]
+
+# In [76]
+# unique(auto.horsepower)
+show(stdout, "text/plain", unique(auto.horsepower))
+
+# In [77]
+auto = Csv.read("./Auto.csv", Dfs.DataFrame,
+                types=[F64, I64, F64, F64, F64, F64, I64, I64, Str],
+                missingstring="?")
+show(stdout, "text/plain", unique(auto.horsepower))
+sum(auto.horsepower |> skipmissing)
+
+# In [78]
+size(auto)
+
+# In [79]
+auto_new = Dfs.dropmissing(auto)
+size(auto_new)
