@@ -238,3 +238,40 @@ size(auto)
 # In [79]
 auto_new = Dfs.dropmissing(auto)
 size(auto_new)
+
+### Basics of Selecting Rows and Columns
+
+# In [80]
+auto = auto_new
+names(auto)
+
+# In [81]
+auto[1:3, :]
+
+# In [82]
+idx_80 = auto.year .> 80
+auto[idx_80, :]
+
+# In [83]
+auto[!, ["mpg", "horsepower"]]
+
+# In 84-86
+# no index in DataFrames.jl
+
+# In [87]
+isOK(n) = n in ["amc rebel sst", "ford torino"]
+auto[map(isOK, auto.name), :]
+
+# In [88]
+auto[[4, 5], :]
+
+# In [89]
+auto[:, [1, 3, 4]]
+# auto[!, [1, 3, 4]]
+
+# In [90]
+auto[[4, 5], [1, 3, 4, 9]]
+
+# In [91]
+isOK(n) = n in ["ford galaxie 500"]
+auto[map(isOK, auto.name), ["mpg", "origin", "name"]]
