@@ -313,3 +313,21 @@ for (value, weight ) in zip([2, 3, 19], [0.2, 0.3, 0.5])
     total += weight * value
 end
 println("Weighted average is: $total")
+
+### String Formatting
+# In [99]
+Rand.seed!(1);
+a = round.(Rand.randn(20, 5), digits=3);
+getNum(rn) = rn < 0.8 ? 0 : missing;
+m = getNum.(Rand.rand(size(a)...));
+a += m;
+df = Dfs.DataFrame(a, :auto);
+Dfs.rename!(df, ["food", "bar", "pickle", "snack", "popcorn"]);
+first(df, 5)
+
+# In [100]
+for cn in names(df)
+    println("Column '$(cn)' has ",
+            "$(ismissing.(df[!, cn]) |> Stats.mean)% ",
+            "of missing values")
+end
