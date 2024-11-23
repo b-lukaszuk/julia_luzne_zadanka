@@ -43,12 +43,12 @@ x_reshaped # be careful, changing x elts, changes x_reshaped
 # so it acts similarily to python
 
 # elts of Matrix{T} are copies of v
-function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
-    len::Int = length(v)
+function reshapeVec(v::Vec{T}, r::I64, c::I64, byRow::Bool)::Matrix{T} where T
+    len::I64 = length(v)
     @assert (len == r*c)
     m::Matrix{T} = Matrix{T}(undef, r, c)
-    stepBegin::Int = 1
-    stepSize::Int = (byRow ? c : r) - 1
+    stepBegin::I64 = 1
+    stepSize::I64 = (byRow ? c : r) - 1
     for i in 1:(byRow ? r : c)
         if byRow
             m[i, :] = v[stepBegin:(stepBegin+stepSize)]
