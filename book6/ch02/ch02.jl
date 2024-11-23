@@ -275,3 +275,16 @@ auto[[4, 5], [1, 3, 4, 9]]
 # In [91]
 isOK(n) = n in ["ford galaxie 500"]
 auto[map(isOK, auto.name), ["mpg", "origin", "name"]]
+
+### More on Selecting Rows and Columns
+# In [92-93]
+auto[auto.year .> 80, ["weight", "origin"]]
+
+# In [94]
+auto[auto.year .> 80 .&& auto.mpg .> 30, ["weight", "origin", "mpg"]]
+
+# In [95]
+auto[auto.displacement .< 300 .&&
+    contains.(auto.name, "ford") .||
+    contains.(auto.name, "datsun"),
+     ["displacement", "weight", "origin", "name"]]
