@@ -288,3 +288,28 @@ auto[auto.displacement .< 300 .&&
     contains.(auto.name, "ford") .||
     contains.(auto.name, "datsun"),
      ["displacement", "weight", "origin", "name"]]
+
+## 2.3.8 For Loops
+
+# In [96]
+total = 0
+for value in [3, 2, 19]
+    total += value
+end
+println("Total is: $total")
+
+# In [97]
+total = 0
+for value in [2, 3, 19]
+    for weight in [3, 2, 1]
+        total += value * weight
+    end
+end
+println("Total is $total")
+
+# In [98]
+total = 0
+for (value, weight ) in zip([2, 3, 19], [0.2, 0.3, 0.5])
+    total += weight * value
+end
+println("Weighted average is: $total")
