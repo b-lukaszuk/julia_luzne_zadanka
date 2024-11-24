@@ -398,10 +398,8 @@ function drawPairplot(df::Dfs.DataFrame, colNames::Vec{Str})::Cmk.Figure
     @assert len < 6 "can't handle more than 5 columns"
     @assert all(numTypes) "all columns must be either F64 or I64"
     fig::Cmk.Figure = Cmk.Figure(size=(900 * len, 600 * len))
-    for r in 1:len
-        for c in 1:len
-            drawScatterOrHist!(df, fig, r, c, colNames[r], colNames[c])
-        end
+    for r in 1:len, c in 1:len
+        drawScatterOrHist!(df, fig, r, c, colNames[r], colNames[c])
     end
     return fig
 end
