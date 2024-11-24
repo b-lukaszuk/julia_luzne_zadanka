@@ -360,7 +360,7 @@ fig
 # In [106-107]
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], xlabel="cylinders", ylabel="MPG", xticks=3:8);
-Cmk.boxplot!(ax, auto.cylinders, auto.mpg);
+Cmk.boxplot!(ax, auto.cylinders, auto.mpg, whiskerwidth=0.5);
 fig
 
 # In [108]
@@ -370,7 +370,6 @@ ax = Cmk.Axis(fig[1, 1],
 Cmk.hist!(ax, auto.mpg, strokewidth=1);
 fig
 
-
 # In [109]
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
@@ -379,8 +378,36 @@ Cmk.hist!(ax, auto.mpg, strokewidth=1, color=:red, bins=12);
 fig
 
 # In [110-111]
-# not sure how to do that with a single line of code
-# should be possible to do with, e.g. PairPlots.jl, or in Cmk with more code
+function drawScatterOrHist!(df::Dfs.DataFrame, fig2modify::Cmk.Figure,
+                           row::Int, col::Int, rowName::Str, colName::Str)
+    @assert (row > 0 && col > 0) "row and col need to be positive integers"
+    if rowName == colName
+        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel="Count")
+        Cmk.hist!(ax, df[!, rowName], strokewidth=1)
+    else
+        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel=colName)
+        Cmk.scatter!(ax, df[!, rowName], df[!, colName])
+    end
+    return nothing
+end
+
+function drawPairplot(df::Dfs.DataFrame, colNames::Vec{Str})::Cmk.Figure
+    len::I64 = length(colNames)
+    colTypes::Vec{Type} = eltype.(eachcol(df[!, colNames]))
+    numTypes::Vec{Bool} = [t in [F64, I64] for t in colTypes]
+    @assert len < 6 "can't handle more than 5 columns"
+    @assert all(numTypes) "all columns must be either F64 or I64"
+    fig::Cmk.Figure = Cmk.Figure(size=(900 * len, 600 * len))
+    for r in 1:len
+        for c in 1:len
+            drawScatterOrHist!(df, fig, r, c, colNames[r], colNames[c])
+        end
+    end
+    return fig
+end
+
+drawPairplot(auto, ["mpg", "displacement", "weight"])
+drawPairplot(auto, ["cylinders", "mpg", "displacement", "weight"])
 
 # In [112]
 Dfs.describe(auto[!, ["mpg", "weight"]])
