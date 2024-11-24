@@ -331,3 +331,60 @@ for cn in names(df)
             "$(ismissing.(df[!, cn]) |> Stats.mean)% ",
             "of missing values")
 end
+
+## 2.3.9 Additional Graphical and Numerical Summaries
+
+# In [101]
+# fig = Cmk.Figure()
+# ax = Cmk.Axis(fig[1, 1])
+# Cmk.scatter(horsepower, mpg) # produces error
+# fig
+
+# In [102]
+Cmk.scatter(auto.horsepower, auto.mpg)
+
+
+# In [103]
+Cmk.scatter(auto.horsepower, auto.mpg, axis=(;title="Horsepower vs. MPG"))
+
+# In [104]
+#Cmk.save("horsepower_mpg.png", fig)
+
+# In [105]
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], title="Horsepower vs. MPG");
+Cmk.scatter!(ax, auto.horsepower, auto.mpg);
+# other axes can be added at need
+fig
+
+# In [106-107]
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="cylinders", ylabel="MPG", xticks=3:8);
+Cmk.boxplot!(ax, auto.cylinders, auto.mpg);
+fig
+
+# In [108]
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="MPG distribution", xlabel="MPG", ylabel="Count");
+Cmk.hist!(ax, auto.mpg, strokewidth=1);
+fig
+
+
+# In [109]
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="MPG distribution", xlabel="MPG", ylabel="Count");
+Cmk.hist!(ax, auto.mpg, strokewidth=1, color=:red, bins=12);
+fig
+
+# In [110-111]
+# not sure how to do that with a single line of code
+# should be possible to do with, e.g. PairPlots.jl, or in Cmk with more code
+
+# In [112]
+Dfs.describe(auto[!, ["mpg", "weight"]])
+
+# In [113]
+Dfs.describe(auto.cylinders)
+Dfs.describe(auto.mpg)
