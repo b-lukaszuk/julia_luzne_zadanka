@@ -18,14 +18,14 @@ the book are written in [Python](https://www.python.org/).
 
 ``` bash
 ls
-# output: README.md ch01.ipynb
+# output: README.md ch02.ipynb
 jupyter notebook # opens notebook in a default browser
 ```
 
 ## Pure julia file
 
 ```bash
-julia ch01.jl
+julia ch02.jl
 ```
 
 To be opened in interactive mode (with REPL) in VSCode or Emacs.
