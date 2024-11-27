@@ -427,4 +427,18 @@ Dfs.describe(auto.mpg)
 # e) produce side by side boxplots of "Outstate" vs. "Private"
 # f) create column "Elite"{"No", "Yes"} based on "Top10perc" (>50%)
 # see how many top universities are there, draw boxplot for Outstate and Elite
-# draw smoe histograms for the data
+# draw some histograms for the data
+
+
+# a-b
+college = Csv.read("./College.csv", Dfs.DataFrame);
+Dfs.rename!(college, :Column1 => "College")
+first(college, 2)
+size(college)
+
+# c
+Dfs.describe(college) # trimmed output
+show(stdout, "text/plain", Dfs.describe(college)) # full output
+
+# d
+drawPairplot(college, ["Top10perc", "Apps", "Enroll"])
