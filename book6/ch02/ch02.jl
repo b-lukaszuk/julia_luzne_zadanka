@@ -417,3 +417,14 @@ Dfs.describe(auto[!, ["mpg", "weight"]])
 # In [113]
 Dfs.describe(auto.cylinders)
 Dfs.describe(auto.mpg)
+
+# Applied
+
+# Exercise 8
+# a)-b) read in College.csv
+# c) describe the data
+# d) draw pairplot for columns ["Top10perc", "Apps", "Enroll"]
+# e) produce side by side boxplots of "Outstate" vs. "Private"
+# f) create column "Elite"{"No", "Yes"} based on "Top10perc" (>50%)
+# see how many top universities are there, draw boxplot for Outstate and Elite
+# draw smoe histograms for the data
