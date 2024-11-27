@@ -5,6 +5,8 @@ import Distributions as Dsts
 import Random as Rand
 import Statistics as Stats
 
+# below a simple code, not error-proof, not optimiezed for speed, etc.
+
 const F64 = Float64
 const I64 = Int64
 const Str = String
@@ -432,13 +434,31 @@ Dfs.describe(auto.mpg)
 
 # a-b
 college = Csv.read("./College.csv", Dfs.DataFrame);
-Dfs.rename!(college, :Column1 => "College")
+Dfs.rename!(college, :Column1 => "College");
 first(college, 2)
 size(college)
 
 # c
-Dfs.describe(college) # trimmed output
+Dfs.describe(college); # trimmed output
 show(stdout, "text/plain", Dfs.describe(college)) # full output
 
 # d
 drawPairplot(college, ["Top10perc", "Apps", "Enroll"])
+
+# e
+nrows, ncol = size(college);
+privCategNames = college.Private |> unique;
+privCategVals = eachindex(privCategNames) |> reverse;
+privateMap = Dict(zip(privCategNames, privCategVals));
+xs = get.(Ref(privateMap), college.Private, 0);
+ys = college.Outstate;
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college type",
+              xlabel="Private College",
+              ylabel="Out-of-state tuition [thousands USD]",
+              xticks=(privCategVals, privCategNames),
+              yticks=(5000:5000:20000, string.(5:5:20))
+);
+Cmk.boxplot!(ax, xs, ys, whiskerwidth=0.5);
+fig
