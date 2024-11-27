@@ -261,6 +261,8 @@ auto[!, ["mpg", "horsepower"]]
 # In [87]
 isOK(n) = n in ["amc rebel sst", "ford torino"]
 auto[map(isOK, auto.name), :]
+# or more enigmatic
+auto[auto.name .∈ Ref(["amc rebel sst", "ford torino"])]
 
 # In [88]
 auto[[4, 5], :]
@@ -275,6 +277,8 @@ auto[[4, 5], [1, 3, 4, 9]]
 # In [91]
 isOK(n) = n in ["ford galaxie 500"]
 auto[map(isOK, auto.name), ["mpg", "origin", "name"]]
+# or
+auto[auto.name .== "ford galaxie 500", ["mpg", "origin", "name"]]
 
 ### More on Selecting Rows and Columns
 # In [92-93]
