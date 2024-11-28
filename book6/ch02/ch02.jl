@@ -390,10 +390,12 @@ function drawScatterOrHist!(df::Dfs.DataFrame, fig2modify::Cmk.Figure,
                            row::Int, col::Int, rowName::Str, colName::Str)
     @assert (row > 0 && col > 0) "row and col need to be positive integers"
     if rowName == colName
-        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel="Count")
+        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel="Count",
+                      xlabelsize=22, ylabelsize=22)
         Cmk.hist!(ax, df[!, rowName], strokewidth=1)
     else
-        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel=colName)
+        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel=colName,
+                      xlabelsize=22, ylabelsize=22)
         Cmk.scatter!(ax, df[!, rowName], df[!, colName])
     end
     return nothing
@@ -403,7 +405,7 @@ function drawPairplot(df::Dfs.DataFrame, colNames::Vec{Str})::Cmk.Figure
     len::I64 = length(colNames)
     colTypes::Vec{Type} = eltype.(eachcol(df[!, colNames]))
     numTypes::Vec{Bool} = [t in [F64, I64] for t in colTypes]
-    @assert len < 6 "can't handle more than 5 columns"
+    @assert (1 < len < 6) "can handle between 2 to 5 columns only"
     @assert all(numTypes) "all columns must be either F64 or I64"
     fig::Cmk.Figure = Cmk.Figure(size=(900 * len, 600 * len))
     for r in 1:len, c in 1:len
