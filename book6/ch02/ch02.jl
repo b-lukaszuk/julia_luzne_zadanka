@@ -4,8 +4,10 @@ import DataFrames as Dfs
 import Distributions as Dsts
 import Random as Rand
 import Statistics as Stats
+import StatsBase as Sb
 
-# below a simple code, not error-proof, not optimiezed for speed, etc.
+# below a simple code
+# not succinct, not error-proof, not optimized for speed, etc.
 
 const F64 = Float64
 const I64 = Int64
@@ -429,7 +431,7 @@ Dfs.describe(auto.mpg)
 # e) produce side by side boxplots of "Outstate" vs. "Private"
 # f) create column "Elite"{"No", "Yes"} based on "Top10perc" (>50%)
 # see how many top universities are there, draw boxplot for Outstate and Elite
-# draw some histograms for the data
+# g) draw some histograms for the data
 
 
 # a-b
@@ -447,7 +449,7 @@ drawPairplot(college, ["Top10perc", "Apps", "Enroll"])
 
 # e
 nrows, ncol = size(college);
-privCategNames = college.Private |> unique;
+privCategNames = college.Private |> unique; # returned ["Yes", "No"]
 privCategVals = eachindex(privCategNames) |> reverse;
 privateMap = Dict(zip(privCategNames, privCategVals));
 xs = get.(Ref(privateMap), college.Private, 0);
@@ -462,3 +464,28 @@ ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college type",
 );
 Cmk.boxplot!(ax, xs, ys, whiskerwidth=0.5);
 fig
+
+# f
+# Top10perc - new students from top 10% of high school class
+college.Elite = ifelse.(college.Top10perc .> 50, "Yes", "No")
+nrows, ncol = size(college);
+eliteCategNames = college.Elite |> unique; # returned ["No", "Yes"]
+eliteCategVals = eachindex(eliteCategNames);
+eliteateMap = Dict(zip(eliteCategNames, eliteCategVals));
+xs = get.(Ref(eliteateMap), college.Elite, 0);
+ys = college.Outstate;
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college eliteness",
+              xlabel="Elite College",
+              ylabel="Out-of-state tuition [thousands USD]",
+              xticks=(eliteCategVals, eliteCategNames),
+              yticks=(0:5000:25000, string.(0:5:25))
+);
+Cmk.boxplot!(ax, xs, ys, whiskerwidth=0.5);
+Cmk.ylims!(ax,0, 25000);
+fig
+
+# how many elite colleges are there
+Sb.countmap(college.Elite)
+Sb.proportionmap(college.Elite)
