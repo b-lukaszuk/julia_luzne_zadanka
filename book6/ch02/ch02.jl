@@ -491,3 +491,15 @@ fig
 # how many elite colleges are there
 Sb.countmap(college.Elite)
 Sb.proportionmap(college.Elite)
+
+# g
+fig = Cmk.Figure(size=(800*4, 500*4));
+for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10perc"])
+    ax = Cmk.Axis(fig[i, 1],
+                  title=var* " distribution",
+                  xlabel=var, ylabel="Count",
+                  titlesize=30,
+                  xlabelsize=26, ylabelsize=26);
+    Cmk.hist!(ax, college[!, var], strokewidth=1);
+end
+fig
