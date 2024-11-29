@@ -509,7 +509,7 @@ fig
 # b) determine range of values for each quantitative predictor
 # c) determine mean and standard deviation for each quantitative predictor
 # d) remove obs 10:85 and calculate, range, mean, std
-# f) which vars could be useful in predicting gas mileage (mpg)?
+# f) which vars could be useful in predicting gas mileage (mpg) based on plots?
 auto = Csv.read("./Auto.csv", Dfs.DataFrame,
                 types=[F64, I64, F64, F64, F64, F64, I64, I64, Str],
                 missingstring="?")
@@ -534,3 +534,15 @@ auto2 = auto[setdiff(1:end, 10:85), :]
 Dfs.combine(auto2, quantVars .=> getExtrema)
 Dfs.combine(auto2, quantVars .=> getMean)
 Dfs.combine(auto2, quantVars .=> getStd)
+
+
+# f
+preds = ["displacement", "horsepower", "weight", "acceleration", "year"]
+len = length(preds)
+fig = Cmk.Figure(size=(2000, 500 * len))
+for (i, p) in enumerate(preds)
+    ax = Cmk.Axis(fig[i, 1], xlabel=p, ylabel="mpg",
+                  xlabelsize=30, ylabelsize=30)
+    Cmk.scatter!(ax, auto[!, p], auto[!, "mpg"])
+end
+fig
