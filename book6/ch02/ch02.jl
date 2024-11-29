@@ -505,7 +505,25 @@ end
 fig
 
 # Exercise 9
+# for auto data set
 # b) determine range of values for each quantitative predictor
 # c) determine mean and standard deviation for each quantitative predictor
 # d) remove obs 10:85 and calculate, range, mean, std
 # f) which vars could be useful in predicting gas mileage (mpg)?
+auto = Csv.read("./Auto.csv", Dfs.DataFrame,
+                types=[F64, I64, F64, F64, F64, F64, I64, I64, Str],
+                missingstring="?")
+quantVars = ["mpg", "cylinders", "displacement", "horsepower", "weight",
+             "acceleration", "year", "origin"]
+# b
+Dfs.combine(auto, quantVars .=> extrema)
+
+# c
+isPresent(val) = !ismissing(val)
+removeNAs(vec) = vec[isPresent.(vec)]
+getMean(vec) = removeNAs(vec) |> Stats.mean
+getStd(vec) = removeNAs(vec) |> Stats.std
+Dfs.combine(auto, quantVars .=> getMean)
+Dfs.combine(auto, quantVars .=> getStd)
+# or together
+Dfs.combine(auto, quantVars .=> [getMean getStd])
