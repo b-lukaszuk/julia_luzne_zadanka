@@ -516,14 +516,21 @@ auto = Csv.read("./Auto.csv", Dfs.DataFrame,
 quantVars = ["mpg", "cylinders", "displacement", "horsepower", "weight",
              "acceleration", "year", "origin"]
 # b
-Dfs.combine(auto, quantVars .=> extrema)
-
-# c
 isPresent(val) = !ismissing(val)
 removeNAs(vec) = vec[isPresent.(vec)]
+getExtrema(vec) = removeNAs(vec) |> extrema
+Dfs.combine(auto, quantVars .=> getExtrema)
+
+# c
 getMean(vec) = removeNAs(vec) |> Stats.mean
 getStd(vec) = removeNAs(vec) |> Stats.std
 Dfs.combine(auto, quantVars .=> getMean)
 Dfs.combine(auto, quantVars .=> getStd)
 # or together
 Dfs.combine(auto, quantVars .=> [getMean getStd])
+
+# d
+auto2 = auto[setdiff(1:end, 10:85), :]
+Dfs.combine(auto2, quantVars .=> getExtrema)
+Dfs.combine(auto2, quantVars .=> getMean)
+Dfs.combine(auto2, quantVars .=> getStd)
