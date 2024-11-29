@@ -503,3 +503,9 @@ for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10perc"])
     Cmk.hist!(ax, college[!, var], strokewidth=1);
 end
 fig
+
+# Exercise 9
+# b) determine range of values for each quantitative predictor
+# c) determine mean and standard deviation for each quantitative predictor
+# d) remove obs 10:85 and calculate, range, mean, std
+# f) which vars could be useful in predicting gas mileage (mpg)?
