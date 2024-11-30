@@ -429,10 +429,10 @@ Dfs.describe(auto.mpg)
 # Exercise 8
 # a)-b) read in College.csv
 # c) describe the data
-# d) draw pairplot for columns ["Top10perc", "Apps", "Enroll"]
-# e) produce side by side boxplots of "Outstate" vs. "Private"
+# d) draw pair-plot for columns ["Top10perc", "Apps", "Enroll"]
+# e) produce side by side box-plots of "Outstate" vs. "Private"
 # f) create column "Elite"{"No", "Yes"} based on "Top10perc" (>50%)
-# see how many top universities are there, draw boxplot for Outstate and Elite
+# see how many top universities are there, draw box-plot for Outstate and Elite
 # g) draw some histograms for the data
 
 
@@ -546,3 +546,15 @@ for (i, p) in enumerate(preds)
     Cmk.scatter!(ax, auto[!, p], auto[!, "mpg"])
 end
 fig
+
+
+# Exercise 10
+# use the Boston data set
+# b) examine the data set (rows, cols, summary statistics)
+# c) draw some pairwise scatter-plots
+# e) do any of the suburbs of Boston appear to have particularly high:
+# crime rates? tax rates? pupil-teacher ratios?
+# h) which suburb of Boston has the lowest median value of owner occupied homes
+# i) how many of the suburbs average more than:
+# 7 rooms per dwelling?
+# 8 rooms per dwelling?
