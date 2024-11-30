@@ -10,6 +10,10 @@ Probably for training I will write the code with
 [Julia](https://julialang.org/), despite the fact that the code examples from
 the book are written in [Python](https://www.python.org/).
 
+# Datasets
+
+Datasets obtained from [the book's official web page](https://www.statlearning.com/resources-second-edition).
+
 # Chapter 2. Statistical Learning
 
 # Usage example
