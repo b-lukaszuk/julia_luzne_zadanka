@@ -560,3 +560,19 @@ fig
 # i) how many of the suburbs average more than:
 # 7 rooms per dwelling?
 # 8 rooms per dwelling?
+
+# dataset description
+# https://islp.readthedocs.io/en/latest/datasets/Boston.html
+boston = Csv.read("./Boston.csv", Dfs.DataFrame);
+Dfs.select!(boston, Dfs.Not(:Column1));
+
+# 10 b)
+first(boston, 2)
+size(boston) # each row is a different suburb
+Dfs.describe(boston)
+
+# 10 c)
+drawPairplot(boston, names(boston)[1:3])
+drawPairplot(boston, names(boston)[4:6])
+drawPairplot(boston, names(boston)[7:9])
+drawPairplot(boston, names(boston)[10:13])
