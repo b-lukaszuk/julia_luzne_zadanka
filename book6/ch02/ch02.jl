@@ -576,3 +576,34 @@ drawPairplot(boston, names(boston)[1:3])
 drawPairplot(boston, names(boston)[4:6])
 drawPairplot(boston, names(boston)[7:9])
 drawPairplot(boston, names(boston)[10:13])
+
+# e) do any of the suburbs of Boston appear to have particularly high:
+# each row is a different suburb
+function drawHist(df::Dfs.DataFrame, colName::Str)::Cmk.Figure
+    fig = Cmk.Figure()
+    drawScatterOrHist!(df, fig, 1, 1, colName, colName)
+    return fig
+end
+getPercGT(vec, val) = Stats.mean(vec .> val)
+
+# crime rates?
+drawHist(boston, "crim") # by the eye: crim > 30
+getPercGT(boston.crim, 30) # roughly 85 percentile
+boston[boston.crim .> 30, :]
+Stats.quantile(boston.crim, 0.99)
+boston[boston.crim .>= 41.37, :]
+
+# tax rates?
+drawHist(boston, "tax") # by the eye: tax > 600
+getPercGT(boston.tax, 600) # roughly 70 percentile
+boston[boston.tax .> 600, :]
+Stats.quantile(boston.tax, 0.99)
+boston[boston.tax .>= 666, :]
+boston[boston.tax .> 666, :]
+
+# pupil-teacher ratios?
+drawHist(boston, "ptratio") # by the eye: ptratio > 20
+getPercGT(boston.ptratio, 20) # roughly 60 percentile
+boston[boston.ptratio .> 20, :]
+Stats.quantile(boston.ptratio, 0.99)
+boston[boston.ptratio .>= 21.2, :]
