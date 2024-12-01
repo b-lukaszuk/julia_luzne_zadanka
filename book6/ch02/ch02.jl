@@ -607,3 +607,14 @@ getPercGT(boston.ptratio, 20) # roughly 60 percentile
 boston[boston.ptratio .> 20, :]
 Stats.quantile(boston.ptratio, 0.99)
 boston[boston.ptratio .>= 21.2, :]
+
+# h) lowest median value of owner occupied homes
+minMedv = minimum(boston.medv)
+inds = findall(boston.medv .== minMedv)
+boston[inds, :]
+
+# i)
+# 7 rooms per dwelling?
+(boston.rm .> 7) |> sum
+# 8 rooms per dwelling?
+(boston.rm .> 8) |> sum
