@@ -209,6 +209,8 @@ A[[2, 4], keep_cols]
 ### Reading in a Data Set
 
 # In [73]
+# dataset description
+# https://islp.readthedocs.io/en/latest/datasets/Auto.html
 auto = Csv.read("./Auto.csv", Dfs.DataFrame)
 first(auto, 2)
 
@@ -435,21 +437,22 @@ Dfs.describe(auto.mpg)
 # see how many top universities are there, draw box-plot for Outstate and Elite
 # g) draw some histograms for the data
 
-
-# a-b
+# 8 a)-b)
+# dataset description
+# https://islp.readthedocs.io/en/latest/datasets/College.html
 college = Csv.read("./College.csv", Dfs.DataFrame);
 Dfs.rename!(college, :Column1 => "College");
 first(college, 2)
 size(college)
 
-# c
+# 8 c)
 Dfs.describe(college); # trimmed output
 show(stdout, "text/plain", Dfs.describe(college)) # full output
 
-# d
+# 8 d)
 drawPairplot(college, ["Top10perc", "Apps", "Enroll"])
 
-# e
+# 8 e)
 nrows, ncol = size(college);
 privCategNames = college.Private |> unique; # returned ["Yes", "No"]
 privCategVals = eachindex(privCategNames) |> reverse;
@@ -467,7 +470,7 @@ ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college type",
 Cmk.boxplot!(ax, xs, ys, whiskerwidth=0.5);
 fig
 
-# f
+# 8 f)
 # Top10perc - new students from top 10% of high school class
 college.Elite = ifelse.(college.Top10perc .> 50, "Yes", "No")
 nrows, ncol = size(college);
@@ -492,7 +495,7 @@ fig
 Sb.countmap(college.Elite)
 Sb.proportionmap(college.Elite)
 
-# g
+# 8 g)
 fig = Cmk.Figure(size=(800*4, 500*4));
 for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10perc"])
     ax = Cmk.Axis(fig[i, 1],
@@ -515,13 +518,14 @@ auto = Csv.read("./Auto.csv", Dfs.DataFrame,
                 missingstring="?")
 quantVars = ["mpg", "cylinders", "displacement", "horsepower", "weight",
              "acceleration", "year", "origin"]
-# b
+
+# 9 b)
 isPresent(val) = !ismissing(val)
 removeNAs(vec) = vec[isPresent.(vec)]
 getExtrema(vec) = removeNAs(vec) |> extrema
 Dfs.combine(auto, quantVars .=> getExtrema)
 
-# c
+# 9 c)
 getMean(vec) = removeNAs(vec) |> Stats.mean
 getStd(vec) = removeNAs(vec) |> Stats.std
 Dfs.combine(auto, quantVars .=> getMean)
@@ -529,14 +533,13 @@ Dfs.combine(auto, quantVars .=> getStd)
 # or together
 Dfs.combine(auto, quantVars .=> [getMean getStd])
 
-# d
+# 9 d)
 auto2 = auto[setdiff(1:end, 10:85), :]
 Dfs.combine(auto2, quantVars .=> getExtrema)
 Dfs.combine(auto2, quantVars .=> getMean)
 Dfs.combine(auto2, quantVars .=> getStd)
 
-
-# f
+# 9 f)
 preds = ["displacement", "horsepower", "weight", "acceleration", "year"]
 len = length(preds)
 fig = Cmk.Figure(size=(2000, 500 * len))
@@ -546,7 +549,6 @@ for (i, p) in enumerate(preds)
     Cmk.scatter!(ax, auto[!, p], auto[!, "mpg"])
 end
 fig
-
 
 # Exercise 10
 # use the Boston data set
