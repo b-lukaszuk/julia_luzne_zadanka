@@ -268,7 +268,7 @@ auto[!, ["mpg", "horsepower"]]
 isOK(n) = n in ["amc rebel sst", "ford torino"]
 auto[map(isOK, auto.name), :]
 # or more enigmatic
-auto[auto.name .∈ Ref(["amc rebel sst", "ford torino"])]
+auto[auto.name .∈ Ref(["amc rebel sst", "ford torino"]), :]
 
 # In [88]
 auto[[4, 5], :]
@@ -542,11 +542,11 @@ Dfs.combine(auto2, quantVars .=> getStd)
 # 9 f)
 preds = ["displacement", "horsepower", "weight", "acceleration", "year"]
 len = length(preds)
-fig = Cmk.Figure(size=(2000, 500 * len))
+fig = Cmk.Figure(size=(2000, 500 * len));
 for (i, p) in enumerate(preds)
     ax = Cmk.Axis(fig[i, 1], xlabel=p, ylabel="mpg",
-                  xlabelsize=30, ylabelsize=30)
-    Cmk.scatter!(ax, auto[!, p], auto[!, "mpg"])
+                  xlabelsize=30, ylabelsize=30);
+    Cmk.scatter!(ax, auto[!, p], auto[!, "mpg"]);
 end
 fig
 
