@@ -9,8 +9,8 @@ import StatsBase as Sb
 # below a simple code
 # not succinct, not error-proof, not optimized for speed, etc.
 
-const F64 = Float64
-const I64 = Int64
+const Flt = Float64
+const Int = Int64
 const Str = String
 const Vec = Vector
 
@@ -45,14 +45,18 @@ x_reshaped = reshape(x, (2, 3)) # colum major, not row major
 # currently v1.10.6, no change to row major possible
 x_reshaped # be careful, changing x elts, changes x_reshaped
 # so it acts similarily to python
+x
+x[2] = 10
+x
+x_reshaped
 
 # elts of Matrix{T} are copies of v
-function reshapeVec(v::Vec{T}, r::I64, c::I64, byRow::Bool)::Matrix{T} where T
-    len::I64 = length(v)
+function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
+    len::Int = length(v)
     @assert (len == r*c)
     m::Matrix{T} = Matrix{T}(undef, r, c)
-    stepBegin::I64 = 1
-    stepSize::I64 = (byRow ? c : r) - 1
+    stepBegin::Int = 1
+    stepSize::Int = (byRow ? c : r) - 1
     for i in 1:(byRow ? r : c)
         if byRow
             m[i, :] = v[stepBegin:(stepBegin+stepSize)]
@@ -220,7 +224,7 @@ first(auto, 2)
 auto = Csv.read(
     IOBuffer(replace(read("./Auto.data"), UInt8('\t') => UInt8(' '))),
     Dfs.DataFrame, delim=" ", ignorerepeated=true,
-    types=[F64, I64, F64, F64, F64, F64, I64, I64, Str])
+    types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str])
 first(auto, 2)
 
 # In [74]
@@ -233,7 +237,7 @@ show(stdout, "text/plain", unique(auto.horsepower))
 
 # In [77]
 auto = Csv.read("./Auto.csv", Dfs.DataFrame,
-                types=[F64, I64, F64, F64, F64, F64, I64, I64, Str],
+                types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
                 missingstring="?")
 show(stdout, "text/plain", unique(auto.horsepower))
 sum(auto.horsepower |> skipmissing)
@@ -404,11 +408,11 @@ function drawScatterOrHist!(df::Dfs.DataFrame, fig2modify::Cmk.Figure,
 end
 
 function drawPairplot(df::Dfs.DataFrame, colNames::Vec{Str})::Cmk.Figure
-    len::I64 = length(colNames)
+    len::Int = length(colNames)
     colTypes::Vec{Type} = eltype.(eachcol(df[!, colNames]))
-    numTypes::Vec{Bool} = [t in [F64, I64] for t in colTypes]
+    numTypes::Vec{Bool} = [t in [Flt, Int] for t in colTypes]
     @assert (1 < len < 6) "can handle between 2 to 5 columns only"
-    @assert all(numTypes) "all columns must be either F64 or I64"
+    @assert all(numTypes) "all columns must be either Flt or Int"
     fig::Cmk.Figure = Cmk.Figure(size=(900 * len, 600 * len))
     for r in 1:len, c in 1:len
         drawScatterOrHist!(df, fig, r, c, colNames[r], colNames[c])
@@ -514,7 +518,7 @@ fig
 # d) remove obs 10:85 and calculate, range, mean, std
 # f) which vars could be useful in predicting gas mileage (mpg) based on plots?
 auto = Csv.read("./Auto.csv", Dfs.DataFrame,
-                types=[F64, I64, F64, F64, F64, F64, I64, I64, Str],
+                types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
                 missingstring="?")
 quantVars = ["mpg", "cylinders", "displacement", "horsepower", "weight",
              "acceleration", "year", "origin"]
