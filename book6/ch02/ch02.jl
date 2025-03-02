@@ -392,15 +392,15 @@ Cmk.hist!(ax, auto.mpg, strokewidth=1, color=:red, bins=12);
 fig
 
 # In [110-111]
-function drawScatterOrHist!(df::Dfs.DataFrame, fig2modify::Cmk.Figure,
-                           row::Int, col::Int, rowName::Str, colName::Str)
+function drawScatterOrHist!(df::Dfs.DataFrame, fig!::Cmk.Figure,
+                            row::Int, col::Int, rowName::Str, colName::Str)
     @assert (row > 0 && col > 0) "row and col need to be positive integers"
     if rowName == colName
-        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel="Count",
+        ax = Cmk.Axis(fig![row, col], xlabel=rowName, ylabel="Count",
                       xlabelsize=22, ylabelsize=22)
         Cmk.hist!(ax, df[!, rowName], strokewidth=1)
     else
-        ax = Cmk.Axis(fig2modify[row, col], xlabel=rowName, ylabel=colName,
+        ax = Cmk.Axis(fig![row, col], xlabel=rowName, ylabel=colName,
                       xlabelsize=22, ylabelsize=22)
         Cmk.scatter!(ax, df[!, rowName], df[!, colName])
     end
