@@ -2,6 +2,7 @@ import CSV as Csv
 import CairoMakie as Cmk
 import DataFrames as Dfs
 import GLM as Glm
+import Statistics as St
 
 const Flt = Float64
 const Int = Int64
@@ -90,3 +91,49 @@ Glm.predict(model, new_df, interval=:confidence, level=0.95)
 Glm.predict(model, new_df, interval=:prediction, level=0.95)
 # interval=:prediction, 95% CI for predicted data points
 # https://en.wikipedia.org/wiki/Prediction_interval
+
+### Defining Functions
+
+# In [20-21]
+# use Cmk.ablines
+
+# In [22]
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Boston dataset",
+              xlabel = "lower status of the population (percent)",
+              ylabel = "medium value of owner occupied homes (in \$1000)");
+Cmk.scatter!(ax, x.lstat, x.medv);
+Cmk.ablines!(ax, Glm.coef(model)[1], Glm.coef(model)[2],
+             linewidth=3);
+fig
+
+# In [23]
+res = Glm.residuals(model)
+pred = Glm.predict(model)
+formula = string(Glm.formula(model))
+
+fig = Cmk.Figure(size=(800, 800));
+ax = Cmk.Axis(fig[1, 1],
+              title="Residuals vs Fitted\n" * formula,
+              xlabel="Fitted values", ylabel="Residuals");
+Cmk.scatter!(ax, pred, res);
+Cmk.hlines!(ax, 0, linestyle=:dash, color="gray");
+fig
+
+# In [24], not sure if that's entirely it, but it should do the trick
+infl = Glm.cooksdistance(model)
+quant = 0.99
+cutoff = St.quantile(infl, quant)
+outliers = infl[infl .> cutoff]
+inds = collect(1:nRows)[infl .> cutoff]
+
+fig = Cmk.Figure(size=(800, 800));
+ax = Cmk.Axis(fig[1, 1],
+              title="Leverage vs Index\n" * formula,
+              xlabel="Index", ylabel="Leverage");
+Cmk.scatter!(ax, 1:nRows, infl);
+Cmk.hlines!(ax, cutoff, linestyle=:dash, color="red");
+Cmk.text!(ax, 0, cutoff * 1.05, text="percentile = $(quant*100)");
+Cmk.text!(ax, inds, outliers .* 1.05, text=string.(inds));
+fig
