@@ -58,7 +58,7 @@ x[1:4, :]
 # In [10-11]
 # medv: median value of owner-occupied homes in $1000s.
 x.medv = boston.medv # response variable
-model = Glm.lm(Glm.@formula(medv ~ lstat), x)
+bostonModel = Glm.lm(Glm.@formula(medv ~ lstat), x)
 
 ### Using Transformations: Fit and Transform
 
@@ -69,10 +69,10 @@ design = Dfs.DataFrame(Dict(
 first(design, 4)
 
 # In [14]
-Glm.coeftable(model)
+Glm.coeftable(bostonModel)
 
 # In [15]
-for (cn, cv) in zip(Glm.coefnames(model), Glm.coef(model))
+for (cn, cv) in zip(Glm.coefnames(bostonModel), Glm.coef(bostonModel))
     println("$(rpad(cn, 15))$cv")
 end
 
@@ -80,60 +80,82 @@ end
 new_df = Dfs.DataFrame((lstat=[5, 10, 15]))
 
 # In [17]
-Glm.predict(model, new_df)
+Glm.predict(bostonModel, new_df)
 
 # In [18]
-Glm.predict(model, new_df, interval=:confidence, level=0.95)
+Glm.predict(bostonModel, new_df, interval=:confidence, level=0.95)
 # interval=:confidence, 95% CI for predicted mean
 # https://en.wikipedia.org/wiki/Confidence_interval
 
 # In [19]
-Glm.predict(model, new_df, interval=:prediction, level=0.95)
+Glm.predict(bostonModel, new_df, interval=:prediction, level=0.95)
 # interval=:prediction, 95% CI for predicted data points
 # https://en.wikipedia.org/wiki/Prediction_interval
 
 ### Defining Functions
 
 # In [20-21]
-# use Cmk.ablines
+# draws scatterplot (x, y) with simple linear regression line
+function drawScatterPlotWithRegLine(
+    df::Dfs.DataFrame, x::String, y::String,
+    title::String, xlabel::String, ylabel::String)::Cmk.Figure
+
+    model = Glm.lm(Glm.term(y) ~ Glm.term(x), df)
+    fig = Cmk.Figure()
+    ax = Cmk.Axis(fig[1, 1], title=title, xlabel = xlabel, ylabel = ylabel)
+    Cmk.scatter!(ax, df[:, x], df[:, y])
+    Cmk.ablines!(ax, Glm.coef(model)[1], Glm.coef(model)[2], linewidth=3)
+    return fig
+
+end
 
 # In [22]
-fig = Cmk.Figure();
-ax = Cmk.Axis(fig[1, 1],
-              title="Boston dataset",
-              xlabel = "lower status of the population (percent)",
-              ylabel = "medium value of owner occupied homes (in \$1000)");
-Cmk.scatter!(ax, x.lstat, x.medv);
-Cmk.ablines!(ax, Glm.coef(model)[1], Glm.coef(model)[2],
-             linewidth=3);
-fig
+drawScatterPlotWithRegLine(x, "lstat", "medv",
+                           "Boston dataset",
+                           "lower status of the population (percent)",
+                           "medium value of owner occupied homes (in \$1000)")
 
 # In [23]
-res = Glm.residuals(model)
-pred = Glm.predict(model)
-formula = string(Glm.formula(model))
+function drawResidualsVsFitted(
+    model::Glm.StatsModels.TableRegressionModel)::Cmk.Figure
 
-fig = Cmk.Figure(size=(800, 800));
-ax = Cmk.Axis(fig[1, 1],
-              title="Residuals vs Fitted\n" * formula,
-              xlabel="Fitted values", ylabel="Residuals");
-Cmk.scatter!(ax, pred, res);
-Cmk.hlines!(ax, 0, linestyle=:dash, color="gray");
-fig
+    res = Glm.residuals(model)
+    pred = Glm.predict(model)
+    formula = string(Glm.formula(model))
+    fig = Cmk.Figure()
+    ax = Cmk.Axis(fig[1, 1], title="Residuals vs Fitted\n" * formula,
+                  xlabel="Fitted values", ylabel="Residuals")
+    Cmk.scatter!(ax, pred, res)
+    Cmk.hlines!(ax, 0, linestyle=:dash, color="gray")
+    return fig
+
+end
+
+drawResidualsVsFitted(bostonModel)
+
 
 # In [24], not sure if that's entirely it, but it should do the trick
-infl = Glm.cooksdistance(model)
-quant = 0.99
-cutoff = St.quantile(infl, quant)
-outliers = infl[infl .> cutoff]
-inds = collect(1:nRows)[infl .> cutoff]
+function drawLeverageVsIndex(
+    model::Glm.StatsModels.TableRegressionModel,
+    cutoffPercentile::Int=99)::Cmk.Figure
+    @assert 0 <= cutoffPercentile <= 100
 
-fig = Cmk.Figure(size=(800, 800));
-ax = Cmk.Axis(fig[1, 1],
-              title="Leverage vs Index\n" * formula,
-              xlabel="Index", ylabel="Leverage");
-Cmk.scatter!(ax, 1:nRows, infl);
-Cmk.hlines!(ax, cutoff, linestyle=:dash, color="red");
-Cmk.text!(ax, 0, cutoff * 1.05, text="percentile = $(quant*100)");
-Cmk.text!(ax, inds, outliers .* 1.05, text=string.(inds));
-fig
+    infl = Glm.cooksdistance(model)
+    quant = cutoffPercentile / 100
+    cutoff = St.quantile(infl, quant)
+    outliers = infl[infl .> cutoff]
+    inds = collect(1:length(infl))
+    indsOutliers = inds[infl .> cutoff]
+    formula = string(Glm.formula(model))
+    fig = Cmk.Figure()
+    ax = Cmk.Axis(fig[1, 1], title="Leverage vs Index\n" * formula,
+                  xlabel="Index", ylabel="Leverage")
+    Cmk.scatter!(ax, inds, infl)
+    Cmk.hlines!(ax, cutoff, linestyle=:dash, color="red")
+    Cmk.text!(ax, 0, cutoff * 1.05, text="percentile = $cutoffPercentile")
+    Cmk.text!(ax, indsOutliers, outliers .* 1.05, text=string.(indsOutliers))
+    return fig
+
+end
+
+drawLeverageVsIndex(bostonModel)
