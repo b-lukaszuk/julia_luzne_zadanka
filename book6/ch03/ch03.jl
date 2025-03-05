@@ -100,9 +100,11 @@ function drawScatterPlotWithRegLine(
     df::Dfs.DataFrame, x::String, y::String,
     title::String, xlabel::String, ylabel::String)::Cmk.Figure
 
-    model = Glm.lm(Glm.term(y) ~ Glm.term(x), df)
-    fig = Cmk.Figure()
-    ax = Cmk.Axis(fig[1, 1], title=title, xlabel = xlabel, ylabel = ylabel)
+    model::Glm.StatsModels.TableRegressionModel = Glm.lm(
+        Glm.term(y) ~ Glm.term(x), df)
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1],
+                            title=title, xlabel = xlabel, ylabel = ylabel)
     Cmk.scatter!(ax, df[:, x], df[:, y])
     Cmk.ablines!(ax, Glm.coef(model)[1], Glm.coef(model)[2], linewidth=3)
     return fig
@@ -119,12 +121,12 @@ drawScatterPlotWithRegLine(x, "lstat", "medv",
 function drawResidualsVsFitted(
     model::Glm.StatsModels.TableRegressionModel)::Cmk.Figure
 
-    res = Glm.residuals(model)
-    pred = Glm.predict(model)
-    formula = string(Glm.formula(model))
-    fig = Cmk.Figure()
-    ax = Cmk.Axis(fig[1, 1], title="Residuals vs Fitted\n" * formula,
-                  xlabel="Fitted values", ylabel="Residuals")
+    res::Vec{Flt} = Glm.residuals(model)
+    pred::Vec{Flt} = Glm.predict(model)
+    formula::Str = string(Glm.formula(model))
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title="Residuals vs Fitted\n" * formula,
+                            xlabel="Fitted values", ylabel="Residuals")
     Cmk.scatter!(ax, pred, res)
     Cmk.hlines!(ax, 0, linestyle=:dash, color="gray")
     return fig
@@ -140,16 +142,16 @@ function drawLeverageVsIndex(
     cutoffPercentile::Int=99)::Cmk.Figure
     @assert 0 <= cutoffPercentile <= 100
 
-    infl = Glm.cooksdistance(model)
-    quant = cutoffPercentile / 100
-    cutoff = St.quantile(infl, quant)
-    outliers = infl[infl .> cutoff]
-    inds = collect(1:length(infl))
-    indsOutliers = inds[infl .> cutoff]
-    formula = string(Glm.formula(model))
-    fig = Cmk.Figure()
-    ax = Cmk.Axis(fig[1, 1], title="Leverage vs Index\n" * formula,
-                  xlabel="Index", ylabel="Leverage")
+    infl::Vec{Flt} = Glm.cooksdistance(model)
+    quant::Flt = cutoffPercentile / 100
+    cutoff::Flt = St.quantile(infl, quant)
+    outliers::Vec{Flt} = infl[infl .> cutoff]
+    inds::Vec{Int} = collect(1:length(infl))
+    indsOutliers::Vec{Int} = inds[infl .> cutoff]
+    formula::Str = string(Glm.formula(model))
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title="Leverage vs Index\n" * formula,
+                            xlabel="Index", ylabel="Leverage")
     Cmk.scatter!(ax, inds, infl)
     Cmk.hlines!(ax, cutoff, linestyle=:dash, color="red")
     Cmk.text!(ax, 0, cutoff * 1.05, text="percentile = $cutoffPercentile")
