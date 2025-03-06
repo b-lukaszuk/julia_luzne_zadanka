@@ -179,3 +179,11 @@ bostonModel2 = Glm.lm(
 terms = names(boston, Dfs.Not("medv", "age"));
 bostonModel3 = Glm.lm(
     Glm.term("medv") ~ sum(Glm.term.(terms)), boston)
+
+
+## 3.6.4 Multiple Goodness of Fit
+
+# In [29]
+vif_df = Dfs.DataFrame(term=terms, vif=Glm.vif(bostonModel3))
+
+# In [30] unnecessary, the code above did the trick, and did it well
