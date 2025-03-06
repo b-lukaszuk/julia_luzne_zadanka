@@ -161,3 +161,21 @@ function drawLeverageVsIndex(
 end
 
 drawLeverageVsIndex(bostonModel)
+
+## 3.6.3 Multiple Linear Regression
+
+# In [25]
+x = boston[:, ["medv", "lstat", "age"]];
+bostonModel1 = Glm.lm(Glm.term("medv") ~ sum(Glm.term.(["lstat", "age"])), x)
+
+# In [26]
+terms = names(boston, Dfs.Not("medv"));
+
+# In [27]
+bostonModel2 = Glm.lm(
+    Glm.term("medv") ~ sum(Glm.term.(terms)), boston)
+
+# In [28]
+terms = names(boston, Dfs.Not("medv", "age"));
+bostonModel3 = Glm.lm(
+    Glm.term("medv") ~ sum(Glm.term.(terms)), boston)
