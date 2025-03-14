@@ -140,8 +140,8 @@ drawResidualsVsFitted(bostonModel)
 function drawLeverageVsIndex(
     model::Glm.StatsModels.TableRegressionModel,
     cutoffPercentile::Int=99)::Cmk.Figure
-    @assert 0 <= cutoffPercentile <= 100
 
+    @assert 0 <= cutoffPercentile <= 100
     infl::Vec{Flt} = Glm.cooksdistance(model)
     quant::Flt = cutoffPercentile / 100
     cutoff::Flt = St.quantile(infl, quant)
@@ -157,7 +157,6 @@ function drawLeverageVsIndex(
     Cmk.text!(ax, 0, cutoff * 1.05, text="percentile = $cutoffPercentile")
     Cmk.text!(ax, indsOutliers, outliers .* 1.05, text=string.(indsOutliers))
     return fig
-
 end
 
 drawLeverageVsIndex(bostonModel)
@@ -187,3 +186,10 @@ bostonModel3 = Glm.lm(
 vif_df = Dfs.DataFrame(term=terms, vif=Glm.vif(bostonModel3))
 
 # In [30] unnecessary, the code above did the trick, and did it well
+
+
+## 3.6.5 Interaction Terms
+
+# In [31]
+x = boston[:, [:lstat, :age, :medv]]
+bostonModel4 = Glm.lm(Glm.@formula(medv ~ lstat * age), x)
