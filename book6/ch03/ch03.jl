@@ -193,3 +193,16 @@ vif_df = Dfs.DataFrame(term=terms, vif=Glm.vif(bostonModel3))
 # In [31]
 x = boston[:, [:lstat, :age, :medv]]
 bostonModel4 = Glm.lm(Glm.@formula(medv ~ lstat * age), x)
+
+## 3.6.6 Non-linear Transformations of the Predictiors
+
+# In [32]
+x = boston[:, [:lstat, :age, :medv]]
+# no orthogonal polynomials
+bostonModel5 = Glm.lm(Glm.@formula(medv ~ lstat + lstat^2 + age), x)
+
+# In [33]
+Glm.ftest(bostonModel1.model, bostonModel5.model)
+
+# In [34]
+drawResidualsVsFitted(bostonModel5)
