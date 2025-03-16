@@ -206,3 +206,20 @@ Glm.ftest(bostonModel1.model, bostonModel5.model)
 
 # In [34]
 drawResidualsVsFitted(bostonModel5)
+
+## 3.6.7 Qualitative Predictors
+carseats = Csv.read("./Carseats.csv", Dfs.DataFrame);
+names(carseats)
+
+terms = setdiff(names(carseats), ["Sales"])
+model = Glm.lm(
+    Glm.term("Sales") ~ sum(Glm.term.(terms)) +
+        Glm.term("Income")&Glm.term("Advertising") +
+        Glm.term("Price")&Glm.term("Age"),
+    carseats)
+# or
+model = Glm.lm(
+    Glm.term("Sales") ~ sum(Glm.term.(terms)) +
+        prod(Glm.term.(["Income", "Advertising"]))+
+        prod(Glm.term.(["Price", "Age"])),
+    carseats)
