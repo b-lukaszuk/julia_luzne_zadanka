@@ -223,3 +223,23 @@ model = Glm.lm(
         prod(Glm.term.(["Income", "Advertising"]))+
         prod(Glm.term.(["Price", "Age"])),
     carseats)
+
+# Exercise 8
+# simple linear regression on the Auto data set
+auto = Csv.read("./Auto.csv", Dfs.DataFrame, missingstring="?");
+names(auto)
+Dfs.describe(auto)
+
+# a) perform simple linear regression: mpg ~ horsepower
+# i. is there a relationship between the predictor and response?
+# ii. How strong is the relationship?
+# iii. is the relationship positive or negative
+# iv. what is the value of mpg with horsepower of 98, what are 95%
+# confidence and prediction intervals?
+automod = Glm.lm(Glm.@formula(mpg ~ horsepower), auto)
+# i. yes; ii. -0.158; iii. negative;
+# iv.
+df = Dfs.DataFrame(Dict(:horsepower => [98]))
+Glm.predict(automod, df)
+Glm.predict(automod, df, interval=:confidence, level=0.95)
+Glm.predict(automod, df, interval=:prediction, level=0.95)
