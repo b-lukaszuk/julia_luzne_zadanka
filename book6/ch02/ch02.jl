@@ -2,6 +2,7 @@ import CSV as Csv
 import CairoMakie as Cmk
 import DataFrames as Dfs
 import Distributions as Dsts
+import RDatasets as Rd
 import Random as Rand
 import Statistics as Stats
 import StatsBase as Sb
@@ -215,16 +216,19 @@ A[[2, 4], keep_cols]
 # In [73]
 # dataset description
 # https://islp.readthedocs.io/en/latest/datasets/Auto.html
-auto = Csv.read("./Auto.csv", Dfs.DataFrame)
+# auto = Csv.read("./Auto.csv", Dfs.DataFrame) # reading from file
+auto = Rd.dataset("ISLR", "Auto")
 first(auto, 2)
 
 # In [74]
 # workaround, still, better to use *.csv
 # delimiters are spaces (multiple) or tabs
-auto = Csv.read(
-    IOBuffer(replace(read("./Auto.data"), UInt8('\t') => UInt8(' '))),
-    Dfs.DataFrame, delim=" ", ignorerepeated=true,
-    types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str])
+# auto = Csv.read(
+#     IOBuffer(replace(read("./Auto.data"), UInt8('\t') => UInt8(' '))),
+#     Dfs.DataFrame, delim=" ", ignorerepeated=true,
+#     types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str])
+auto = Rd.dataset("ISLR", "Auto")
+Dfs.rename!(auto, lowercase.(names(auto))) # from RDatasets
 first(auto, 2)
 
 # In [74]
@@ -236,9 +240,11 @@ auto.horsepower # or
 show(stdout, "text/plain", unique(auto.horsepower))
 
 # In [77]
-auto = Csv.read("./Auto.csv", Dfs.DataFrame,
-                types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
-                missingstring="?")
+# auto = Csv.read("./Auto.csv", Dfs.DataFrame,
+#                 types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
+#                 missingstring="?")
+auto = Rd.dataset("ISLR", "Auto")
+Dfs.rename!(auto, lowercase.(names(auto))) # from RDatasets
 show(stdout, "text/plain", unique(auto.horsepower))
 sum(auto.horsepower |> skipmissing)
 
@@ -444,17 +450,19 @@ Dfs.describe(auto.mpg)
 # 8 a)-b)
 # dataset description
 # https://islp.readthedocs.io/en/latest/datasets/College.html
-college = Csv.read("./College.csv", Dfs.DataFrame);
-Dfs.rename!(college, :Column1 => "College");
+# college = Csv.read("./College.csv", Dfs.DataFrame);
+# Dfs.rename!(college, :Column1 => "College");
+college = Rd.dataset("ISLR", "College")
 first(college, 2)
 size(college)
 
 # 8 c)
-Dfs.describe(college); # trimmed output
+Dfs.describe(college) # trimmed output
 show(stdout, "text/plain", Dfs.describe(college)) # full output
 
 # 8 d)
-drawPairplot(college, ["Top10perc", "Apps", "Enroll"])
+# drawPairplot(college, ["Top10perc", "Apps", "Enroll"]) # from file
+drawPairplot(college, ["Top10Perc", "Apps", "Enroll"]) # from RDatasets
 
 # 8 e)
 nrows, ncol = size(college);
@@ -462,7 +470,8 @@ privCategNames = college.Private |> unique; # returned ["Yes", "No"]
 privCategVals = eachindex(privCategNames) |> reverse;
 privateMap = Dict(zip(privCategNames, privCategVals));
 xs = get.(Ref(privateMap), college.Private, 0);
-ys = college.Outstate;
+# ys = college.Outstate; # from file
+ys = college.OutState; # from RDatasets
 
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college type",
@@ -476,13 +485,15 @@ fig
 
 # 8 f)
 # Top10perc - new students from top 10% of high school class
-college.Elite = ifelse.(college.Top10perc .> 50, "Yes", "No")
+# college.Elite = ifelse.(college.Top10perc .> 50, "Yes", "No") # from file
+college.Elite = ifelse.(college.Top10Perc .> 50, "Yes", "No") # from RDatasets
 nrows, ncol = size(college);
 eliteCategNames = college.Elite |> unique; # returned ["No", "Yes"]
 eliteCategVals = eachindex(eliteCategNames);
 eliteateMap = Dict(zip(eliteCategNames, eliteCategVals));
 xs = get.(Ref(eliteateMap), college.Elite, 0);
-ys = college.Outstate;
+# ys = college.Outstate; # from file
+ys = college.OutState; # from RDatasets
 
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], title="Out-of-state tuition per college eliteness",
@@ -501,7 +512,8 @@ Sb.proportionmap(college.Elite)
 
 # 8 g)
 fig = Cmk.Figure(size=(800*4, 500*4));
-for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10perc"])
+# for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10perc"]) # from file
+for (i, var) in enumerate(["Apps", "Accept", "Enroll", "Top10Perc"]) # from RDatasets
     ax = Cmk.Axis(fig[i, 1],
                   title=var* " distribution",
                   xlabel=var, ylabel="Count",
@@ -517,9 +529,11 @@ fig
 # c) determine mean and standard deviation for each quantitative predictor
 # d) remove obs 10:85 and calculate, range, mean, std
 # f) which vars could be useful in predicting gas mileage (mpg) based on plots?
-auto = Csv.read("./Auto.csv", Dfs.DataFrame,
-                types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
-                missingstring="?")
+# auto = Csv.read("./Auto.csv", Dfs.DataFrame,
+#                 types=[Flt, Int, Flt, Flt, Flt, Flt, Int, Int, Str],
+#                 missingstring="?")
+auto = Rd.dataset("ISLR", "Auto")
+Dfs.rename!(auto, lowercase.(names(auto))) # from RDatasets
 quantVars = ["mpg", "cylinders", "displacement", "horsepower", "weight",
              "acceleration", "year", "origin"]
 
@@ -567,8 +581,11 @@ fig
 
 # dataset description
 # https://islp.readthedocs.io/en/latest/datasets/Boston.html
-boston = Csv.read("./Boston.csv", Dfs.DataFrame);
-Dfs.select!(boston, Dfs.Not(:Column1));
+# boston = Csv.read("./Boston.csv", Dfs.DataFrame);
+# Dfs.select!(boston, Dfs.Not(:Column1));
+boston = Rd.dataset("MASS", "Boston");
+Dfs.rename!(boston, lowercase.(names(boston))) # for RDatasets
+
 
 # 10 b)
 first(boston, 2)
