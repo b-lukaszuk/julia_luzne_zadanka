@@ -2,6 +2,7 @@ import CSV as Csv
 import CairoMakie as Cmk
 import DataFrames as Dfs
 import GLM as Glm
+import RDatasets as Rd
 import Statistics as St
 
 const Flt = Float64
@@ -43,8 +44,10 @@ sum(a)
 # In [8]
 # dataset description
 # https://islp.readthedocs.io/en/latest/datasets/Boston.html
-boston = Csv.read("./Boston.csv", Dfs.DataFrame);
-Dfs.select!(boston, Dfs.Not(:Column1));
+# boston = Csv.read("./Boston.csv", Dfs.DataFrame); # from file
+# Dfs.select!(boston, Dfs.Not(:Column1)); # from file
+boston = Rd.dataset("MASS", "Boston"); # from RDatasets
+Dfs.rename!(boston, lowercase.(names(boston))) # from RDatasets
 names(boston)
 
 # In [9]
@@ -208,7 +211,8 @@ Glm.ftest(bostonModel1.model, bostonModel5.model)
 drawResidualsVsFitted(bostonModel5)
 
 ## 3.6.7 Qualitative Predictors
-carseats = Csv.read("./Carseats.csv", Dfs.DataFrame);
+# carseats = Csv.read("./Carseats.csv", Dfs.DataFrame); # from file
+carseats = Rd.dataset("ISLR", "Carseats"); # from RDatasets
 names(carseats)
 
 terms = setdiff(names(carseats), ["Sales"])
@@ -226,7 +230,9 @@ model = Glm.lm(
 
 # Exercise 8
 # simple linear regression on the Auto data set
-auto = Csv.read("./Auto.csv", Dfs.DataFrame, missingstring="?");
+# auto = Csv.read("./Auto.csv", Dfs.DataFrame, missingstring="?"); # from file
+auto = Rd.dataset("ISLR", "Auto"); # from RDatasets
+Dfs.rename!(auto, lowercase.(names(auto))) # from RDatasets
 names(auto)
 Dfs.describe(auto)
 
