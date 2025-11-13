@@ -63,12 +63,14 @@ import StatsBase as Sb
 
 From the book, originally from [[https://en.wikipedia.org/wiki/Conjunction_fallacy][with Amos Tversky and Daniel Kahneman]].
 
-#+BEGIN-QUOTE
+#+BEGIN_QUOTE
+
 Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?
 
 1. Linda is a bank teller.
 2. Linda is a bank teller and is active in the feminist movement.
-#+END-QUOTE
+
+#+END_QUOTE
 
 * 1.2. Probability
 
