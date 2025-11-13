@@ -5,3 +5,61 @@
 
 * Link to the chapter online
 [[https://allendowney.github.io/ThinkBayes2/chap01.html][Chapter 1]]
+
+* Warning
+**The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.**
+
+* Environment
+
+#+BEGIN_SRC julia :results output :session j1
+
+cd(joinpath(homedir(), "Desktop", "julia_luzne_zadanka", "book4", "ch01"))
+
+using Pkg
+Pkg.activate(".")
+Pkg.status()
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+
+
+
+Activating project at `~/Desktop/julia_luzne_zadanka/book4/ch01`
+Status `~/Desktop/julia_luzne_zadanka/book4/ch01/Project.toml`
+  [336ed68f] CSV v0.10.15
+  [a93c6f00] DataFrames v1.8.1
+  [2913bbd2] StatsBase v0.34.8
+  [10745b16] Statistics v1.10.0
+#+end_example
+
+* Imports
+
+#+BEGIN_SRC julia :results output :session j1
+
+import CSV as Csv
+import DataFrames as Dfs
+import Statistics as St
+import StatsBase as Sb
+
+#+END_SRC
+
+#+RESULTS:
+:
+:
+:
+:
+
+* Test
+
+#+BEGIN_SRC julia :results output :session j1
+
+Sb.mean(1:10)
+
+#+END_SRC
+
+#+RESULTS:
+:
+: 5.5
