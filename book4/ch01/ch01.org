@@ -7,13 +7,20 @@
 [[https://allendowney.github.io/ThinkBayes2/chap01.html][Chapter 1]]
 
 * Warning
-**The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.**
+*The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.*
 
+* Data Files
+** gss_bayes
+[[https://raw.githubusercontent.com/AllenDowney/BiteSizeBayes/master/gss_bayes.csv][Link to the data file (gss_bayes.csv) online]]
 * Environment
 
 #+BEGIN_SRC julia :results output :session j1
 
 cd(joinpath(homedir(), "Desktop", "julia_luzne_zadanka", "book4", "ch01"))
+
+#+END_SRC
+
+#+BEGIN_SRC julia :results output :session j1
 
 using Pkg
 Pkg.activate(".")
@@ -52,14 +59,43 @@ import StatsBase as Sb
 :
 :
 
-* Test
+* 1.1. Linda the Banker
+
+From the book, originally from [[https://en.wikipedia.org/wiki/Conjunction_fallacy][with Amos Tversky and Daniel Kahneman]].
+
+```
+Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?
+
+1. Linda is a bank teller.
+2. Linda is a bank teller and is active in the feminist movement.
+```
+
+* 1.2. Probability
 
 #+BEGIN_SRC julia :results output :session j1
 
-Sb.mean(1:10)
+gss = Csv.read("./gss_bayes.csv", Dfs.DataFrame);
+first(gss, 3)
 
 #+END_SRC
 
 #+RESULTS:
 :
-: 5.5
+:
+: 3×7 DataFrame
+:  Row │ caseid  year   age      sex    polviews  partyid  indus10
+:      │ Int64   Int64  Float64  Int64  Float64   Float64  Float64
+: ─────┼───────────────────────────────────────────────────────────
+:    1 │      1   1974     21.0      1       4.0      2.0   4970.0
+:    2 │      2   1974     41.0      1       5.0      0.0   9160.0
+:    3 │      5   1974     58.0      2       6.0      1.0   2670.0
+
+
+The columns are:
++ caseid: Respondent identifier.
++ year: Year when the respondent was surveyed.
++ age: Respondent’s age when surveyed.
++ sex: Male or female.
++ polviews: Political views on a range from liberal to conservative.
++ partyid: Political party affiliation, Democrat, Independent, or Republican.
++ indus10: Code for the industry the respondent works in.
