@@ -14,19 +14,19 @@
 [[https://raw.githubusercontent.com/AllenDowney/BiteSizeBayes/master/gss_bayes.csv][Link to the data file (gss_bayes.csv) online]]
 * Environment
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 println("Let's go.")
 
 #+END_SRC
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
-cd(joinpath(homedir(), "Desktop", "julia_luzne_zadanka", "book4", "ch01"))
+cd(joinpath(homedir(), "Desktop", "julia/luzne_zadanka/book4/ch01")
 
 #+END_SRC
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 using Pkg
 Pkg.activate(".")
@@ -36,7 +36,7 @@ Pkg.status()
 
 * Imports
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 import CSV as Csv
 import DataFrames as Dfs
@@ -60,7 +60,7 @@ Linda is 31 years old, single, outspoken, and very bright. She majored in philos
 
 * 1.2. Probability
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 gss = Csv.read("./gss_bayes.csv", Dfs.DataFrame);
 first(gss, 3)
@@ -79,7 +79,7 @@ The columns are:
 * 1.3 Fraction of Bankers
 code for banking and related activities is 6870
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 banker = gss.indus10 .== 6870;
 sum(banker)
@@ -90,7 +90,7 @@ St.mean(banker) # prob banker
 * 1.4 The probability function
 
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 function getProb(a::Bv)::Flt
     return St.mean(a)
@@ -99,13 +99,13 @@ end
 #+END_SRC
 
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 getProb(banker)
 
 #+END_SRC
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC
 
 gss.sex |> unique # 1 - male, 2 - female
 female = gss.sex .== 2;
