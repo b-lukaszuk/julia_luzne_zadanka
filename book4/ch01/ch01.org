@@ -127,3 +127,29 @@ St.mean(banker) # prob banker
 :
 : 728
 : 0.014769730168391155
+
+* 1.4 The probability function
+
+
+#+BEGIN_SRC julia :results output :session j1
+
+function getProb(a::Bv)::Flt
+    return St.mean(a)
+end
+
+#+END_SRC
+
+
+#+BEGIN_SRC julia :results output :session j1
+
+getProb(banker)
+
+#+END_SRC
+
+#+BEGIN_SRC julia :results output :session j1
+
+gss.sex |> unique # 1 - male, 2 - female
+female = gss.sex .== 2;
+getProb(female)
+
+#+END_SRC
