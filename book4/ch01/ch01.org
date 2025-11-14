@@ -16,9 +16,22 @@
 
 #+BEGIN_SRC julia :results output :session j1
 
+println("Let's go.")
+
+#+END_SRC
+
+#+RESULTS:
+:
+: Let's go.
+
+#+BEGIN_SRC julia :results output :session j1
+
 cd(joinpath(homedir(), "Desktop", "julia_luzne_zadanka", "book4", "ch01"))
 
 #+END_SRC
+
+#+RESULTS:
+:
 
 #+BEGIN_SRC julia :results output :session j1
 
@@ -29,18 +42,14 @@ Pkg.status()
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-
-
-
-
-Activating project at `~/Desktop/julia_luzne_zadanka/book4/ch01`
-Status `~/Desktop/julia_luzne_zadanka/book4/ch01/Project.toml`
-  [336ed68f] CSV v0.10.15
-  [a93c6f00] DataFrames v1.8.1
-  [2913bbd2] StatsBase v0.34.8
-  [10745b16] Statistics v1.10.0
-#+end_example
+:
+:
+: Activating project at `~/Desktop/julia_luzne_zadanka/book4/ch01`
+: Status `~/Desktop/julia_luzne_zadanka/book4/ch01/Project.toml`
+:   [336ed68f] CSV v0.10.15
+:   [a93c6f00] DataFrames v1.8.1
+:   [2913bbd2] StatsBase v0.34.8
+:   [10745b16] Statistics v1.10.0
 
 * Imports
 
@@ -101,3 +110,20 @@ The columns are:
 + polviews: Political views on a range from liberal to conservative.
 + partyid: Political party affiliation, Democrat, Independent, or Republican.
 + indus10: Code for the industry the respondent works in.
+
+* 1.3 Fraction of Bankers
+code for banking and related activities is 6870
+
+#+BEGIN_SRC julia :results output :session j1
+
+banker = gss.indus10 .== 6870;
+sum(banker)
+St.mean(banker) # prob banker
+
+#+END_SRC
+
+#+RESULTS:
+:
+:
+: 728
+: 0.014769730168391155
