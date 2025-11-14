@@ -112,3 +112,27 @@ female = gss.sex .== 2;
 getProb(female)
 
 #+END_SRC
+
+* 1.5 Political Views and Parties (polviews)
+
+polviews:
+1 - extremely liberal, 2 - liberal, 3. slightly liberal,
+4 -moderate, 5 - slightly conservative, etc.
+
+#+BEGIN_SRC
+
+liberal = gss.polviews .<= 3;
+getProb(liberal)
+
+#+END_SRC
+
+partyid:
+0 - strong democrat, 1 - not strong democrat,
+2 - independent, near democrat, 3 - independent, etc.
+
+#+BEGIN_SRC
+
+democrat = gss.partyid .<= 1;
+getProb(democrat)
+
+#+END_SRC
