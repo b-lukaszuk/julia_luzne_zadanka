@@ -136,3 +136,31 @@ democrat = gss.partyid .<= 1;
 getProb(democrat)
 
 #+END_SRC
+
+* 1.6 Conjunction
+
+#+BEGIN_SRC
+
+getProb(banker)
+
+#+END_SRC
+
+
+#+BEGIN_SRC
+
+getProb(democrat)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getProb(banker .&& democrat)
+getProb(democrat .&& banker)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getProb(banker .&& democrat) == getProb(democrat .&& banker)
+
+#+END_SRC
