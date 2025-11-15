@@ -211,3 +211,17 @@ getConditionalProb(female, banker)
 getConditionalProb(banker, female)
 
 #+END_SRC
+
+* 1.9. Condition and Conjunction
+
+#+BEGIN_SRC
+
+getConditionalProb(female, liberal .&& democrat)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getConditionalProb(liberal .&& female, banker)
+
+#+END_SRC
