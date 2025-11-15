@@ -87,7 +87,7 @@ St.mean(banker) # prob banker
 
 #+END_SRC
 
-* 1.4 The probability function
+* 1.4. The probability function
 
 
 #+BEGIN_SRC
@@ -113,7 +113,7 @@ getProb(female)
 
 #+END_SRC
 
-* 1.5 Political Views and Parties (polviews)
+* 1.5. Political Views and Parties (polviews)
 
 polviews:
 1 - extremely liberal, 2 - liberal, 3. slightly liberal,
@@ -137,7 +137,7 @@ getProb(democrat)
 
 #+END_SRC
 
-* 1.6 Conjunction
+* 1.6. Conjunction
 
 #+BEGIN_SRC
 
@@ -162,5 +162,38 @@ getProb(democrat .&& banker)
 #+BEGIN_SRC
 
 getProb(banker .&& democrat) == getProb(democrat .&& banker)
+
+#+END_SRC
+
+* 1.7. Conditional Probability
+
+#+BEGIN_SRC
+
+# P(democrat|liberal)
+selected = democrat[liberal]
+getProb(selected)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+# P(female|banker)
+selected = female[banker]
+getProb(selected)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+function getConditionalProb(proposition::Bv, given::Bv)::Flt
+    @assert length(proposition) == length(given) "args must be of eql lengths"
+    return getProb(proposition[given])
+end
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getConditionalProb(liberal, female)
 
 #+END_SRC
