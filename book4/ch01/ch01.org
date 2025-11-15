@@ -197,3 +197,17 @@ end
 getConditionalProb(liberal, female)
 
 #+END_SRC
+
+* 1.8. Conditional Probability Is Not Commutative
+
+#+BEGIN_SRC
+
+getConditionalProb(female, banker)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getConditionalProb(banker, female)
+
+#+END_SRC
