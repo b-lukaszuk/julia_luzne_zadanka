@@ -240,7 +240,7 @@ Theorems:
 2. Using a conditional probability we can compute a conjunction.
 3. Using $P(A|B)$ we can compute $P(B|A)$
 
-** 1.10.1 Theorem 1
+** 1.10.1. Theorem 1
 
 \begin{equation}
 P(A|B) = \frac{P(A\ and\ B)}{P(B)}
@@ -267,5 +267,47 @@ or
 #+BEGIN_SRC
 
 getProb(female .&& banker) / getProb(banker)
+
+#+END_SRC
+
+** 1.10.2. Theorem 2
+
+Start with Theorem 1
+
+\begin{equation}
+P(A|B) = \frac{P(A\ and\ B)}{P(B)}
+\end{equation}
+
+multiply both sites by $P(B)$ to get
+
+\begin{equation}
+P(A|B) * P(B) = P(A\ and\ B)
+\end{equation}
+
+and swap
+
+\begin{equation}
+P(A\ and\ B) = P(A|B) * P(B)
+\end{equation}
+
+and swap to get Theorem 2.
+
+\begin{equation}
+P(A\ and\ B) =  P(B) * P(A|B)
+\end{equation}
+
+Let's test it.
+
+#+BEGIN_SRC
+
+getProb(liberal .&& democrat)
+
+#+END_SRC
+
+which is equal to:
+
+#+BEGIN_SRC
+
+getProb(democrat) * getConditionalProb(liberal, democrat)
 
 #+END_SRC
