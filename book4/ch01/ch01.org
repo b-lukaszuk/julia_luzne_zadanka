@@ -311,3 +311,47 @@ which is equal to:
 getProb(democrat) * getConditionalProb(liberal, democrat)
 
 #+END_SRC
+
+** 1.10.3. Theorem 3
+
+Since conjunction is commutative:
+
+\begin{equation}
+P(A\ and\ B) = P(B\ and\ A)
+\end{equation}
+
+Then if we apply Theorem 2 to both sides of that conjunction, then we get.
+
+\begin{equation}
+P(B) * P(A|B) = P(A) * P(B|A)
+\end{equation}
+
+Now, we divide both sides by $P(B)$
+
+\begin{equation}
+\frac{P(B) * P(A|B)}{P(B)} = \frac{P(A) * P(B|A)}{P(B)}
+\end{equation}
+
+which gives us Theorem 3 in the form:
+
+\begin{equation}
+P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
+\end{equation}
+
+*We call Theorem 3 the Bayes's Theorem*
+
+Let's check this out in practice.
+
+#+BEGIN_SRC
+
+getConditionalProb(liberal, banker)
+
+#+END_SRC
+
+and the equivalent:
+
+#+BEGIN_SRC
+
+getProb(liberal) * getConditionalProb(banker, liberal) / getProb(banker)
+
+#+END_SRC
