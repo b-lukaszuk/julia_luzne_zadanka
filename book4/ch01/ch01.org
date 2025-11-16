@@ -47,7 +47,7 @@ import StatsBase as Sb
 
 * 1.1. Linda the Banker
 
-From the book, originally from [[https://en.wikipedia.org/wiki/Conjunction_fallacy][with Amos Tversky and Daniel Kahneman]].
+From the book, originally from [[https://en.wikipedia.org/wiki/Conjunction_fallacy][Amos Tversky and Daniel Kahneman]].
 
 #+BEGIN_QUOTE
 
@@ -242,9 +242,7 @@ Theorems:
 
 ** 1.10.1. Theorem 1
 
-\begin{equation}
-P(A|B) = \frac{P(A\ and\ B)}{P(B)}
-\end{equation}
+$P(A|B) = \frac{P(A\ and\ B)}{P(B)}$
 
 Examples
 
@@ -274,27 +272,19 @@ getProb(female .&& banker) / getProb(banker)
 
 Start with Theorem 1
 
-\begin{equation}
-P(A|B) = \frac{P(A\ and\ B)}{P(B)}
-\end{equation}
+$P(A|B) = \frac{P(A\ and\ B)}{P(B)}$
 
 multiply both sites by $P(B)$ to get
 
-\begin{equation}
-P(A|B) * P(B) = P(A\ and\ B)
-\end{equation}
+$P(A|B) * P(B) = P(A\ and\ B)$
 
 and swap
 
-\begin{equation}
-P(A\ and\ B) = P(A|B) * P(B)
-\end{equation}
+$P(A\ and\ B) = P(A|B) * P(B)$
 
 and swap to get Theorem 2.
 
-\begin{equation}
-P(A\ and\ B) =  P(B) * P(A|B)
-\end{equation}
+$P(A\ and\ B) =  P(B) * P(A|B)$
 
 Let's test it.
 
@@ -316,27 +306,19 @@ getProb(democrat) * getConditionalProb(liberal, democrat)
 
 Since conjunction is commutative:
 
-\begin{equation}
-P(A\ and\ B) = P(B\ and\ A)
-\end{equation}
+$P(A\ and\ B) = P(B\ and\ A)$
 
 Then if we apply Theorem 2 to both sides of that conjunction, then we get.
 
-\begin{equation}
-P(B) * P(A|B) = P(A) * P(B|A)
-\end{equation}
+$P(B) * P(A|B) = P(A) * P(B|A)$
 
 Now, we divide both sides by $P(B)$
 
-\begin{equation}
-\frac{P(B) * P(A|B)}{P(B)} = \frac{P(A) * P(B|A)}{P(B)}
-\end{equation}
+$\frac{P(B) * P(A|B)}{P(B)} = \frac{P(A) * P(B|A)}{P(B)}$
 
 which gives us Theorem 3 in the form:
 
-\begin{equation}
-P(A|B) = \frac{P(A) * P(B|A)}{P(B)}
-\end{equation}
+$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
 
 *We call Theorem 3 the Bayes's Theorem*
 
