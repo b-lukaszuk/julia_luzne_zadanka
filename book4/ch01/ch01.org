@@ -231,7 +231,7 @@ getConditionalProb(liberal .&& female, banker)
 Symbols:
 
 - $P(A)$ - probability that event A
-- $P(A and B)$ - probability of conjunction (both event A and event B occurred)
+- $P(A\ and\ B)$ - probability of conjunction (both event A and event B occurred)
 - $P(A|B)$ - conditional probability of event A given that B happened
 
 Theorems:
@@ -239,3 +239,33 @@ Theorems:
 1. Using a conjunction we can compute a conditional probability.
 2. Using a conditional probability we can compute a conjunction.
 3. Using $P(A|B)$ we can compute $P(B|A)$
+
+** 1.10.1 Theorem 1
+
+\begin{equation}
+P(A|B) = \frac{P(A\ and\ B)}{P(B)}
+\end{equation}
+
+Examples
+
+#+BEGIN_SRC
+
+St.mean(female[banker])
+
+#+END_SRC
+
+or
+
+#+BEGIN_SRC
+
+getConditionalProb(female, banker)
+
+#+END_SRC
+
+or
+
+#+BEGIN_SRC
+
+getProb(female .&& banker) / getProb(banker)
+
+#+END_SRC
