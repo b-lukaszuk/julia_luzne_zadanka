@@ -225,3 +225,17 @@ getConditionalProb(female, liberal .&& democrat)
 getConditionalProb(liberal .&& female, banker)
 
 #+END_SRC
+
+* 1.10. Laws of Probability
+
+Symbols:
+
+- $P(A)$ - probability that event A
+- $P(A and B)$ - probability of conjunction (both event A and event B occurred)
+- $P(A|B)$ - conditional probability of event A given that B happened
+
+Theorems:
+
+1. Using a conjunction we can compute a conditional probability.
+2. Using a conditional probability we can compute a conjunction.
+3. Using $P(A|B)$ we can compute $P(B|A)$
