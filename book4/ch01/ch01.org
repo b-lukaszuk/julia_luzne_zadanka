@@ -337,3 +337,87 @@ and the equivalent:
 getProb(liberal) * getConditionalProb(banker, liberal) / getProb(banker)
 
 #+END_SRC
+
+* 1.11. The Law of Total Probability
+
+$P(A) + P(B_{1}\ and\ A) + P(B_{2}\ and\ A)$
+
+B1, B2 - two possibilities
+Necesary condition: B1, B2 are: mutually exclusive and collectively exhaustive
+
+#+BEGIN_SRC
+
+getProb(banker)
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+male = gss.sex .== 1
+
+getProb(male .&& banker) + getProb(female .&& banker)
+
+#+END_SRC
+
+Applying Theorem 2:
+
+$P(A\ and\ B)  = P(A|B) * P(B)$
+
+to:
+
+$P(A) + P(B_{1}\ and\ A) + P(B_{2}\ and\ A)$
+
+after swapping $P(B{i}\ and\ A)$ to $P(A\ and\ B_{i})$ first (since conjunction/multiplication is commutative) gives us:
+
+$P(A) + P(A\ and\ B_{1}) + P(A\ and\ B_{2})$
+
+prior to substitution of Theorem 2.
+
+After the substitution of Theorem 2 we get:
+
+$P(A)  = P(A|B_{1}) * P(B_{1}) + P(A|B_{2}) * P(B_{2})$
+
+equivalently written as:
+
+$P(A)  =  P(B_{1}) * P(A|B_{1}) +  P(B_{2}) * P(A|B_{2})$
+
+Let's test it with an example:
+
+#+BEGIN_SRC
+
+getProb(male) * getConditionalProb(banker, male) +
+    getProb(female) * getConditionalProb(banker, female)
+
+#+END_SRC
+
+With more than two conditions (more than two Bs) we write the formula as:
+
+$P(A)  = \sum{i} P(B_{i}) * P(A|B_{i})$
+
+Which we check for polviews.
+
+#+BEGIN_SRC
+
+B = gss.polviews
+bCounts = Sb.countmap(B)
+for k in sort(keys(bCounts) |> collect)
+    println("$k\t$(bCounts[k])")
+end
+
+#+END_SRC
+
+Where 4.0 represents 'Moderate', so prob of a moderate banker is:
+
+#+BEGIN_SRC
+
+getProb(B .== 4) * getConditionalProb(banker, B .== 4)
+
+#+END_SRC
+
+and the prob of banker is:
+
+#+BEGIN_SRC
+
+[getProb(B .== i) * getConditionalProb(banker, B .== i) for i in 1:7] |> sum
+
+#+END_SRC
