@@ -344,7 +344,7 @@ $P(A) + P(B_1\ and\ A) + P(B_2)\ and\ A)$
 
 B1, B2 - two possibilities
 
-Necesary condition: B1, B2 are: mutually exclusive and collectively exhaustive
+Necessary condition: B1, B2 are: mutually exclusive and collectively exhaustive
 
 #+BEGIN_SRC
 
