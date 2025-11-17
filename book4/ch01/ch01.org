@@ -422,3 +422,20 @@ and the prob of banker is:
 [getProb(B .== i) * getConditionalProb(banker, B .== i) for i in 1:7] |> sum
 
 #+END_SRC
+
+* 1.12. Summary
+
+The important things are the three Theorems, especially Theorem 3 aka Bayes's theorem:
+
+$P(A|B) = \frac{P(B|A) * P(A)}{P(B)}$
+
+or equivalently
+
+$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+
+and the law of total probability:
+
+$P(A)  = \sum_i P(B_i) * P(A|B_i)$
+
+Which are useful to compute the probability of interest in case we don't have
+all the data as we had it here.
