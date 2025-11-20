@@ -441,7 +441,7 @@ Which are useful to compute the probability of interest in case we don't have
 all the data as we had it here.
 
 * 1.13. Exercises
-** 1.13.1 Liberals and Democrats
+** 1.13.1. Liberals and Democrats
 Calculate P(liberal|democrat)
 
 #+BEGIN_SRC
@@ -455,5 +455,23 @@ and P(democrat|liberal)
 #+BEGIN_SRC
 
 getConditionalProb(democrat, liberal)
+
+#+END_SRC
+
+** 1.13.2. Linda the Banker
+
+Calculate P(Linda is a banker), remember she is a female (you know that already)
+
+#+BEGIN_SRC
+
+getConditionalProb(banker, female)
+
+#+END_SRC
+
+Calculate P(Linda is a banker and liberal democrat), remember she is a female (you know that already).
+
+#+BEGIN_SRC
+
+getConditionalProb(banker .&& liberal .&& democrat, female)
 
 #+END_SRC
