@@ -439,3 +439,21 @@ $P(A)  = \sum_i P(B_i) * P(A|B_i)$
 
 Which are useful to compute the probability of interest in case we don't have
 all the data as we had it here.
+
+* 1.13. Exercises
+** 1.13.1 Liberals and Democrats
+Calculate P(liberal|democrat)
+
+#+BEGIN_SRC
+
+getConditionalProb(liberal, democrat)
+
+#+END_SRC
+
+and P(democrat|liberal)
+
+#+BEGIN_SRC
+
+getConditionalProb(democrat, liberal)
+
+#+END_SRC
