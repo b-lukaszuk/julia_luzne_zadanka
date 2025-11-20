@@ -475,3 +475,40 @@ Calculate P(Linda is a banker and liberal democrat), remember she is a female (y
 getConditionalProb(banker .&& liberal .&& democrat, female)
 
 #+END_SRC
+
+** 1.13.3. Heart and Brain
+
+Given that:
+
+#+BEGIN_SRC
+
+young = gss.age .< 30
+getProb(young)
+
+#+END_SRC
+
+and
+
+#+BEGIN_SRC
+
+old = gss.age .>= 65
+getProb(old)
+
+#+END_SRC
+
+and
+
+#+BEGIN_SRC
+
+conservative = gss.polviews .>= 5
+getProb(conservative)
+
+#+END_SRC
+
+What is the probability that a randomly chosen respondent is a young liberal?
+
+What is the probability that a young person is liberal?
+
+What fraction of respondents are old conservatives?
+
+What fraction of conservatives are old?
