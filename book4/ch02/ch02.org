@@ -1,0 +1,37 @@
+#+TITLE: Ch02. Bayes’s Theorem
+#+STARTUP: overview
+#+STARTUP: indent
+#+OPTIONS: \n: t
+
+* Link to the chapter online
+[[https://allendowney.github.io/ThinkBayes2/chap02.html][Chapter 2]]
+
+* Warning
+*The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.*
+
+* Data Files
+TODO
+* Environment
+
+#+BEGIN_SRC
+
+println("Let's go.")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+cd(joinpath(homedir(), "Desktop", "julia/luzne_zadanka/book4/ch02")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+using Pkg
+Pkg.activate(".")
+Pkg.status()
+
+#+END_SRC
+
+* Imports
+TODO
