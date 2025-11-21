@@ -507,8 +507,32 @@ getProb(conservative)
 
 What is the probability that a randomly chosen respondent is a young liberal?
 
+#+BEGIN_SRC
+
+getProb(young .&& liberal)
+
+#+END_SRC
+
 What is the probability that a young person is liberal?
+
+#+BEGIN_SRC
+
+getConditionalProb(liberal, young)
+
+#+END_SRC
 
 What fraction of respondents are old conservatives?
 
+#+BEGIN_SRC
+
+getProb(old .&& conservative)
+
+#+END_SRC
+
 What fraction of conservatives are old?
+
+#+BEGIN_SRC
+
+getConditionalProb(old, conservative)
+
+#+END_SRC
