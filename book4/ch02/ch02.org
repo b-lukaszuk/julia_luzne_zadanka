@@ -39,3 +39,45 @@ TODO
 * Bayes's Theorem
 
 $P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+
+* 2.1. The Cookie Problem
+
+There are 2 bowls of cookies:
+
+- Bowl 1 contains 30 vanilla cookies and 10 chocolate cookies.
+- Bowl 2 contains 20 vanilla cookies and 20 chocolate cookies.
+
+  You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
+  What is the probability that it came from Bowl1?
+
+  My (BL) solution (I solved it alone):
+
+  30v+20v = 50v
+  P(B1) = 30/50 = 3/5 = 6/10 = 0.6
+  P(B2) = 20/50 = 2/5 = 2/10 = 0.4
+
+  or from Beyes's Theorem
+
+$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+
+after replacing A with B1 and B with V, we get:
+
+$P(B1|V) = \frac{P(B1) * P(V|B1)}{P(V)}$
+
+and
+
+$P(B1|V) = \frac{\frac{1}{2} * \frac{30}{40}}{\frac{30+20}{30+10+20+20}}$
+
+we get
+
+$P(B1|V) = \frac{\frac{30}{50}}{\frac{50}{80}}$
+
+which gives us
+
+$P(B1|V) = \frac{30}{\cancel{80}1} * \frac{\cancel{80}1}{50}$
+
+and finally
+
+$P(B1|V) = \frac{30}{50} = \frac{3}{5} = \frac{6}{10} = 0.6$
+
+Similar explanations were found in the subchapter of the book.
