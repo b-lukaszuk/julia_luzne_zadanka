@@ -47,18 +47,18 @@ There are 2 bowls of cookies:
 - Bowl 1 contains 30 vanilla cookies and 10 chocolate cookies.
 - Bowl 2 contains 20 vanilla cookies and 20 chocolate cookies.
 
-  You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
-  What is the probability that it came from Bowl1?
+You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
+What is the probability that it came from Bowl1?
 
-  My (BL) solution (I solved it alone):
+My (BL) solution (I solved it alone):
 
-  30v+20v = 50v
+30v+20v = 50v
 
-  P(B1) = 30/50 = 3/5 = 6/10 = 0.6
+P(B1) = 30/50 = 3/5 = 6/10 = 0.6
 
-  P(B2) = 20/50 = 2/5 = 2/10 = 0.4
+P(B2) = 20/50 = 2/5 = 2/10 = 0.4
 
-  or from Beyes's Theorem
+or from Beyes's Theorem
 
 $P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
 
@@ -82,7 +82,7 @@ we cancel out the 80s (replace them with 1s) and finally get:
 
 $P(B1|V) = \frac{30}{50} = \frac{3}{5} = \frac{6}{10} = 0.6$
 
-Similar explanations were found in the subchapter of the book.
+Similar explanations were found in the sub-chapter of the book.
 
 * 2.1. Diachronic Bayes
 
@@ -96,7 +96,23 @@ $P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
 
 where:
 
-- P(H) - prior, prob of hypothesis before we see data
-- P(H|D) - posterior, prob of hypothesis after we wee data
-- P(D|H) - likelihood, prob of data under hypothesis
+- P(H) - *prior*, prob of hypothesis before we see data
+- P(H|D) - *posterior*, prob of hypothesis after we wee data
+- P(D|H) - *likelihood*, prob of data under hypothesis
 - P(D) - total prob of the data under any hypothesis
+
+*prior* sometimes can be computed, but sometimes it is subjectively estimated.
+
+total probability of data under any hypothesis is most difficult to calculate, but
+we often simplify it by assuming that the hypothesis are:
+
+- mutually exclusive (only one of them can be true)
+- collectively exhaustive (one of them must be true)
+
+In general we express it with the formula:
+
+$P(D) = \sum_i P(H_i) * P(D|H_i)$
+
+compare it with: 1.11. The Law of Total Probability.
+
+The process in this section, using data and prior probability to compute a posterior probability is called a *Bayesian update*.
