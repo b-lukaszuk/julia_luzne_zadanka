@@ -53,7 +53,9 @@ There are 2 bowls of cookies:
   My (BL) solution (I solved it alone):
 
   30v+20v = 50v
+
   P(B1) = 30/50 = 3/5 = 6/10 = 0.6
+
   P(B2) = 20/50 = 2/5 = 2/10 = 0.4
 
   or from Beyes's Theorem
@@ -74,9 +76,9 @@ $P(B1|V) = \frac{\frac{30}{50}}{\frac{50}{80}}$
 
 which gives us
 
-$P(B1|V) = \frac{30}{\cancel{80}1} * \frac{\cancel{80}1}{50}$
+$P(B1|V) = \frac{30}{80} * \frac{80}{50}$
 
-and finally
+we cancel out the 80s (replace them with 1s) and finally get:
 
 $P(B1|V) = \frac{30}{50} = \frac{3}{5} = \frac{6}{10} = 0.6$
 
