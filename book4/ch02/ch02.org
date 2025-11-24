@@ -83,3 +83,20 @@ we cancel out the 80s (replace them with 1s) and finally get:
 $P(B1|V) = \frac{30}{50} = \frac{3}{5} = \frac{6}{10} = 0.6$
 
 Similar explanations were found in the subchapter of the book.
+
+* 2.1. Diachronic Bayes
+
+Diachronic means 'related to change over time' (as we see evidence)
+
+$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+
+we replace A with H for hypothesis, and B with D for data and get:
+
+$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
+
+where:
+
+- P(H) - prior, prob of hypothesis before we see data
+- P(H|D) - posterior, prob of hypothesis after we wee data
+- P(D|H) - likelihood, prob of data under hypothesis
+- P(D) - total prob of the data under any hypothesis
