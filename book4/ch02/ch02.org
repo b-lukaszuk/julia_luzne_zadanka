@@ -199,3 +199,9 @@ table2
 #+END_SRC
 
 P(6-sided dice | 1) = 4//9
+
+* 2.5. The Monty Hall Problem.
+
+Three doors: 1, 2, 3. Prize behind one (a car). Goats behind other doors.  First
+you pick Door 1. The host opens Door 3 and shows a goat. You may change your
+choice now to Door 2. Would you? Is it worth it?
