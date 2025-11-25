@@ -34,7 +34,12 @@ Pkg.status()
 #+END_SRC
 
 * Imports
-TODO
+
+#+BEGIN_SRC
+
+import DataFrames as Dfs
+
+#+END_SRC
 
 * Bayes's Theorem
 
@@ -84,7 +89,7 @@ $P(B1|V) = \frac{30}{50} = \frac{3}{5} = \frac{6}{10} = 0.6$
 
 Similar explanations were found in the sub-chapter of the book.
 
-* 2.1. Diachronic Bayes
+* 2.2. Diachronic Bayes
 
 Diachronic means 'related to change over time' (as we see evidence)
 
@@ -116,3 +121,32 @@ $P(D) = \sum_i P(H_i) * P(D|H_i)$
 compare it with: 1.11. The Law of Total Probability.
 
 The process in this section, using data and prior probability to compute a posterior probability is called a *Bayesian update*.
+
+* 2.3. Bayes Tables
+
+Bayes Tables are convenient tools for Bayesian update.
+
+#+BEGIN_SRC
+
+table = Dfs.DataFrame(Dict("bowl" => [1, 2]))
+table.prior = [1/2, 1/2]
+table.likelihood = [30/40, 20/40]
+table.unnorm = table.prior .* table.likelihood
+
+#+END_SRC
+
+`unnorm` column, because those are 'unnormalized posteriors', each is a product of:
+
+$P(H_i)*P(D|H_i)$
+
+(see: numerator of the Bayes Theorem) after summing them up we get:
+
+$P(D) = \sum_i P(D_i) * P(D|H_i)$
+
+So the posterior is:
+
+#+BEGIN_SRC
+
+table.posterior = table.unnorm ./ sum(table.unnorm)
+
+#+END_SRC
