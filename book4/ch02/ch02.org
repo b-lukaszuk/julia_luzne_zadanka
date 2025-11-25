@@ -150,3 +150,52 @@ So the posterior is:
 table.posterior = table.unnorm ./ sum(table.unnorm)
 
 #+END_SRC
+
+* 2.4. The Dice Problem
+
+You have a box with a 6-, 8-, 12-sided dice. You choose one at random, roll it, and got 1.
+What is the P(6-sided dice | 1)?
+
+First a little helper function.
+
+#+BEGIN_SRC
+
+function rep(x::A, times::Int)::Vec{A} where A
+    @assert times > 1 "times must be greater than 1"
+    return [x for _ in 1:times]
+end
+
+#+END_SRC
+
+Now the table with data.
+
+#+BEGIN_SRC
+
+table2 = Dfs.DataFrame(Dict("n sides on dice" => [6, 8, 12]))
+table2.prior = rep(1//3, 3)
+table2.likelihood = [1//6, 1//8, 1//12]
+
+#+END_SRC
+
+Now an update function.
+
+#+BEGIN_SRC
+
+function bayesUpdate!(df::Dfs.DataFrame)
+    df.unnorm = df.prior .* df.likelihood
+    df.posterior = df.unnorm ./ sum(df.unnorm)
+    return nothing
+end
+
+#+END_SRC
+
+And the update itself.
+
+#+BEGIN_SRC
+
+bayesUpdate!(table2)
+table2
+
+#+END_SRC
+
+P(6-sided dice | 1) = 4//9
