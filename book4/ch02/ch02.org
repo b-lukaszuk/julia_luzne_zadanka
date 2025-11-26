@@ -264,3 +264,13 @@ df
 ** 2.7.2. Siblings
 Someone got two children. One of them is a girl.
 What is P(gg)?
+
+#+BEGIN_SRC
+
+df = Dfs.DataFrame(Dict("children" => ["gg", "gb or bg", "bb"]))
+df.prior = [1//2 * 1//2, (1//2 * 1//2) * 2, 1//2 * 1//2] # P(H)
+df.likelihood = [1, 1, 0] # P(D|H)
+bayesUpdate!(df)
+df
+
+#+END_SRC
