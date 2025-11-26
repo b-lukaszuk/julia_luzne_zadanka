@@ -289,3 +289,16 @@ bayesUpdate!(df)
 df
 
 #+END_SRC
+
+*** 2.7.3.2. Question 2
+You choose Door 1, Monty opens Door 3, what is P(car behind Door 2)
+
+#+BEGIN_SRC
+
+df = Dfs.DataFrame(Dict("Car benind Door" => 1:3))
+df.prior = rep(1//3, 3) # P(H)
+df.likelihood = [0, 1, 0] # P(D|H)
+bayesUpdate!(df)
+df
+
+#+END_SRC
