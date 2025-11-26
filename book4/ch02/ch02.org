@@ -243,3 +243,20 @@ There's not much difference between using Bayes's Theorem and Bayes's table to
 solve a problem like the ones presented in this chapter. Still, Bayes's table
 makes it easier to compute the total probability of the data, especially for
 problems with more than two hypothesis.
+
+* 2.7. Exercises
+** 2.7.1. Coins
+You got 2 coins in a box, regular P(head) = 0.5, trick: P(head) = 1 (heads on
+both sides).
+
+You choose a coin at random and see head at one side. What is P(trick coin)?
+
+#+BEGIN_SRC
+
+df = Dfs.DataFrame(Dict("coin" => ["regular", "trick"]))
+df.prior = rep(1//2, 2) # P(H)
+df.likelihood = [1//2, 1] # P(D|H)
+bayesUpdate!(df)
+df
+
+#+END_SRC
