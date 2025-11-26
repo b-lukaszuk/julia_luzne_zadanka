@@ -237,3 +237,9 @@ table3
 
 #+END_SRC
 
+* 2.6. Summary
+
+There's not much difference between using Bayes's Theorem and Bayes's table to
+solve a problem like the ones presented in this chapter. Still, Bayes's table
+makes it easier to compute the total probability of the data, especially for
+problems with more than two hypothesis.
