@@ -260,3 +260,7 @@ bayesUpdate!(df)
 df
 
 #+END_SRC
+
+** 2.7.2. Siblings
+Someone got two children. One of them is a girl.
+What is P(gg)?
