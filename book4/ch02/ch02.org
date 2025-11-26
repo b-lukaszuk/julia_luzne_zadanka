@@ -302,3 +302,12 @@ bayesUpdate!(df)
 df
 
 #+END_SRC
+
+** 2.7.4. M&M's
+
+In 1994, the colors M&M’s were: 30% Brown, 20% Yellow, 20% Red, 10% Green, 10% Orange, 10% Tan.
+In 1996:  24% Blue , 20% Green, 16% Orange, 14% Yellow, 13% Red, 13% Brown.
+
+You got two identical bags one from yr 1994, the other from 1996.  You pick one
+from each at random.  Colors are: yellow and green. What is P(yellow was taken
+from 1994 bag)?
