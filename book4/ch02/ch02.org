@@ -311,3 +311,16 @@ In 1996:  24% Blue , 20% Green, 16% Orange, 14% Yellow, 13% Red, 13% Brown.
 You got two identical bags one from yr 1994, the other from 1996.  You pick one
 from each at random.  Colors are: yellow and green. What is P(yellow was taken
 from 1994 bag)?
+
+#+BEGIN_SRC
+
+df = Dfs.DataFrame(Dict("Bags order" => ["94_96", "96_94"]))
+df.prior = rep(1//2, 2) # P(H)
+# bag1, bag2 => yellow, green
+# 1994: 20% yellow, 10% green
+# 1996: 14% yellow, 20% green
+df.likelihood = [0.2 * 0.2, 0.14 * 0.1] # P(D|H)
+bayesUpdate!(df)
+df
+
+#+END_SRC
