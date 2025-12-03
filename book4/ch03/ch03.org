@@ -37,7 +37,51 @@ Pkg.status()
 
 #+BEGIN_SRC
 
-# none yet
+import DataFrames as Dfs
 
 #+END_SRC
 
+
+* Pmf
+** struct definition
+
+#+BEGIN_SRC
+
+mutable struct Pmf{T}
+    names::Vector{T} # names of hypotheses
+    priors::Vector{Flt} # priors for each hypothesis
+    likelihoods::Vector{Flt} # likelihoods for each hypothesis
+    posteriors::Vector{Flt} # posteriors for each hypothesis
+
+    Pmf(ns::Vector{Int}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Int}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
+
+    Pmf(ns::Vector{Flt}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Flt}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
+
+    Pmf(ns::Vector{Str}, prs) =
+        (length(ns) != length(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Str}(
+            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+        )
+end
+
+function Base.show(io::IO, pmf::Pmf)
+    trim::Bool = length(pmf.names) > 10
+    result::Str = "names: $(join(trim ? pmf.names[1:10] : pmf.names, ", "))$(trim ? ", ..." : "")\n"
+    result = result * "priors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.priors[1:10] : pmf.priors), ", "))$(trim ? ", ..." : "")\n"
+    result = result * "likelihoods: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.likelihoods[1:10] : pmf.likelihoods), ", "))$(trim ? ", ..." : "")\n"
+    result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.posteriors[1:10] : pmf.posteriors),  ", "))$(trim ? ", ..." : "")\n"
+    print(io, result)
+end
+
+#+END_SRC
