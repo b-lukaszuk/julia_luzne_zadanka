@@ -85,3 +85,35 @@ function Base.show(io::IO, pmf::Pmf)
 end
 
 #+END_SRC
+
+** helper fns
+
+#+BEGIN_SRC
+
+function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
+    return Dfs.DataFrame(
+        (;
+        names=pmf.names,
+        priors=pmf.priors,
+        likelihoods=pmf.likelihoods,
+        posteriors=pmf.posteriors
+         )
+    )
+end
+
+function getCounts(v::Vector{T})::Dict{T,Int} where {T}
+    result::Dict{T,Int} = Dict()
+    for elt in v
+        result[elt] = get(result, elt, 0) + 1
+    end
+    return result
+end
+
+function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
+    counts::Dict{T,Int} = getCounts(seq)
+    sortedKeys::Vector{T} = keys(counts) |> collect |> sort
+    sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
+end
+
+#+END_SRC
