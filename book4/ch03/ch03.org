@@ -142,3 +142,46 @@ c(sth) = collect(sth)
 str(sth) = string(sth)
 
 #+END_SRC
+
+* 3.1. Distributions
+
+a distribution - a set of possible outcomes and their corresponding probabilities
+
+* 3.2. Probability Mass Functions
+
+PMF - maps each possible outcome to its probability (for discrete distributions).
+
+#+BEGIN_SRC
+
+coin = Pmf(["heads", "tails"], rep(1/2, 2))
+coin |> pmf2df
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+die = getPmfFromSeq(c(1:6))
+die |> pmf2df
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+letters = getPmfFromSeq(str.(c("Mississippi")))
+letters |> pmf2df
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+getPriorByName(letters, "s")
+getPriorByName(letters, "t")
+
+#+END_SRC
+
+
+#+BEGIN_SRC
+
+getPriorsByNames(die, [1, 4, 7])
+
+#+END_SRC
