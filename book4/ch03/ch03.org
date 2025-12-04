@@ -41,7 +41,6 @@ import DataFrames as Dfs
 
 #+END_SRC
 
-
 * Pmf
 ** struct definition
 
@@ -115,5 +114,31 @@ function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
     sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
     return Pmf(sortedKeys, sortedVals)
 end
+function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) where {T}
+    ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
+    return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
+end
+
+function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
+    return getFieldValsEqName(pmf, name, "priors", 0.0)
+end
+
+function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
+    return map(n -> getPriorByName(pmf, n), names)
+end
+
+#+END_SRC
+
+** other fns (mostly one-liners)
+
+#+BEGIN_SRC
+
+function rep(x::A, times::Int)::Vec{A} where A
+    @assert times > 1 "times must be greater than 1"
+    return [x for _ in 1:times]
+end
+
+c(sth) = collect(sth)
+str(sth) = string(sth)
 
 #+END_SRC
