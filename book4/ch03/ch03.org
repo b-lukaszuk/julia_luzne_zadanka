@@ -127,6 +127,32 @@ function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where 
     return map(n -> getPriorByName(pmf, n), names)
 end
 
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64}) where {T}
+    pmf.likelihoods = newLikelihoods
+end
+
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64}) where {T}
+    pmf.posteriors = newPosteriors
+end
+
+"""
+        normalizes pmf.posteriors so they add up to 1
+"""
+function normalizePosteriors!(pmf::Pmf{T}) where {T}
+    pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
+end
+
+"""
+        updates posteriors (priors .* likeliehoods)
+        if normalize = true, then posteriors are normalized
+"""
+function updatePosteriors!(pmf::Pmf{T}, normalize::Bool=true) where {T}
+    setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
+    if normalize
+        normalizePosteriors!(pmf)
+    end
+end
+
 #+END_SRC
 
 ** other fns (mostly one-liners)
@@ -183,5 +209,36 @@ getPriorByName(letters, "t")
 #+BEGIN_SRC
 
 getPriorsByNames(die, [1, 4, 7])
+
+#+END_SRC
+
+* 3.3. The Cookie Problem Revisited
+
+There are 2 bowls of cookies:
+
+- Bowl 1 contains 30 vanilla cookies and 10 chocolate cookies.
+- Bowl 2 contains 20 vanilla cookies and 20 chocolate cookies.
+
+You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
+What is the probability that it came from Bowl1?
+
+#+BEGIN_SRC
+
+cookies = getPmfFromSeq(["Bowl 1", "Bowl 2"])
+cookies |> pmf2df
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+setLikelihoods!(cookies, [0.75, 0.5])
+cookies |> pmf2df
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+updatePosteriors!(cookies)
+cookies |> pmf2df
 
 #+END_SRC
