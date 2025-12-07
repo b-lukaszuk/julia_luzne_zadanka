@@ -146,10 +146,11 @@ end
         updates posteriors (priors .* likeliehoods)
         if normalize = true, then posteriors are normalized
 """
-function bayesUpdate!(df::Dfs.DataFrame)
-    df.unnorm = df.prior .* df.likelihood
-    df.posterior = df.unnorm ./ sum(df.unnorm)
-    return nothing
+function bayesUpdate!(pmf::Pmf{T}, normalize::Bool=true) where {T}
+    setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
+    if normalize
+        normalizePosteriors!(pmf)
+    end
 end
 
 #+END_SRC
