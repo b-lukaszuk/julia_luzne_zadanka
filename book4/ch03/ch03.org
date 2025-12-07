@@ -231,7 +231,7 @@ cookies |> pmf2df
 
 #+BEGIN_SRC
 
-setLikelihoods!(cookies, [0.75, 0.5])
+setLikelihoods!(cookies, [30/40, 20/40])
 cookies |> pmf2df
 
 #+END_SRC
@@ -239,6 +239,29 @@ cookies |> pmf2df
 #+BEGIN_SRC
 
 bayesUpdate!(cookies)
+cookies |> pmf2df
+
+#+END_SRC
+
+You put the cookie back to the bowl and draw again from the same bowl.
+The second cookie is also vanilla. What are the posteriors now?
+
+#+BEGIN_SRC
+
+cookies.posteriors .*= cookies.likelihoods
+normalizePosteriors!(cookies)
+cookies |> pmf2df
+
+#+END_SRC
+
+We do the same thing again, but this time we get a chocolate cookie.
+What are the posteriors now?
+
+#+BEGIN_SRC
+
+setLikelihoods!(cookies, [10/40, 20/40])
+cookies.posteriors .*= cookies.likelihoods
+normalizePosteriors!(cookies)
 cookies |> pmf2df
 
 #+END_SRC
