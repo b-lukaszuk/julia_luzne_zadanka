@@ -265,3 +265,15 @@ normalizePosteriors!(cookies)
 cookies |> pmf2df
 
 #+END_SRC
+
+* 3.4. 101 Bowls
+
+Cookie problem with 101 Bowls (vanilla and/or chocolate cookies):
+
+- Bowl 1 contains 0% vanilla cookies,
+- Bowl 2 contains 1% vanilla cookies,
+- Bowl 99 contains 99% vanilla cookies,
+- Bowl 100 contains 100% vanilla cookies,
+
+You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
+What is the probability that it came from Bowl x?
