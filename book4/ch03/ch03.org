@@ -277,3 +277,21 @@ Cookie problem with 101 Bowls (vanilla and/or chocolate cookies):
 
 You choose a bowl at random and choose a cookie from it. The cookie is vanilla.
 What is the probability that it came from Bowl x?
+
+#+BEGIN_SRC
+
+bowls101 = getPmfFromSeq(c(0:100))
+bowls101.likelihoods = bowls101.names ./ 100
+bayesUpdate!(bowls101)
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Posterior after one vanilla cookie",
+              xlabel="Bowl #", ylabel="PMF",
+              xticks=(0:20:100), yticks=(0:0.0025:0.02)
+              );
+Cmk.lines!(ax, bowls101.names, bowls101.posteriors, color=:blue, label="posterior");
+Cmk.lines!(ax, bowls101.names, bowls101.priors, color=:gray, label="prior");
+fig
+
+#+END_SRC
