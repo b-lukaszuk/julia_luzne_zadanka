@@ -292,6 +292,28 @@ ax = Cmk.Axis(fig[1, 1],
               );
 Cmk.lines!(ax, bowls101.names, bowls101.posteriors, color=:blue, label="posterior");
 Cmk.lines!(ax, bowls101.names, bowls101.priors, color=:gray, label="prior");
+Cmk.axislegend(position=:lt)
+fig
+
+#+END_SRC
+
+Now we put the cookie back, and draw again. This time vanilla cookie (again).
+What are the posteriors?
+
+#+BEGIN_SRC
+
+bowls101.posteriors .*= bowls101.likelihoods
+normalizePosteriors!(bowls101)
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Posterior after two vanilla cookie",
+              xlabel="Bowl #", ylabel="PMF",
+              xticks=(0:20:100), yticks=(0:0.005:0.03)
+              );
+Cmk.lines!(ax, bowls101.names, bowls101.posteriors, color=:blue, label="posterior");
+Cmk.lines!(ax, bowls101.names, bowls101.priors, color=:gray, label="prior");
+Cmk.axislegend(position=:lt)
 fig
 
 #+END_SRC
