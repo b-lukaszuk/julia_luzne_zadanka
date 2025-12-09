@@ -317,3 +317,13 @@ Cmk.axislegend(position=:lt)
 fig
 
 #+END_SRC
+
+How about we put the cookie back and draw again. This time we got chocolate cookie.
+What are the posteriors?
+
+#+BEGIN_SRC
+
+cookies = getPmfFromSeq(["Bowl 1", "Bowl 2"])
+cookies |> pmf2df
+
+#+END_SRC
