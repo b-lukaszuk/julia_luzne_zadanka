@@ -46,6 +46,8 @@ import DataFrames as Dfs
 
 #+BEGIN_SRC
 
+len(collection) = length(collection)
+
 mutable struct Pmf{T}
     names::Vector{T} # names of hypotheses
     priors::Vector{Flt} # priors for each hypothesis
