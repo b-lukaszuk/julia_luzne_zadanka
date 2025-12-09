@@ -55,33 +55,40 @@ mutable struct Pmf{T}
     posteriors::Vector{Flt} # posteriors for each hypothesis
 
     Pmf(ns::Vector{Int}, prs) =
-        (length(ns) != length(prs)) ?
+        (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Int}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
 
     Pmf(ns::Vector{Flt}, prs) =
-        (length(ns) != length(prs)) ?
+        (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Flt}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
 
     Pmf(ns::Vector{Str}, prs) =
-        (length(ns) != length(prs)) ?
+        (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Str}(
-            ns, (prs ./ sum(prs)), zeros(length(ns)), zeros(length(ns))
+            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
 end
 
+function getFirstN(v::Vec{A}, n::Int)::Str where A<:Union{Flt, Int, Str}
+    @assert 0 < n <= 10 "n must be in range [1-10]"
+    vv::Vec{A} = first(v, n)
+    vv = eltype(v) == Flt ? round.(vv, digits=3) : vv
+    result::Str = join(string.(vv), ", ")
+    return len(v) > n ? result * "..." : result
+end
+
 function Base.show(io::IO, pmf::Pmf)
-    trim::Bool = length(pmf.names) > 10
-    result::Str = "names: $(join(trim ? pmf.names[1:10] : pmf.names, ", "))$(trim ? ", ..." : "")\n"
-    result = result * "priors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.priors[1:10] : pmf.priors), ", "))$(trim ? ", ..." : "")\n"
-    result = result * "likelihoods: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.likelihoods[1:10] : pmf.likelihoods), ", "))$(trim ? ", ..." : "")\n"
-    result = result * "posteriors: $(join(map(x -> round(x, digits=3) |> string, trim ? pmf.posteriors[1:10] : pmf.posteriors),  ", "))$(trim ? ", ..." : "")\n"
+    result::Str = "names: $(getFirstN(pmf.names, 10))\n"
+    result = result * "priors: $(getFirstN(pmf.priors, 10))\n"
+    result = result * "likelihoods: $(getFirstN(pmf.likelihoods, 10))\n"
+    result = result * "posteriors: $(getFirstN(pmf.posteriors, 10))\n"
     print(io, result)
 end
 
@@ -116,6 +123,7 @@ function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
     sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
     return Pmf(sortedKeys, sortedVals)
 end
+
 function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) where {T}
     ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
     return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
@@ -157,13 +165,27 @@ end
 
 #+END_SRC
 
-** other fns (mostly one-liners)
+** other fns
 
 #+BEGIN_SRC
 
 function rep(x::A, times::Int)::Vec{A} where A
     @assert times > 1 "times must be greater than 1"
     return [x for _ in 1:times]
+end
+
+function rep(v::Vector{A}, times::Vector{Int})::Vector{A} where A
+    @assert (len(v) == len(times)) "length(v) not equal length(times)"
+    @assert all(map((>)(0), times)) "times elts must be GT 0"
+    result::Vector{A} = Vec{eltype(v)}(undef, sum(times))
+    currInd::Int = 1
+    for i in eachindex(v)
+        for _ in 1:times[i]
+            result[currInd] = v[i]
+            currInd += 1
+        end
+    end
+    return result
 end
 
 c(sth) = collect(sth)
@@ -325,7 +347,29 @@ What are the posteriors?
 
 #+BEGIN_SRC
 
-cookies = getPmfFromSeq(["Bowl 1", "Bowl 2"])
-cookies |> pmf2df
+bowls101.likelihoods = (100 .- bowls101.names) ./ 100
+bowls101.posteriors .*= bowls101.likelihoods
+normalizePosteriors!(bowls101)
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Posterior after 2 vanilla, 1 chocolate cookie",
+              xlabel="Bowl #", ylabel="PMF",
+              xticks=(0:20:100), yticks=(0:0.0025:0.0175)
+              );
+Cmk.lines!(ax, bowls101.names, bowls101.posteriors, color=:blue, label="posterior");
+Cmk.lines!(ax, bowls101.names, bowls101.priors, color=:gray, label="prior");
+Cmk.axislegend(position=:lt)
+fig
+
+#+END_SRC
+
+Let's see where is the maximum posterior probability (for which hypothesis, which of 101 bowls).
+
+#+BEGIN_SRC
+
+maxPosterior = bowls101.posteriors |> maximum
+indMaxPost = findfirst(p -> isapprox(maxPosterior, p), bowls101.posteriors) # 1 indexed
+bowls101.names[indMaxPost]
 
 #+END_SRC
