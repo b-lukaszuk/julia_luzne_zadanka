@@ -90,6 +90,7 @@ function Base.show(io::IO, pmf::Pmf)
     result = result * "likelihoods: $(getFirstN(pmf.likelihoods, 10))\n"
     result = result * "posteriors: $(getFirstN(pmf.posteriors, 10))\n"
     print(io, result)
+    return nothing
 end
 
 #+END_SRC
@@ -137,30 +138,34 @@ function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where 
     return map(n -> getPriorByName(pmf, n), names)
 end
 
-function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64}) where {T}
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64})::Pmf{T} where {T}
     pmf.likelihoods = newLikelihoods
+    return pmf
 end
 
-function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64}) where {T}
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64})::Pmf{T} where {T}
     pmf.posteriors = newPosteriors
+    return pmf
 end
 
 """
         normalizes pmf.posteriors so they add up to 1
 """
-function normalizePosteriors!(pmf::Pmf{T}) where {T}
+function normalizePosteriors!(pmf::Pmf{T})::Pmf{T} where {T}
     pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
+    return pmf
 end
 
 """
         updates posteriors (priors .* likeliehoods)
         if normalize = true, then posteriors are normalized
 """
-function bayesUpdate!(pmf::Pmf{T}, normalize::Bool=true) where {T}
+function bayesUpdate!(pmf::Pmf{T}, normalize::Bool=true)::Pmf{T} where {T}
     setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
     if normalize
         normalizePosteriors!(pmf)
     end
+    return pmf
 end
 
 function getIndMaxField(pmf::Pmf, field::String)::Int
@@ -185,7 +190,7 @@ function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
 end
 
 function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           nameThatOccurred::Union{Flt, Int})
+                           nameThatOccurred::Union{Flt, Int})::Pmf{<:Union{Flt, Int}}
     hypos::Vec{<:Union{Flt, Int}} = pmf.names
     likelihoods::Vec{Flt} = 1 ./ hypos
     impossible::Bv = nameThatOccurred .> hypos
@@ -197,7 +202,7 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
         pmf.posteriors .*= pmf.likelihoods
         normalizePosteriors!(pmf)
     end
-    return nothing
+    return pmf
 end
 
 #+END_SRC
