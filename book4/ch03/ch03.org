@@ -395,3 +395,28 @@ df = bowls101 |> pmf2df
 df[getIndMaxPosterior(bowls101), :]
 
 #+END_SRC
+
+* 3.5. The Dice Problem
+
+You got three dice: 6-, 8-, and 12-sided die. You choose one at random, roll it, get 1.
+What are the posteriors?
+
+#+BEGIN_SRC
+
+dice = getPmfFromSeq([6, 8, 12])
+dice.likelihoods = [1/nSides for nSides in dice.names]
+bayesUpdate!(dice)
+dice
+
+#+END_SRC
+
+Now, you roll again and get 7. What are the posteriors?
+
+#+BEGIN_SRC
+
+dice.likelihoods = [0, 1/8, 1/12]
+dice.posteriors .= dice.likelihoods .* dice.posteriors
+normalizePosteriors!(dice)
+dice
+
+#+END_SRC
