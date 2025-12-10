@@ -163,6 +163,26 @@ function bayesUpdate!(pmf::Pmf{T}, normalize::Bool=true) where {T}
     end
 end
 
+function getIndMaxField(pmf::Pmf, field::String)::Int
+    maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
+    return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
+end
+
+function getIndMaxPosterior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "posteriors")
+end
+
+function getIndMaxPrior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "priors")
+end
+
+function getNameMaxPrior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIndMaxPrior(pmf)]
+end
+
+function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
+    return pmf.names[getIndMaxPosterior(pmf)]
+end
 #+END_SRC
 
 ** other fns
@@ -368,8 +388,10 @@ Let's see where is the maximum posterior probability (for which hypothesis, whic
 
 #+BEGIN_SRC
 
-maxPosterior = bowls101.posteriors |> maximum
-indMaxPost = findfirst(p -> isapprox(maxPosterior, p), bowls101.posteriors) # 1 indexed
-bowls101.names[indMaxPost]
+getIndMaxPosterior(bowls101) # 1 indexed
+getNameMaxPosterior(bowls101)
+
+df = bowls101 |> pmf2df
+df[getIndMaxPosterior(bowls101), :]
 
 #+END_SRC
