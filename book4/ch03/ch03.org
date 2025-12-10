@@ -183,6 +183,23 @@ end
 function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
     return pmf.names[getIndMaxPosterior(pmf)]
 end
+
+function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
+                           nameThatOccurred::Union{Flt, Int})
+    hypos::Vec{<:Union{Flt, Int}} = pmf.names
+    likelihoods::Vec{Flt} = 1 ./ hypos
+    impossible::Bv = nameThatOccurred .> hypos
+    likelihoods[impossible] .= 0.0
+    pmf.likelihoods = likelihoods
+    if all(pmf.posteriors .== 0)
+        bayesUpdate!(pmf)
+    else
+        pmf.posteriors .*= pmf.likelihoods
+        normalizePosteriors!(pmf)
+    end
+    return nothing
+end
+
 #+END_SRC
 
 ** other fns
@@ -417,6 +434,20 @@ Now, you roll again and get 7. What are the posteriors?
 dice.likelihoods = [0, 1/8, 1/12]
 dice.posteriors .= dice.likelihoods .* dice.posteriors
 normalizePosteriors!(dice)
+dice
+
+#+END_SRC
+
+* 3.6. Updating Dice
+
+The same problem, but we will write the function to automate the calculations
+from 3.5 (see `updatePosteriors!` above).
+
+#+BEGIN_SRC
+
+dice = getPmfFromSeq([6, 8, 12])
+updatePosteriors!(dice, 1)
+updatePosteriors!(dice, 7)
 dice
 
 #+END_SRC
