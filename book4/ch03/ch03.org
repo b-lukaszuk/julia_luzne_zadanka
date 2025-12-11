@@ -454,3 +454,17 @@ updatePosteriors!(dice, 7)
 Just a description of what was done here. There is also a promise that in the
 next chapter we will make the leap from using Bayes’s Theorem to doing Bayesian
 statistics.
+
+* 3.8. Exercises
+** 3.8.1. Exercise 1
+
+There is a box with a 6-, 8-, and a 12-sided die. You choose a dice at random,
+roll it four times, and get 1, 3, 5, and 7. What are the posteriors for the
+dice?
+
+#+BEGIN_SRC
+
+dice = getPmfFromSeq([6, 8, 12])
+updatePosteriors!(dice, [1, 3, 5, 7]) |> pmf2df
+
+#+END_SRC
