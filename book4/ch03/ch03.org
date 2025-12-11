@@ -160,7 +160,7 @@ end
         updates posteriors (priors .* likeliehoods)
         if normalize = true, then posteriors are normalized
 """
-function bayesUpdate!(pmf::Pmf{T}, normalize::Bool=true)::Pmf{T} where {T}
+function bayesUpdate!(pmf::Pmf{T}, normalize::Bool)::Pmf{T} where {T}
     setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
     if normalize
         normalizePosteriors!(pmf)
@@ -195,14 +195,13 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     likelihoods::Vec{Flt} = 1 ./ hypos
     impossible::Bv = nameThatOccurred .> hypos
     likelihoods[impossible] .= 0.0
-    pmf.likelihoods = likelihoods
-    if all(pmf.posteriors .== 0)
-        bayesUpdate!(pmf)
+    setLikelihoods!(pmf, likelihoods)
+    if all(pmf.posteriors .== 0) # posteriors are initialized with 0s
+        return bayesUpdate!(pmf, true)
     else
         pmf.posteriors .*= pmf.likelihoods
-        normalizePosteriors!(pmf)
+        return normalizePosteriors!(pmf)
     end
-    return pmf
 end
 
 #+END_SRC
@@ -297,15 +296,13 @@ cookies |> pmf2df
 
 #+BEGIN_SRC
 
-setLikelihoods!(cookies, [30/40, 20/40])
-cookies |> pmf2df
+setLikelihoods!(cookies, [30/40, 20/40]) |> pmf2df
 
 #+END_SRC
 
 #+BEGIN_SRC
 
-bayesUpdate!(cookies)
-cookies |> pmf2df
+bayesUpdate!(cookies, true) |> pmf2df
 
 #+END_SRC
 
@@ -315,8 +312,7 @@ The second cookie is also vanilla. What are the posteriors now?
 #+BEGIN_SRC
 
 cookies.posteriors .*= cookies.likelihoods
-normalizePosteriors!(cookies)
-cookies |> pmf2df
+normalizePosteriors!(cookies) |> pmf2df
 
 #+END_SRC
 
@@ -327,8 +323,7 @@ What are the posteriors now?
 
 setLikelihoods!(cookies, [10/40, 20/40])
 cookies.posteriors .*= cookies.likelihoods
-normalizePosteriors!(cookies)
-cookies |> pmf2df
+normalizePosteriors!(cookies) |> pmf2df
 
 #+END_SRC
 
