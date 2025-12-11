@@ -343,7 +343,7 @@ What is the probability that it came from Bowl x?
 
 bowls101 = getPmfFromSeq(c(0:100))
 bowls101.likelihoods = bowls101.names ./ 100
-bayesUpdate!(bowls101)
+bayesUpdate!(bowls101, true)
 
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
@@ -422,8 +422,7 @@ What are the posteriors?
 
 dice = getPmfFromSeq([6, 8, 12])
 dice.likelihoods = [1/nSides for nSides in dice.names]
-bayesUpdate!(dice)
-dice
+bayesUpdate!(dice, true)
 
 #+END_SRC
 
@@ -434,7 +433,6 @@ Now, you roll again and get 7. What are the posteriors?
 dice.likelihoods = [0, 1/8, 1/12]
 dice.posteriors .= dice.likelihoods .* dice.posteriors
 normalizePosteriors!(dice)
-dice
 
 #+END_SRC
 
@@ -448,6 +446,5 @@ from 3.5 (see `updatePosteriors!` above).
 dice = getPmfFromSeq([6, 8, 12])
 updatePosteriors!(dice, 1)
 updatePosteriors!(dice, 7)
-dice
 
 #+END_SRC
