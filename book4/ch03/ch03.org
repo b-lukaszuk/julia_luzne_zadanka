@@ -204,6 +204,12 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     end
 end
 
+function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
+                           namesThatOccurred::Vec{<:Union{Flt, Int}})::Pmf{<:Union{Flt, Int}}
+    foreach(n -> updatePosteriors!(pmf, n), namesThatOccurred)
+    return pmf
+end
+
 #+END_SRC
 
 ** other fns
