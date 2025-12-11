@@ -448,3 +448,9 @@ updatePosteriors!(dice, 1)
 updatePosteriors!(dice, 7)
 
 #+END_SRC
+
+* 3.7. Summary
+
+Just a description of what was done here. There is also a promise that in the
+next chapter we will make the leap from using Bayes’s Theorem to doing Bayesian
+statistics.
