@@ -474,3 +474,25 @@ dice = getPmfFromSeq([6, 8, 12])
 updatePosteriors!(dice, [1, 3, 5, 7]) |> pmf2df
 
 #+END_SRC
+
+** 3.8.2. Exercise 2
+
+A box contains:
+
+- one 4-sided,
+- two 6-sided,
+- three 8-sided
+- four 12-sided
+- five 20-sided
+
+dice.
+
+You choose a dice at random, roll it. get 7. What are the posteriors for the
+dice?
+
+#+BEGIN_SRC
+
+dice = getPmfFromSeq(rep([4, 6, 8, 12, 20], c(1:5)))
+updatePosteriors!(dice, 7) |> pmf2df
+
+#+END_SRC
