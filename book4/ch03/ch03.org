@@ -496,3 +496,29 @@ dice = getPmfFromSeq(rep([4, 6, 8, 12, 20], c(1:5)))
 updatePosteriors!(dice, 7) |> pmf2df
 
 #+END_SRC
+
+** 3.8.3. Exercise 3
+
+Two sock drawers:
+
+- equal ratio of black/white socks,
+- equal ratio of red/green/blue socks,
+
+You choose a drawer at random, choose two socks at random. You got a matching
+pair. What is the probability that the socks are white (assume drawing with
+replacement)?
+
+#+BEGIN_SRC
+
+drawers = Pmf(["BW", "RGB"], [0.5, 0.5])
+
+# for BW: WW or BB (2) out of 2*2 = 4 options
+# for RGB: RR, BB, GG (3) out of 3*3 = 9 options
+# so, prob of having a matching pair out of a drawer
+setLikelihoods!(drawers, [2/4, 3/9])
+bayesUpdate!(drawers, true) |> pmf2df
+
+# prob of BW drawer is 0.6 AND prob of getting WW out of WW/BB is 1/2
+# 2 independent probabilities, so
+pmf2df(drawers)[1, 4] * 1/2
+#+END_SRC
