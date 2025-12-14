@@ -254,3 +254,29 @@ In Information Theory, Inference, and Learning Algorithms, David MacKay poses th
 When spun on edge 250 times, a Belgian one-euro coin came up heads 140 times and tails 110. `It looks very suspicious to me,’ said Barry Blight, a statistics lecturer at the London School of Economics. `If the coin were unbiased, the chance of getting a result as extreme as that would be less than 7%.’
 
 “But [MacKay asks] do these data give evidence that the coin is biased rather than fair?”
+
+* 4.2. The Binomial Distribution
+
+Fair coin toss. n - num. of coin tosses, p - prob of success in a single toss,
+k - num. of successes in all coin tosses.
+
+#+BEGIN_SRC
+
+n = 2
+p = 0.5
+k = 1
+
+binDst = Dst.Binomial(n, p)
+Dst.pdf(binDst, k) |> round3
+
+#+END_SRC
+
+Another example.
+
+#+BEGIN_SRC
+
+ks = 0:n
+
+Dst.pdf.(binDst, 0:n) .|> round3
+
+#+END_SRC
