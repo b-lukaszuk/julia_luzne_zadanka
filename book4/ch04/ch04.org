@@ -77,10 +77,14 @@ mutable struct Pmf{T}
         )
 end
 
+function round3(x::Flt)::Flt
+    return round(x, digits=3)
+end
+
 function getFirstN(v::Vec{A}, n::Int)::Str where A<:Union{Flt, Int, Str}
     @assert 0 < n <= 10 "n must be in range [1-10]"
     vv::Vec{A} = first(v, n)
-    vv = eltype(v) == Flt ? round.(vv, digits=3) : vv
+    vv = eltype(v) == Flt ? round3.(vv) : vv
     result::Str = join(string.(vv), ", ")
     return len(v) > n ? result * "..." : result
 end
