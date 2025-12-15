@@ -326,3 +326,25 @@ coin.priors[ind]
 
 #+END_SRC
 
+
+MacKay says: the chance of getting a result as extreme as that would be 7%.
+Let's see if that's true.
+
+#+BEGIN_SRC
+
+function getTotalProbGeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
+    isGe::Bv = pmf.names .>= name
+    total::Flt = getproperty(pmf, Symbol(field))[isGe] |> sum
+    return total
+end
+
+function getTotalProbLeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
+    isLe::Bv = pmf.names .<= name
+    total::Flt = getproperty(pmf, Symbol(field))[isLe] |> sum
+    return total
+end
+
+# two tail, so: >= 140 && <= 110
+getTotalProbGeName(coin, "priors", 140) + getTotalProbLeName(coin, "priors", 110)
+
+#+END_SRC
