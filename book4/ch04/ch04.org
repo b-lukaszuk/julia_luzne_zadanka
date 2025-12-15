@@ -280,3 +280,49 @@ ks = 0:n
 Dst.pdf.(binDst, 0:n) .|> round3
 
 #+END_SRC
+
+To automate it we define the following function.
+
+#+BEGIN_SRC
+
+function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
+    @assert n > 0 "n must be greater than 0"
+    @assert 0 <= p <= 1 "p must be in the range [0-1]"
+    binDst = Dst.Binomial(n, p)
+    ks::Vec{Int} = c(0:n)
+    return Pmf(ks, Dst.pdf.(binDst, ks))
+end
+
+#+END_SRC
+
+Which we use as
+
+#+BEGIN_SRC
+
+coin = getBinomPmf(250, 0.5)
+
+drawPriors(coin,
+           "Binomial distribution (n=250, p=0.5)",
+           "Number of heads (k)",
+           "PMF")
+
+#+END_SRC
+
+Most likely number of heads (and its probability) is:
+
+#+BEGIN_SRC
+
+ind = getIndMaxPrior(coin)
+coin.names[ind], coin.priors[ind]
+
+#+END_SRC
+
+In MacKay's example, we got 140 heads, with probability of:
+
+#+BEGIN_SRC
+
+ind = findfirst((==)(140), coin.names)
+coin.priors[ind]
+
+#+END_SRC
+
