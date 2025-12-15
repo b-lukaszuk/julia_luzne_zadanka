@@ -215,6 +215,26 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     return pmf
 end
 
+function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
+    @assert n > 0 "n must be greater than 0"
+    @assert 0 <= p <= 1 "p must be in the range [0-1]"
+    binDst = Dst.Binomial(n, p)
+    ks::Vec{Int} = c(0:n)
+    return Pmf(ks, Dst.pdf.(binDst, ks))
+end
+
+function getTotalProbGeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
+    isGe::Bv = pmf.names .>= name
+    total::Flt = getproperty(pmf, Symbol(field))[isGe] |> sum
+    return total
+end
+
+function getTotalProbLeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
+    isLe::Bv = pmf.names .<= name
+    total::Flt = getproperty(pmf, Symbol(field))[isLe] |> sum
+    return total
+end
+
 #+END_SRC
 
 ** other fns
@@ -281,21 +301,7 @@ Dst.pdf.(binDst, 0:n) .|> round3
 
 #+END_SRC
 
-To automate it we define the following function.
-
-#+BEGIN_SRC
-
-function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
-    @assert n > 0 "n must be greater than 0"
-    @assert 0 <= p <= 1 "p must be in the range [0-1]"
-    binDst = Dst.Binomial(n, p)
-    ks::Vec{Int} = c(0:n)
-    return Pmf(ks, Dst.pdf.(binDst, ks))
-end
-
-#+END_SRC
-
-Which we use as
+To automate it we use `getBinomPmf` defined earlier.
 
 #+BEGIN_SRC
 
@@ -331,18 +337,6 @@ MacKay says: the chance of getting a result as extreme as that would be 7%.
 Let's see if that's true.
 
 #+BEGIN_SRC
-
-function getTotalProbGeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
-    isGe::Bv = pmf.names .>= name
-    total::Flt = getproperty(pmf, Symbol(field))[isGe] |> sum
-    return total
-end
-
-function getTotalProbLeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
-    isLe::Bv = pmf.names .<= name
-    total::Flt = getproperty(pmf, Symbol(field))[isLe] |> sum
-    return total
-end
 
 # two tail, so: >= 140 && <= 110
 getTotalProbGeName(coin, "priors", 140) + getTotalProbLeName(coin, "priors", 110)
