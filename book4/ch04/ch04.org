@@ -50,26 +50,26 @@ Pkg.status()
 len(collection) = length(collection)
 
 mutable struct Pmf{T}
-    names::Vector{T} # names of hypotheses
-    priors::Vector{Flt} # priors for each hypothesis
-    likelihoods::Vector{Flt} # likelihoods for each hypothesis
-    posteriors::Vector{Flt} # posteriors for each hypothesis
+    names::Vec{T} # names of hypotheses
+    priors::Vec{Flt} # priors for each hypothesis
+    likelihoods::Vec{Flt} # likelihoods for each hypothesis
+    posteriors::Vec{Flt} # posteriors for each hypothesis
 
-    Pmf(ns::Vector{Int}, prs) =
+    Pmf(ns::Vec{Int}, prs) =
         (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Int}(
             ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
 
-    Pmf(ns::Vector{Flt}, prs) =
+    Pmf(ns::Vec{Flt}, prs) =
         (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Flt}(
             ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
 
-    Pmf(ns::Vector{Str}, prs) =
+    Pmf(ns::Vec{Str}, prs) =
         (len(ns) != len(prs)) ?
         error("length(names) must be equal length(priors)") :
         new{Str}(
@@ -115,7 +115,7 @@ function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
     )
 end
 
-function getCounts(v::Vector{T})::Dict{T,Int} where {T}
+function getCounts(v::Vec{T})::Dict{T,Int} where {T}
     result::Dict{T,Int} = Dict()
     for elt in v
         result[elt] = get(result, elt, 0) + 1
@@ -123,10 +123,10 @@ function getCounts(v::Vector{T})::Dict{T,Int} where {T}
     return result
 end
 
-function getPmfFromSeq(seq::Vector{T})::Pmf{T} where {T}
+function getPmfFromSeq(seq::Vec{T})::Pmf{T} where {T}
     counts::Dict{T,Int} = getCounts(seq)
-    sortedKeys::Vector{T} = keys(counts) |> collect |> sort
-    sortedVals::Vector{Int} = [counts[k] for k in sortedKeys]
+    sortedKeys::Vec{T} = keys(counts) |> collect |> sort
+    sortedVals::Vec{Int} = [counts[k] for k in sortedKeys]
     return Pmf(sortedKeys, sortedVals)
 end
 
@@ -139,16 +139,16 @@ function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
     return getFieldValsEqName(pmf, name, "priors", 0.0)
 end
 
-function getPriorsByNames(pmf::Pmf{T}, names::Vector{T})::Vector{Float64} where {T}
+function getPriorsByNames(pmf::Pmf{T}, names::Vec{T})::Vec{Float64} where {T}
     return map(n -> getPriorByName(pmf, n), names)
 end
 
-function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vector{Float64})::Pmf{T} where {T}
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vec{Float64})::Pmf{T} where {T}
     pmf.likelihoods = newLikelihoods
     return pmf
 end
 
-function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vector{Float64})::Pmf{T} where {T}
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vec{Float64})::Pmf{T} where {T}
     pmf.posteriors = newPosteriors
     return pmf
 end
@@ -253,6 +253,9 @@ function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figu
     return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
 end
 
+function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
+end
 #+END_SRC
 
 ** other fns
@@ -264,10 +267,10 @@ function rep(x::A, times::Int)::Vec{A} where A
     return [x for _ in 1:times]
 end
 
-function rep(v::Vector{A}, times::Vector{Int})::Vector{A} where A
+function rep(v::Vec{A}, times::Vec{Int})::Vec{A} where A
     @assert (len(v) == len(times)) "length(v) not equal length(times)"
     @assert all(map((>)(0), times)) "times elts must be GT 0"
-    result::Vector{A} = Vec{eltype(v)}(undef, sum(times))
+    result::Vec{A} = Vec{eltype(v)}(undef, sum(times))
     currInd::Int = 1
     for i in eachindex(v)
         for _ in 1:times[i]
