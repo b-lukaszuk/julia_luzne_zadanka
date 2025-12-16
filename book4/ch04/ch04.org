@@ -256,6 +256,17 @@ end
 function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
     return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
 end
+
+function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
+                           events::Vec{A},
+                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Union{Flt, Int}} where A
+    pmf.likelihoods .= 1
+    for e in events
+        pmf.likelihoods .*= eventsProbs[e]
+    end
+    return bayesUpdate!(pmf, true)
+end
+
 #+END_SRC
 
 ** other fns
@@ -388,16 +399,7 @@ Bayesian update for binomial distribution.
 
 #+BEGIN_SRC
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           events::Vec{A},
-                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Union{Flt, Int}} where A
-    pmf.likelihoods .= 1
-    for e in events
-        pmf.likelihoods .*= eventsProbs[e]
-    end
-    return bayesUpdate!(pmf, true)
-end
-
+# defined in the Pmf section above
 updatePosteriors!(coin, cointosses, likelihood)
 
 #+END_SRC
