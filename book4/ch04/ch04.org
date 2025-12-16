@@ -361,3 +361,59 @@ getTotalProbGeName(coin, "priors", 140) + getTotalProbLeName(coin, "priors", 110
 
 #+END_SRC
 
+* 4.3. Bayesian Estimation
+
+Probability of a coin landing heads.
+
+#+BEGIN_SRC
+
+coin = getPmfFromSeq(c(0:0.01:1))
+
+#+END_SRC
+
+Likelihoods for heads and tails for each coin
+
+#+BEGIN_SRC
+
+likelihood = Dict('h' => coin.names, 't' => 1 .- coin.names)
+# 140 h out of 250 tosses (see 4.1.)
+cointosses = rep(['h', 't'], [140, 110])
+
+#+END_SRC
+
+Bayesian update for binomial distribution.
+
+#+BEGIN_SRC
+
+function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
+                           events::Vec{A},
+                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Union{Flt, Int}} where A
+    pmf.likelihoods .= 1
+    for e in events
+        pmf.likelihoods .*= eventsProbs[e]
+    end
+    return bayesUpdate!(pmf, true)
+end
+
+updatePosteriors!(coin, cointosses, likelihood)
+
+#+END_SRC
+
+Drawing of posteriors after the update.
+
+#+BEGIN_SRC
+
+drawPosteriors(coin,
+               "Posterior distribution of #of heads\n(140 h out of 250 tosses)",
+               "Probability", "Proportion of heads")
+
+#+END_SRC
+
+What real proportion of heads for the coin is most likely:
+
+#+BEGIN_SRC
+
+indMax = getIndMaxPosterior(coin)
+coin.names[indMax]
+
+#+END_SRC
