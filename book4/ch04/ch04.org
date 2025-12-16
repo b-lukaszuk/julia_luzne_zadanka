@@ -235,6 +235,24 @@ function getTotalProbLeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
     return total
 end
 
+function drawLinesPmf(pmf::Pmf{T},
+    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+    fig = Cmk.Figure(size=(600, 400))
+    Cmk.lines(fig[1, 1],
+        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
+        axis=(;
+            title=title,
+            xlabel=xlabel,
+            ylabel=ylabel,
+        ))
+    return fig
+
+end
+
+function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
+end
+
 #+END_SRC
 
 ** other fns
@@ -342,3 +360,4 @@ Let's see if that's true.
 getTotalProbGeName(coin, "priors", 140) + getTotalProbLeName(coin, "priors", 110)
 
 #+END_SRC
+
