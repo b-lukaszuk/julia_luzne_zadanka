@@ -422,3 +422,27 @@ indMax = getIndMaxPosterior(coin)
 coin.names[indMax]
 
 #+END_SRC
+
+* 4.4. Triangle Prior
+Previously we tried triangle prior, this time we'll go with quite a different beast.
+
+#+BEGIN_SRC
+
+uniform = getPmfFromSeq(c(0:0.01:1))
+triangle = Pmf(c(0:0.01:1), [0:49..., 50:-1:0...])
+
+#+END_SRC
+
+Next, we draw the priors.
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], title="Uniform and triangle prior distributions",
+         xlabel="Proportion of heads (x)", ylabel="Probability");
+Cmk.lines!(ax, uniform.names, uniform.priors, label="uniform");
+Cmk.lines!(ax, triangle.names, triangle.priors, label="triangle");
+Cmk.axislegend();
+fig
+
+#+END_SRC
