@@ -446,3 +446,29 @@ Cmk.axislegend();
 fig
 
 #+END_SRC
+
+Let's do the update and see do the posteriors differ.
+
+#+BEGIN_SRC
+
+updatePosteriors!(uniform, cointosses, likelihood)
+updatePosteriors!(triangle, cointosses, likelihood)
+
+#+END_SRC
+
+And the drawing.
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], title="Uniform and triangle posterior distributions",
+         xlabel="Proportion of heads (x)", ylabel="Probability");
+Cmk.lines!(ax, uniform.names, uniform.posteriors, label="uniform");
+Cmk.lines!(ax, triangle.names, triangle.posteriors, label="triangle");
+Cmk.axislegend();
+fig
+
+#+END_SRC
+
+With enough data for likelihoods and Bayesian update we land with almost
+identical posteriors. Yay.
