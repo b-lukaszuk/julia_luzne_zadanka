@@ -478,10 +478,12 @@ identical posteriors. Yay.
 Instead of computing update one coin spin at a time (for 250 spins) we can do
 this all at one with the following formula:
 
-$\binom{n}{k}*p^{k}*(1-p)^{n-k}$
+$ \binom{n}{k}*p^{k}*(1-p)^{n-k }$
 
 where:
 
 n - total number of tosses
+
 p - probability of success in a single toss
+
 k - number of successes
