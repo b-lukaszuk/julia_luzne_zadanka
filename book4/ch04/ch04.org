@@ -487,3 +487,38 @@ n - total number of tosses
 p - probability of success in a single toss
 
 k - number of successes
+
+We can implement this formula into code.
+
+#+BEGIN_SRC
+
+function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}}, k::Int, n::Int)::Pmf{<:Union{Flt, Int}}
+    @assert n >= k >= 0 "n and k must be >= 0"
+    xs::Vec{<:Union{Flt, Int}} = pmf.names
+    likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
+    setLikelihoods!(pmf, likelihoods)
+    return bayesUpdate!(pmf, true)
+end
+
+#+END_SRC
+
+And use it for the update.
+
+#+BEGIN_SRC
+
+uniform2 = getPmfFromSeq(c(0:0.01:1))
+updateBinomial!(uniform2, 140, 250)
+
+#+END_SRC
+
+The result should be the same like the previously defined `uniform`.
+
+#+BEGIN_SRC
+
+isapprox.(uniform.names, uniform2.names) |> all
+isapprox.(uniform.priors, uniform2.priors) |> all
+isapprox.(uniform.posteriors, uniform2.posteriors) |> all
+
+#+END_SRC
+
+Although the calculations should be more efficient.
