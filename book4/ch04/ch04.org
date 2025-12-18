@@ -522,3 +522,13 @@ isapprox.(uniform.posteriors, uniform2.posteriors) |> all
 #+END_SRC
 
 Although the calculations should be more efficient.
+
+* 4.6. Bayesian Statistics
+
+By comparing the Euro and 101 Bowls problem (from a previous chapter) you might
+notice that the choice of priors is often subjective (different people may choose
+different values). Because of that the posteriors are subjective too.
+
+Historically, many have been bothered by its subjectivity and its use of
+probability for things that are not random (like physical quantities of the
+coins).
