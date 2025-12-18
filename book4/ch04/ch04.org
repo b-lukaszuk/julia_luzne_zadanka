@@ -267,6 +267,14 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     return bayesUpdate!(pmf, true)
 end
 
+function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}}, k::Int, n::Int)::Pmf{<:Union{Flt, Int}}
+    @assert n >= k >= 0 "n and k must be >= 0"
+    xs::Vec{<:Union{Flt, Int}} = pmf.names
+    likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
+    setLikelihoods!(pmf, likelihoods)
+    return bayesUpdate!(pmf, true)
+end
+
 #+END_SRC
 
 ** other fns
@@ -488,21 +496,8 @@ p - probability of success in a single toss
 
 k - number of successes
 
-We can implement this formula into code.
-
-#+BEGIN_SRC
-
-function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}}, k::Int, n::Int)::Pmf{<:Union{Flt, Int}}
-    @assert n >= k >= 0 "n and k must be >= 0"
-    xs::Vec{<:Union{Flt, Int}} = pmf.names
-    likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
-    setLikelihoods!(pmf, likelihoods)
-    return bayesUpdate!(pmf, true)
-end
-
-#+END_SRC
-
-And use it for the update.
+We can implement this formula into code (see this file Pmf > helper fns) and use
+it for the update.
 
 #+BEGIN_SRC
 
