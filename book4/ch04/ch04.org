@@ -545,3 +545,28 @@ fair?" The question will be answered in Testing (chapter 10).
 
  Suppose a player appearing in their first game gets 3 hits out of 3 attempts.
  What is the posterior distribution for their probability of getting a hit?
+
+ Start with the following priors.
+
+#+BEGIN_SRC
+
+# names of the hypothesis: true hit rates
+trueHitRates = range(0.1, 0.4, 101) |> c
+batting = getPmfFromSeq(trueHitRates)
+likelihood = Dict('y' => trueHitRates, 'n' => 1 .- trueHitRates)
+# dataset that yields a reasonable prior distribution
+dataset = rep(['y', 'n'], [25, 75])
+# update with the imaginary data
+updatePosteriors!(batting, dataset, likelihood)
+# draw priors
+drawPosteriors(batting, "Baseball, avg hits priors", "Probability of getting a it", "PMF")
+
+# set the result as priors, initialize with 0s the rest
+batting.priors = batting.posteriors
+batting.likelihoods .= 0
+batting.posteriors .= 0
+
+#+END_SRC
+
+Now update this distribution with the data and plot the posterior. What is the
+most likely quantity in the posterior distribution?
