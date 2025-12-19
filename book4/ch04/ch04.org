@@ -536,3 +536,12 @@ to converge and give similar posteriors.
 Overall, the chapter was interesting, but we still haven't answered MacKay's
 question: "Do these data give evidence that the coin is biased rather than
 fair?" The question will be answered in Testing (chapter 10).
+
+* 4.8. Exercises
+** 4.8.1. Exercise 1
+ In Major League Baseball, most players have a batting average between .200 and
+ .330, which means that their probability of getting a hit is between 0.2 and
+ 0.33.
+
+ Suppose a player appearing in their first game gets 3 hits out of 3 attempts.
+ What is the posterior distribution for their probability of getting a hit?
