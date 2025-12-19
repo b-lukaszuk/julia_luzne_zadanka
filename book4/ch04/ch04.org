@@ -527,3 +527,12 @@ different values). Because of that the posteriors are subjective too.
 Historically, many have been bothered by its subjectivity and its use of
 probability for things that are not random (like physical quantities of the
 coins).
+
+* 4.7. Summary
+
+Even when we start with two different priors, then given enough data they tend
+to converge and give similar posteriors.
+
+Overall, the chapter was interesting, but we still haven't answered MacKay's
+question: "Do these data give evidence that the coin is biased rather than
+fair?" The question will be answered in Testing (chapter 10).
