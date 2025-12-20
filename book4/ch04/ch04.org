@@ -570,3 +570,39 @@ batting.posteriors .= 0
 
 Now update this distribution with the data and plot the posterior. What is the
 most likely quantity in the posterior distribution?
+
+*** Solution 1
+
+Update.
+
+#+BEGIN_SRC
+
+dataset = rep('y', 3)
+updatePosteriors!(batting, dataset, likelihood)
+
+#+END_SRC
+
+Drawing Comparison.
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure()
+ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF")
+Cmk.lines!(ax, batting.names, batting.priors, label="prior");
+Cmk.lines!(ax, batting.names, batting.posteriors, label="posteriorr");
+Cmk.axislegend()
+fig
+
+#+END_SRC
+
+Numerical Comparison.
+
+#+BEGIN_SRC
+
+maxPriorInd = getIndMaxPrior(batting)
+batting.names[maxPriorInd], batting.posteriors[maxPriorInd]
+
+maxPostInd = getIndMaxPosterior(batting)
+batting.names[maxPostInd], batting.posteriors[maxPostInd]
+
+#+END_SRC
