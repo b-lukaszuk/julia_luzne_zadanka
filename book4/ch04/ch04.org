@@ -586,16 +586,53 @@ Drawing Comparison.
 
 #+BEGIN_SRC
 
-fig = Cmk.Figure()
-ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF")
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF");
 Cmk.lines!(ax, batting.names, batting.priors, label="prior");
 Cmk.lines!(ax, batting.names, batting.posteriors, label="posteriorr");
-Cmk.axislegend()
+Cmk.axislegend();
 fig
 
 #+END_SRC
 
-Numerical Comparison.
+Numerical comparison.
+
+#+BEGIN_SRC
+
+maxPriorInd = getIndMaxPrior(batting)
+batting.names[maxPriorInd], batting.posteriors[maxPriorInd]
+
+maxPostInd = getIndMaxPosterior(batting)
+batting.names[maxPostInd], batting.posteriors[maxPostInd]
+
+#+END_SRC
+
+*** Solution 2
+
+Starting with priors set like in the chapter.
+
+Update.
+
+#+BEGIN_SRC
+
+updateBinomial!(batting, 3, 3)
+
+#+END_SRC
+
+Drawing Comparison.
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF");
+Cmk.lines!(ax, batting.names, batting.priors, label="prior");
+Cmk.lines!(ax, batting.names, batting.posteriors, label="posteriorr");
+Cmk.axislegend();
+fig
+
+#+END_SRC
+
+Numerical comparison.
 
 #+BEGIN_SRC
 
