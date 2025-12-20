@@ -562,7 +562,7 @@ updatePosteriors!(batting, dataset, likelihood)
 drawPosteriors(batting, "Baseball, avg hits priors", "Probability of getting a it", "PMF")
 
 # set the result as priors, initialize with 0s the rest
-batting.priors = batting.posteriors
+batting.priors = copy(batting.posteriors)
 batting.likelihoods .= 0
 batting.posteriors .= 0
 
