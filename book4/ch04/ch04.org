@@ -708,3 +708,38 @@ maxPostInd = getIndMaxPosterior(taxes)
 taxes.names[maxPostInd], taxes.posteriors[maxPostInd]
 
 #+END_SRC
+
+
+*** Solution 2
+
+Starting with priors set like before.
+
+Update.
+
+#+BEGIN_SRC
+
+updateBinomial!(taxes, 80-50, 80+20-50)
+
+#+END_SRC
+
+Drawing Comparison.
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="Probability of cheating on taxes", ylabel="PMF");
+Cmk.lines!(ax, taxes.names, taxes.priors, label="prior");
+Cmk.lines!(ax, taxes.names, taxes.posteriors, label="posteriorr");
+Cmk.axislegend();
+fig
+
+#+END_SRC
+
+Numerical assessment.
+
+#+BEGIN_SRC
+
+maxPostInd = getIndMaxPosterior(taxes)
+taxes.names[maxPostInd], taxes.posteriors[maxPostInd]
+
+#+END_SRC
