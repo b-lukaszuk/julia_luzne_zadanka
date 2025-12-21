@@ -643,3 +643,24 @@ maxPostInd = getIndMaxPosterior(batting)
 batting.names[maxPostInd], batting.posteriors[maxPostInd]
 
 #+END_SRC
+
+** 4.8.2. Exercise 2
+
+Suppose you want to know how many people cheat on their taxes. If you ask them
+directly, it is likely that some of the cheaters will lie. You can get a more
+accurate estimate if you ask them indirectly, like this: Ask each person to flip
+a coin and, without revealing the outcome,
+
+If they get heads, they report YES.
+
+If they get tails, they honestly answer the question “Do you cheat on your
+taxes?”
+
+If someone says YES, we don’t know whether they actually cheat on their taxes;
+they might have flipped heads. Knowing this, people might be more willing to
+answer honestly.
+
+Suppose you survey 100 people this way and get 80 YESes and 20 NOs. Based on
+this data, what is the posterior distribution for the fraction of people who
+cheat on their taxes? What is the most likely quantity in the posterior
+distribution?
