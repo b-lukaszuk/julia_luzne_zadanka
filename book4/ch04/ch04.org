@@ -589,7 +589,7 @@ Drawing Comparison.
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF");
 Cmk.lines!(ax, batting.names, batting.priors, label="prior");
-Cmk.lines!(ax, batting.names, batting.posteriors, label="posteriorr");
+Cmk.lines!(ax, batting.names, batting.posteriors, label="posterior");
 Cmk.axislegend();
 fig
 
@@ -626,7 +626,7 @@ Drawing Comparison.
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a hit", ylabel="PMF");
 Cmk.lines!(ax, batting.names, batting.priors, label="prior");
-Cmk.lines!(ax, batting.names, batting.posteriors, label="posteriorr");
+Cmk.lines!(ax, batting.names, batting.posteriors, label="posterior");
 Cmk.axislegend();
 fig
 
@@ -694,7 +694,7 @@ Drawing Comparison.
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], xlabel="Probability of cheating on taxes", ylabel="PMF");
 Cmk.lines!(ax, taxes.names, taxes.priors, label="prior");
-Cmk.lines!(ax, taxes.names, taxes.posteriors, label="posteriorr");
+Cmk.lines!(ax, taxes.names, taxes.posteriors, label="posterior");
 Cmk.axislegend();
 fig
 
@@ -728,7 +728,7 @@ Drawing Comparison.
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1], xlabel="Probability of cheating on taxes", ylabel="PMF");
 Cmk.lines!(ax, taxes.names, taxes.priors, label="prior");
-Cmk.lines!(ax, taxes.names, taxes.posteriors, label="posteriorr");
+Cmk.lines!(ax, taxes.names, taxes.posteriors, label="posterior");
 Cmk.axislegend();
 fig
 
