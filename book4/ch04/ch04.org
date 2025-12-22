@@ -709,7 +709,6 @@ taxes.names[maxPostInd], taxes.posteriors[maxPostInd]
 
 #+END_SRC
 
-
 *** Solution 2
 
 Starting with priors set like before.
@@ -743,3 +742,16 @@ maxPostInd = getIndMaxPosterior(taxes)
 taxes.names[maxPostInd], taxes.posteriors[maxPostInd]
 
 #+END_SRC
+
+** 4.8.3. Exercise 3
+
+Suppose you want to test whether a coin is fair, but you don’t want to spin it
+hundreds of times. So you make a machine that spins the coin automatically and
+uses computer vision to determine the outcome.
+
+However, you discover that the machine is not always accurate. Specifically,
+suppose the probability is y=0.2 that an actual heads is reported as tails, or
+actual tails reported as heads.
+
+If we spin a coin 250 times and the machine reports 140 heads, what is the
+posterior distribution of x? What happens as you vary the value of y?
