@@ -785,3 +785,60 @@ So:
 P(heads|bias) = P(heads) * P(no bias) + P(tails) * P(bias)
 
 P(tails|bias) = P(tails) * P(no bias) + P(heads) * P(bias)
+
+Let's transform the last two formulas into functions.
+
+#+BEGIN_SRC
+
+function getCorrectedPheads(pHeads::Flt, pBias::Flt)::Flt
+    @assert 0 <= pHeads <= 1 "pHeads must be in range [0-1]"
+    @assert 0 <= pBias <= 1 "pBias must be in range [0-1]"
+    return pHeads * (1-pBias) + (1-pHeads) * pBias
+end
+
+function getCorrectedPtails(pHeads::Flt, pBias::Flt)::Flt
+    return getCorrectedPheads(1-pHeads, pBias)
+end
+
+#+END_SRC
+
+Now, for datasets and likelihoods.
+
+#+BEGIN_SRC
+
+dataset = rep(['h', 't'], [140, 250-140])
+likelihood = Dict(
+    'h' => getCorrectedPheads.(headProbs, 0.2),
+    't' => getCorrectedPtails.(headProbs, 0.2))
+
+#+END_SRC
+
+Which we use to update posteriors:
+
+#+BEGIN_SRC
+
+updatePosteriors!(coinMachine, dataset, likelihood)
+
+#+END_SRC
+
+draw comparisons:
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="Probability of getting a head", ylabel="PMF");
+Cmk.lines!(ax, coinMachine.names, coinMachine.priors, label="prior");
+Cmk.lines!(ax, coinMachine.names, coinMachine.posteriors, label="posterior");
+Cmk.axislegend();
+fig
+
+#+END_SRC
+
+and to perform numerical assessment:
+
+#+BEGIN_SRC
+
+maxPostInd = getIndMaxPosterior(coinMachine)
+coinMachine.names[maxPostInd], coinMachine.posteriors[maxPostInd]
+
+#+END_SRC
