@@ -755,3 +755,33 @@ actual tails reported as heads.
 
 If we spin a coin 250 times and the machine reports 140 heads, what is the
 posterior distribution of x? What happens as you vary the value of y?
+
+#+BEGIN_SRC
+
+headProbs = range(0, 1, 101) |> c
+coinMachine = getPmfFromSeq(headProbs)
+
+#+END_SRC
+
+Let's say we got a fair coin P(heads = 0.5), then what is a probability of
+getting heads with biased computer vision [P(heads|bias) or P(D|H)]?
+
+Out of 1000 tosses I should get:
+- 500 real heads (20%, so 100 misclassified as tails)
+- 500 real tails (20%, so 100 misclassified as heads)
+
+Which yields:
+- 400 real heads plus 100 false heads
+- 400 real tails plus 100 false tails
+
+where:
+- P(real head) = P(real head) and P(no classification bias)
+- P(real tail) = P(real tail) and P(no classification bias)
+- P(false head) = P(real tail) and P(classification bias)
+- P(false tail) = P(real head) and P(classification bias)
+
+So:
+
+P(heads|bias) = P(heads) * P(no bias) + P(tails) * P(bias)
+
+P(tails|bias) = P(tails) * P(no bias) + P(heads) * P(bias)
