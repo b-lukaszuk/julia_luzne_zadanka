@@ -875,3 +875,31 @@ maxPostInd = getIndMaxPosterior(coinMachine)
 coinMachine.names[maxPostInd], coinMachine.posteriors[maxPostInd]
 
 #+END_SRC
+
+Different values of x, i.e. prob. of misclassification:
+
+#+BEGIN_SRC
+
+headProbs = range(0, 1, 101) |> c
+dataset = rep(['h', 't'], [140, 250-140])
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1], xlabel="Posterior probability of getting heads", ylabel="PMF");
+
+for pError in 0:0.1:0.4
+    coinMachine = getPmfFromSeq(headProbs);
+    likelihood = Dict(
+        'h' => getCorrectedPheads.(headProbs, pError),
+        't' => getCorrectedPtails.(headProbs, pError));
+    updatePosteriors!(coinMachine, dataset, likelihood);
+    Cmk.lines!(ax, coinMachine.names, coinMachine.posteriors,
+               label="pError = $pError");
+    maxPostInd = getIndMaxPosterior(coinMachine);
+    maxPostName = coinMachine.names[maxPostInd];
+    maxPostProb = coinMachine.posteriors[maxPostInd] |> round3;
+    Cmk.text!(0, maxPostProb, text="maxPost = $maxPostName, prob = $maxPostProb");
+end
+
+Cmk.axislegend();
+fig
+
+#+END_SRC
