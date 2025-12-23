@@ -676,18 +676,51 @@ taxes = getPmfFromSeq(cheatingProbs)
 
 *** Solution 1
 
-Update.
+Dataset:
 
 #+BEGIN_SRC
 
 # result, but 50 y are due to the coin toss
-dataset = rep(['y', 'n'], [80-50, 20])
-likelihood = Dict('y' => cheatingProbs, 'n' => 1 .- cheatingProbs)
+dataset = rep(['y', 'n'], [80, 20])
+
+#+END_SRC
+
+Let's say 50% of people cheat and 50% do not. If so, then on every 100 individuals:
+
+- 50 will say they cheat because of the coin (25 real cheaters, 25 non-cheaters)
+- of the remaining 50: 25 will say they cheated (real cheaters), 25 will say they did not cheat (real non-cheaters)
+
+Therefore, the probability that a person says they cheat is:
+
+0.5 (coin prob) + prob real cheaters - prob real cheaters * coin prob
+
+We can put in into a function:
+
+#+BEGIN_SRC
+
+function getCorrectedProbCheating(probCheating::Flt, biasProb::Flt)::Flt
+    @assert 0 <= probCheating <= 1 "probCheating must be in range [0-1]"
+    @assert 0 <= biasProb <= 1 "biasProb must be in range [0-1]"
+    return biasProb + probCheating - probCheating * biasProb
+end
+
+function getCorrectedProbHonest(probCheating::Flt, biasProb::Flt)::Flt
+    return 1 - getCorrectedProbCheating(probCheating, biasProb)
+end
+
+#+END_SRC
+
+And do the update.
+
+#+BEGIN_SRC
+
+likelihood = Dict('y' => getCorrectedProbCheating.(cheatingProbs, 0.5),
+                  'n' => getCorrectedProbHonest.(cheatingProbs, 0.5))
 updatePosteriors!(taxes, dataset, likelihood)
 
 #+END_SRC
 
-Drawing Comparison.
+Now, we may draw a comparison:
 
 #+BEGIN_SRC
 
@@ -700,7 +733,7 @@ fig
 
 #+END_SRC
 
-Numerical assessment.
+and do a numerical assessment:
 
 #+BEGIN_SRC
 
