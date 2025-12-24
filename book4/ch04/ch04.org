@@ -926,3 +926,49 @@ x for the Alien Blaster 9000?
 
 Hint: If the probability of hitting each target is x, the probability of hitting
 one target in both tests is $[2*x*(1-x)]^2$
+
+*** Reasoning
+
+My explanation for the probability of getting the same number of hits in both tests, based on properties of probability from [here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_properties.html):
+
+During a test with two shots I can have one of the following results (H - hit, M - miss):
+
+- HH, HM, MH, MM
+
+The same number of shots in both tests means either of:
+
+- 00, 11, 22,
+
+If we assume:
+
+- x - probability of hitting a target,
+- y - probability of not hitting a target (1 - x)
+
+then:
+
+Probability of hitting 0 shots in two tests [P(MM) & P(MM)] is:
+
+- y * y (first test),
+- y * y (second test)
+
+In total (2 tests): y * y * y * y = $y^4$ = $(1-x)^4$
+
+Probability of hitting 1 shot in two tests [P(HM | MH) & P(HM | MH)] is:
+
+- x * y + y * x => xy + xy (multiplication commutativity) => 2xy (first test),
+- x * y + y * x => xy + xy (multiplication commutativity) => 2xy (second test),
+
+In total (2 tests): 2xy * 2xy = $4x^2*y^2$ => $4x^2*(1-x)^2$
+
+This could be rewritten as: $[2x*(1-x)]^2$ (from the hint above)
+
+Probability of hitting 2 shots in two tests [P(HH) & P(HH)] is:
+
+- x * x => $x^2$ (first test),
+- x * x => $x^2$ (second test)
+
+In total (2 tests): x * x * x * x = $x^4$
+
+So, the probability of getting the same result in two tests is:
+
+- P(0 & 0) + P(1 & 1) + P(2 & 2) = $[(1-x)^4] + [4x^2*(1-x)^2] + [x^4]$
