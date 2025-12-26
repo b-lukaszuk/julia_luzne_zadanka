@@ -979,6 +979,8 @@ So, the probability of getting the same result in two tests is:
 
 *** Solution
 
+PMF object:
+
 #+BEGIN_SRC
 
 alienHitProbs = range(0.1, 0.4, 101) |> c
@@ -986,6 +988,7 @@ edl = getPmfFromSeq(alienHitProbs)
 
 #+END_SRC
 
+Formula for likelihoods:
 
 #+BEGIN_SRC
 
@@ -997,5 +1000,29 @@ function getLikelihoodHit(pHit::Flt)::Flt
     p22::Flt = pHit^4
     return p00 + p11 + p22
 end
+
+#+END_SRC
+
+Bayesian update:
+
+#+BEGIN_SRC
+
+setLikelihoods!(edl, getLikelihoodHit.(edl.names))
+bayesUpdate!(edl, true)
+
+#+END_SRC
+
+Graphical display:
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Alien Blaster 9000\nSame number of targets hit in both tests",
+              xlabel="Probability of hitting an alien ship", ylabel="PMF");
+Cmk.lines!(ax, edl.names, edl.priors, label="prior");
+Cmk.lines!(ax, edl.names, edl.posteriors, label="posterior");
+Cmk.axislegend();
+fig
 
 #+END_SRC
