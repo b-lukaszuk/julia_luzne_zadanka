@@ -929,7 +929,7 @@ one target in both tests is $[2*x*(1-x)]^2$
 
 *** Reasoning
 
-My explanation for the probability of getting the same number of hits in both tests, based on properties of probability from [here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_properties.html):
+My explanation for the probability of getting the same number of hits in both tests, based on properties of probability from [[https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_properties.html][here]]:
 
 During a test with two shots I can have one of the following results (H - hit, M - miss):
 
@@ -946,23 +946,27 @@ If we assume:
 
 then:
 
-Probability of hitting 0 shots in two tests [P(MM) & P(MM)] is:
+Probability of hitting 0 shots in two tests [P(MM) AND P(MM)] is:
 
 - y * y (first test),
 - y * y (second test)
 
 In total (2 tests): y * y * y * y = $y^4$ = $(1-x)^4$
 
-Probability of hitting 1 shot in two tests [P(HM | MH) & P(HM | MH)] is:
+Probability of hitting 1 shot in two tests, i.e.:
+
+- P(HM) OR P(MH) [first test]
+  AND
+- P(HM) OR P(MH) [second test] is:
 
 - x * y + y * x => xy + xy (multiplication commutativity) => 2xy (first test),
 - x * y + y * x => xy + xy (multiplication commutativity) => 2xy (second test),
 
-In total (2 tests): 2xy * 2xy = $4x^2*y^2$ => $4x^2*(1-x)^2$
+In total (2 tests): 2xy * 2xy = 4*xx*yy = $4x^2*y^2$ => $4x^2*(1-x)^2$
 
-This could be rewritten as: $[2x*(1-x)]^2$ (from the hint above)
+This could be rewritten as: $[2x*(1-x)]^2$ (from the author's hint above)
 
-Probability of hitting 2 shots in two tests [P(HH) & P(HH)] is:
+Probability of hitting 2 shots in two tests [P(HH) AND P(HH)] is:
 
 - x * x => $x^2$ (first test),
 - x * x => $x^2$ (second test)
