@@ -1,0 +1,44 @@
+#+TITLE: Ch05. Estimating Counts
+#+STARTUP: overview
+#+STARTUP: indent
+#+OPTIONS: \n: t
+
+* Link to the chapter online
+[[https://allendowney.github.io/ThinkBayes2/chap05.html][Chapter 5]]
+
+* Warning
+*The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.*
+
+* Data Files
+None so far
+
+* Environment
+
+#+BEGIN_SRC
+
+println("Let's go.")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+cd(joinpath(homedir(), "Desktop", "julia/luzne_zadanka/book4/ch05")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+using Pkg
+Pkg.activate(".")
+Pkg.status()
+
+#+END_SRC
+
+* Imports
+
+#+BEGIN_SRC
+
+# none so far
+
+#+END_SRC
+
