@@ -297,6 +297,10 @@ function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.
     return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
 end
 
+# \sum_i (p_i * q_i), where q_i quantities, p_i - quantities' probabilities
+function getMeanPosteriorName(pmf::Pmf)::Flt
+    return sum(pmf.names .* pmf.posteriors)
+end
 #+END_SRC
 
 ** other fns
@@ -367,3 +371,30 @@ maxPostInd = getIndMaxPosterior(train)
 train.names[maxPostInd], train.posteriors[maxPostInd]
 
 #+END_SRC
+
+*maxPostInd - maximizes the chance of getting the answer exactly right.*
+
+What is the mean posterior destribution, i.e.
+
+$mean = \sum_i (p_i * q_i)$
+
+where:
+
+- $q_i$ - a set of possible quantities
+- $p_i$ - a set of possible probabilities for the quantities
+
+#+BEGIN_SRC
+
+sum(train.names .* train.posteriors)
+
+#+END_SRC
+
+Of course we can close it to a function (see PMF section) and use it like so:
+
+#+BEGIN_SRC
+
+getMeanPosteriorName(train)
+
+#+END_SRC
+
+*getMeanPosteriorName - minimizes the mean squared error* over a long run.
