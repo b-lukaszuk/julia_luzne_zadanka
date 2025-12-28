@@ -326,3 +326,44 @@ c(sth) = collect(sth)
 str(sth) = string(sth)
 
 #+END_SRC
+
+* 5.1. The Train Problem
+
+The problem from Frederick Mosteller’s [[https://store.doverpublications.com/products/9780486653556][Fifty Challenging Problems in Probability with Solutions]]:
+
+“A railroad numbers its locomotives in order 1…N. One day you see a locomotive with the number 60. Estimate how many locomotives the railroad has.”
+
+Pmf:
+
+#+BEGIN_SRC
+
+train = getPmfFromSeq(1:1000 |> c)
+
+#+END_SRC
+
+Update:
+
+#+BEGIN_SRC
+
+updatePosteriors!(train, 60)
+
+#+END_SRC
+
+Posteriors:
+
+#+BEGIN_SRC
+
+drawPosteriors(train,
+               "Posterior distribution\nafter locomative no. 60 was observed",
+               "Number of trains", "PMF")
+
+#+END_SRC
+
+Max Posterior:
+
+#+BEGIN_SRC
+
+maxPostInd = getIndMaxPosterior(train)
+train.names[maxPostInd], train.posteriors[maxPostInd]
+
+#+END_SRC
