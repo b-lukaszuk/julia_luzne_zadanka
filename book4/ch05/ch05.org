@@ -401,7 +401,7 @@ getMeanPosteriorName(train)
 
 * 5.2. Sensitivity to the Prior
 
-With small data set of observations the posterior is sensistive to the prior.
+With small data set of observations the posterior is sensitive to the prior.
 
 #+BEGIN_SRC
 
@@ -438,3 +438,20 @@ Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
 #+END_SRC
 
 Compare the above with section 4.4. Triangle Prior.
+
+* 5.3. Power Law Prior
+
+If more data are not available we may try to improve prior by gathering more
+background information.
+
+In fact, the distribution of company sizes tends to follow a power law, as
+Robert Axtell reports in Science
+(http://www.sciencemag.org/content/293/5536/1818.full.pdf).
+
+Mathematically this can be expressed as:
+
+$N \propto (\frac{1}{N})^{\alpha}$
+
+where:
+
+- $\alpha$ is a parameter that is often near 1
