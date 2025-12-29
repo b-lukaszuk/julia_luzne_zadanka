@@ -455,3 +455,63 @@ $N \propto (\frac{1}{N})^{\alpha}$
 where:
 
 - $\alpha$ is a parameter that is often near 1
+
+Since from mathematics we know that:
+
+$a^{-n} = \frac{1}{a^{n}}$
+
+So we can rewrite the above as:
+
+$N \propto N^{-\alpha}$
+
+Once we know that we may compare the impact of both priors (uniform vs. power
+law) on the posteriors.
+
+#+BEGIN_SRC
+
+alpha = 1.0
+nLocomotives = 1:1000 |> c
+trainPowerLawPriors = Pmf(nLocomotives, nLocomotives.^(-alpha))
+trainUniformPriors = getPmfFromSeq(nLocomotives)
+
+#+END_SRC
+
+First, let's see the priors:
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Prior distributions", xlabel="Number or trains", ylabel="PMF",
+              xticks=0:250:1000, yticks=0:0.02:0.12);
+Cmk.lines!(ax, trainPowerLawPriors.names, trainPowerLawPriors.priors, color=:orange, label="power law");
+Cmk.lines!(ax, trainUniformPriors.names, trainUniformPriors.priors, color=:blue, label="uniform");
+Cmk.axislegend();
+fig
+
+#+END_SRC
+
+Now, the update:
+
+#+BEGIN_SRC
+
+dataset = [60]
+updatePosteriors!(trainPowerLawPriors, dataset)
+updatePosteriors!(trainUniformPriors, dataset)
+
+#+END_SRC
+
+And posteriors:
+
+#+BEGIN_SRC
+
+fig = Cmk.Figure();
+ax = Cmk.Axis(fig[1, 1],
+              title="Posterior distributions", xlabel="Number or trains", ylabel="PMF",
+              xticks=0:250:1000, yticks=0:0.0025:0.0175);
+Cmk.lines!(ax, trainPowerLawPriors.names, trainPowerLawPriors.posteriors, color=:orange, label="power law");
+Cmk.lines!(ax, trainUniformPriors.names, trainUniformPriors.posteriors, color=:blue, label="uniform");
+Cmk.axislegend();
+fig
+
+#+END_SRC
