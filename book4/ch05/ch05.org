@@ -398,3 +398,43 @@ getMeanPosteriorName(train)
 #+END_SRC
 
 *getMeanPosteriorName - minimizes the mean squared error* over a long run.
+
+* 5.2. Sensitivity to the Prior
+
+With small data set of observations the posterior is sensistive to the prior.
+
+#+BEGIN_SRC
+
+upBonds = [500, 1000, 2000]
+posteriorMeans = Flt[]
+
+for upBond in upBonds
+    train = getPmfFromSeq(1:upBond |> c)
+    updatePosteriors!(train, 60)
+    push!(posteriorMeans, round3(getMeanPosteriorName(train)))
+end
+
+Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
+
+#+END_SRC
+
+With more data, the posteriors tend to converge, e.g. let's say we observed
+trains: 60, 30, and 90.
+
+#+BEGIN_SRC
+
+upBonds = [500, 1000, 2000]
+posteriorMeans = Flt[]
+trainNums = [60, 30, 90]
+
+for upBond in upBonds
+    train = getPmfFromSeq(1:upBond |> c)
+    updatePosteriors!(train, trainNums)
+    push!(posteriorMeans, round3(getMeanPosteriorName(train)))
+end
+
+Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
+
+#+END_SRC
+
+Compare the above with section 4.4. Triangle Prior.
