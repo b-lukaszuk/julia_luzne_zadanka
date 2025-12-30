@@ -515,3 +515,49 @@ Cmk.axislegend();
 fig
 
 #+END_SRC
+
+Now, let's see how the better priors translate into posterior means.
+First, a small dataset:
+
+#+BEGIN_SRC
+
+upBonds = [500, 1000, 2000]
+alpha = 1.0
+posteriorMeans = Flt[]
+# small data set
+trainNums = [60]
+
+for upBond in upBonds
+    nTrains = 1:upBond |> c
+    train = Pmf(nTrains, nTrains.^(-alpha))
+    updatePosteriors!(train, trainNums)
+    push!(posteriorMeans, round3(getMeanPosteriorName(train)))
+end
+
+Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
+
+#+END_SRC
+
+Next, a larger dataset:
+
+#+BEGIN_SRC
+
+upBonds = [500, 1000, 2000]
+alpha = 1.0
+posteriorMeans = Flt[]
+# larger data set 60
+trainNums = [30, 60, 90]
+
+for upBond in upBonds
+    nTrains = 1:upBond |> c
+    train = Pmf(nTrains, nTrains.^(-alpha))
+    updatePosteriors!(train, trainNums)
+    push!(posteriorMeans, round3(getMeanPosteriorName(train)))
+end
+
+Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
+
+#+END_SRC
+
+Compare with Section 5.2. Sensitivity to the Prior. The spread of posterior
+means is (much) smaller.
