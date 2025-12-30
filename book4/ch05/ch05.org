@@ -561,3 +561,45 @@ Dfs.DataFrame("upper bond" => upBonds, "posterior mean" => posteriorMeans)
 
 Compare with Section 5.2. Sensitivity to the Prior. The spread of posterior
 means is (much) smaller.
+
+* 5.4. Credible Intervals
+
+Other way to summarize a posterior distribution (except of point estimates we
+met so far) is with percentiles.
+
+For instance (see the PMF section above) we may calculate the posterior probability that a company has less than or equal to 100 trains:
+
+#+BEGIN_SRC
+
+alpha = 1.0
+nLocomotives = 1:1000 |> c
+trainPowerLawPriors = Pmf(nLocomotives, nLocomotives.^(-alpha))
+dataset = [60, 30, 90]
+updatePosteriors!(trainPowerLawPriors, dataset)
+
+#+END_SRC
+
+and calculations:
+
+#+BEGIN_SRC
+
+getPosteriorLE(trainPowerLawPriors, 100)
+
+#+END_SRC
+
+We can also calculate the quantile (see the PMF section above):
+
+#+BEGIN_SRC
+
+getPosteriorQuantile(trainPowerLawPriors, 0.5)
+
+#+END_SRC
+
+or a 90% confidence interval for the number of trains:
+
+#+BEGIN_SRC
+
+getPosteriorQuantile.(Ref(trainPowerLawPriors), [0.05, 0.95])
+getPosteriorCredibleInterval(trainPowerLawPriors, 0.9)
+
+#+END_SRC
