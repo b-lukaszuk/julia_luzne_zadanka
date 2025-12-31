@@ -577,3 +577,7 @@ getPosteriorCredibleInterval(trainPowerLawPriors, 0.9)
 
 #+END_SRC
 
+* 5.5. The German Tank Problem
+
+Reasoning similar to the one presented in this chapter was used to solve [[https://en.wikipedia.org/wiki/German_tank_problem][the
+German Tank Problem]] during WW2.
