@@ -271,6 +271,19 @@ function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Flt} where T<
     return getPosteriorQuantile.(Ref(pmf), [intervalLow, intervalHigh])
 end
 
+function drawProbsComparison(pmf1::Pmf{<:Ufi}, pmf2::Pmf{<:Ufi}, fieldName::Str,
+                             label1::Str, label2::Str, title::Str,
+                             xlabel::Str, ylabel::Str)::Cmk.Figure
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    ys1::Vec{Flt} = getproperty(pmf1, Symbol(fieldName))
+    ys2::Vec{Flt} = getproperty(pmf2, Symbol(fieldName))
+    Cmk.lines!(ax, pmf1.names, ys1, label=label1)
+    Cmk.lines!(ax, pmf2.names, ys2, label=label2)
+    Cmk.axislegend();
+    return fig
+end
+
 #+END_SRC
 
 ** other fns
@@ -450,14 +463,9 @@ First, let's see the priors:
 
 #+BEGIN_SRC
 
-fig = Cmk.Figure();
-ax = Cmk.Axis(fig[1, 1],
-              title="Prior distributions", xlabel="Number or trains", ylabel="PMF",
-              xticks=0:250:1000, yticks=0:0.02:0.12);
-Cmk.lines!(ax, trainPowerLawPriors.names, trainPowerLawPriors.priors, color=:orange, label="power law");
-Cmk.lines!(ax, trainUniformPriors.names, trainUniformPriors.priors, color=:blue, label="uniform");
-Cmk.axislegend();
-fig
+drawProbsComparison(trainPowerLawPriors, trainUniformPriors, "priors",
+                    "power law", "uniform",
+                    "Prior distributions", "Number of trains", "PMF")
 
 #+END_SRC
 
@@ -475,14 +483,9 @@ And posteriors:
 
 #+BEGIN_SRC
 
-fig = Cmk.Figure();
-ax = Cmk.Axis(fig[1, 1],
-              title="Posterior distributions", xlabel="Number or trains", ylabel="PMF",
-              xticks=0:250:1000, yticks=0:0.0025:0.0175);
-Cmk.lines!(ax, trainPowerLawPriors.names, trainPowerLawPriors.posteriors, color=:orange, label="power law");
-Cmk.lines!(ax, trainUniformPriors.names, trainUniformPriors.posteriors, color=:blue, label="uniform");
-Cmk.axislegend();
-fig
+drawProbsComparison(trainPowerLawPriors, trainUniformPriors, "posteriors",
+                    "power law", "uniform",
+                    "Prior distributions", "Number of trains", "PMF")
 
 #+END_SRC
 
