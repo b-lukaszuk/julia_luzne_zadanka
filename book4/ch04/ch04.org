@@ -80,7 +80,7 @@ function round3(x::Flt)::Flt
     return round(x, digits=3)
 end
 
-function getFirstN(v::Vec{A}, n::Int)::Str where A<:Union{Flt, Int, Str}
+function getFirstN(v::Vec{A}, n::Int)::Str where A<:Ufis
     @assert 0 < n <= 10 "n must be in range [1-10]"
     vv::Vec{A} = first(v, n)
     vv = eltype(v) == Flt ? round3.(vv) : vv
@@ -193,9 +193,9 @@ function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
     return pmf.names[getIndMaxPosterior(pmf)]
 end
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           nameThatOccurred::Union{Flt, Int})::Pmf{<:Union{Flt, Int}}
-    hypos::Vec{<:Union{Flt, Int}} = pmf.names
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           nameThatOccurred::Ufi)::Pmf{<:Ufi}
+    hypos::Vec{<:Ufi} = pmf.names
     likelihoods::Vec{Flt} = 1 ./ hypos
     impossible::Bv = nameThatOccurred .> hypos
     likelihoods[impossible] .= 0.0
@@ -208,8 +208,8 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     end
 end
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           namesThatOccurred::Vec{<:Union{Flt, Int}})::Pmf{<:Union{Flt, Int}}
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           namesThatOccurred::Vec{<:Ufi})::Pmf{<:Ufi}
     foreach(n -> updatePosteriors!(pmf, n), namesThatOccurred)
     return pmf
 end
@@ -256,9 +256,9 @@ function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.
     return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
 end
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
+function updatePosteriors!(pmf::Pmf{<:Ufi},
                            events::Vec{A},
-                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Union{Flt, Int}} where A
+                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Ufi} where A
     pmf.likelihoods .= 1
     for e in events
         pmf.likelihoods .*= eventsProbs[e]
@@ -266,34 +266,12 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     return bayesUpdate!(pmf, true)
 end
 
-function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}}, k::Int, n::Int)::Pmf{<:Union{Flt, Int}}
+function updateBinomial!(pmf::Pmf{<:Ufi}, k::Int, n::Int)::Pmf{<:Ufi}
     @assert n >= k >= 0 "n and k must be >= 0"
-    xs::Vec{<:Union{Flt, Int}} = pmf.names
+    xs::Vec{<:Ufi} = pmf.names
     likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
     setLikelihoods!(pmf, likelihoods)
     return bayesUpdate!(pmf, true)
-end
-
-function drawLinesPmf(pmf::Pmf{T},
-    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    fig = Cmk.Figure(size=(600, 400))
-    Cmk.lines(fig[1, 1],
-        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
-        axis=(;
-            title=title,
-            xlabel=xlabel,
-            ylabel=ylabel,
-        ))
-    return fig
-
-end
-
-function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
-end
-
-function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
 end
 
 #+END_SRC
