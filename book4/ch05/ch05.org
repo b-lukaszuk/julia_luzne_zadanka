@@ -68,20 +68,13 @@ mutable struct Pmf{T}
         new{Flt}(
             ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
         )
-
-    Pmf(ns::Vec{Str}, prs) =
-        (len(ns) != len(prs)) ?
-        error("length(names) must be equal length(priors)") :
-        new{Str}(
-            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
-        )
 end
 
 function round3(x::Flt)::Flt
     return round(x, digits=3)
 end
 
-function getFirstN(v::Vec{A}, n::Int)::Str where A<:Union{Flt, Int, Str}
+function getFirstN(v::Vec{A}, n::Int)::Str where A
     @assert 0 < n <= 10 "n must be in range [1-10]"
     vv::Vec{A} = first(v, n)
     vv = eltype(v) == Flt ? round3.(vv) : vv
@@ -104,7 +97,7 @@ end
 
 #+BEGIN_SRC
 
-function pmf2df(pmf::Pmf{T})::Dfs.DataFrame where {T}
+function pmf2df(pmf::Pmf{A})::Dfs.DataFrame where A<:Ufi
     return Dfs.DataFrame(
         (;
         names=pmf.names,
@@ -123,32 +116,32 @@ function getCounts(v::Vec{T})::Dict{T,Int} where {T}
     return result
 end
 
-function getPmfFromSeq(seq::Vec{T})::Pmf{T} where {T}
+function getPmfFromSeq(seq::Vec{T})::Pmf{T} where T<:Ufi
     counts::Dict{T,Int} = getCounts(seq)
     sortedKeys::Vec{T} = keys(counts) |> collect |> sort
     sortedVals::Vec{Int} = [counts[k] for k in sortedKeys]
     return Pmf(sortedKeys, sortedVals)
 end
 
-function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::String, default) where {T}
+function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::Str, default) where T<:Ufi
     ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
     return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
 end
 
-function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where {T}
+function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where T<:Ufi
     return getFieldValsEqName(pmf, name, "priors", 0.0)
 end
 
-function getPriorsByNames(pmf::Pmf{T}, names::Vec{T})::Vec{Float64} where {T}
+function getPriorsByNames(pmf::Pmf{T}, names::Vec{T})::Vec{Float64} where T<:Ufi
     return map(n -> getPriorByName(pmf, n), names)
 end
 
-function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vec{Float64})::Pmf{T} where {T}
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vec{Float64})::Pmf{T} where T<:Ufi
     pmf.likelihoods = newLikelihoods
     return pmf
 end
 
-function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vec{Float64})::Pmf{T} where {T}
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vec{Float64})::Pmf{T} where T<:Ufi
     pmf.posteriors = newPosteriors
     return pmf
 end
@@ -156,7 +149,7 @@ end
 """
         normalizes pmf.posteriors so they add up to 1
 """
-function normalizePosteriors!(pmf::Pmf{T})::Pmf{T} where {T}
+function normalizePosteriors!(pmf::Pmf{T})::Pmf{T} where T<:Ufi
     pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
     return pmf
 end
@@ -165,7 +158,7 @@ end
         updates posteriors (priors .* likeliehoods)
         if normalize = true, then posteriors are normalized
 """
-function bayesUpdate!(pmf::Pmf{T}, normalize::Bool)::Pmf{T} where {T}
+function bayesUpdate!(pmf::Pmf{T}, normalize::Bool)::Pmf{T} where T<:Ufi
     setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
     if normalize
         normalizePosteriors!(pmf)
@@ -173,7 +166,7 @@ function bayesUpdate!(pmf::Pmf{T}, normalize::Bool)::Pmf{T} where {T}
     return pmf
 end
 
-function getIndMaxField(pmf::Pmf, field::String)::Int
+function getIndMaxField(pmf::Pmf{T}, field::String)::Int where T<:Ufi
     maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
     return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
 end
@@ -186,17 +179,17 @@ function getIndMaxPrior(pmf::Pmf)::Int
     return getIndMaxField(pmf, "priors")
 end
 
-function getNameMaxPrior(pmf::Pmf{T})::T where {T}
+function getNameMaxPrior(pmf::Pmf{T})::T where T<:Ufi
     return pmf.names[getIndMaxPrior(pmf)]
 end
 
-function getNameMaxPosterior(pmf::Pmf{T})::T where {T}
+function getNameMaxPosterior(pmf::Pmf{T})::T where T<:Ufi
     return pmf.names[getIndMaxPosterior(pmf)]
 end
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           nameThatOccurred::Union{Flt, Int})::Pmf{<:Union{Flt, Int}}
-    hypos::Vec{<:Union{Flt, Int}} = pmf.names
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           nameThatOccurred::Ufi)::Pmf{<:Ufi}
+    hypos::Vec{<:Ufi} = pmf.names
     likelihoods::Vec{Flt} = 1 ./ hypos
     impossible::Bv = nameThatOccurred .> hypos
     likelihoods[impossible] .= 0.0
@@ -209,57 +202,15 @@ function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
     end
 end
 
-function updatePosteriors!(pmf::Pmf{<:Union{Flt, Int}},
-                           namesThatOccurred::Vec{<:Union{Flt, Int}})::Pmf{<:Union{Flt, Int}}
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           namesThatOccurred::Vec{<:Ufi})::Pmf{<:Ufi}
     foreach(n -> updatePosteriors!(pmf, n), namesThatOccurred)
     return pmf
 end
 
-function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
-    @assert n > 0 "n must be greater than 0"
-    @assert 0 <= p <= 1 "p must be in the range [0-1]"
-    binDst = Dst.Binomial(n, p)
-    ks::Vec{Int} = c(0:n)
-    return Pmf(ks, Dst.pdf.(binDst, ks))
-end
-
-function getTotalProbGeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
-    isGe::Bv = pmf.names .>= name
-    total::Flt = getproperty(pmf, Symbol(field))[isGe] |> sum
-    return total
-end
-
-function getTotalProbLeName(pmf::Pmf{T}, field::Str, name::T)::Flt where {T}
-    isLe::Bv = pmf.names .<= name
-    total::Flt = getproperty(pmf, Symbol(field))[isLe] |> sum
-    return total
-end
-
-function drawLinesPmf(pmf::Pmf{T},
-    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    fig = Cmk.Figure(size=(600, 400))
-    Cmk.lines(fig[1, 1],
-        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
-        axis=(;
-            title=title,
-            xlabel=xlabel,
-            ylabel=ylabel,
-        ))
-    return fig
-
-end
-
-function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
-end
-
-function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
-    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
-end
-
-function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}},
+function updateBinomial!(pmf::Pmf{<:Ufi},
                            events::Vec{A},
-                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Union{Flt, Int}} where A
+                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Ufi} where A
     pmf.likelihoods .= 1
     for e in events
         pmf.likelihoods .*= eventsProbs[e]
@@ -267,16 +218,16 @@ function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}},
     return bayesUpdate!(pmf, true)
 end
 
-function updateBinomial!(pmf::Pmf{<:Union{Flt, Int}}, k::Int, n::Int)::Pmf{<:Union{Flt, Int}}
+function updateBinomial!(pmf::Pmf{<:Ufi}, k::Int, n::Int)::Pmf{<:Ufi}
     @assert n >= k >= 0 "n and k must be >= 0"
-    xs::Vec{<:Union{Flt, Int}} = pmf.names
+    xs::Vec{<:Ufi} = pmf.names
     likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
     setLikelihoods!(pmf, likelihoods)
     return bayesUpdate!(pmf, true)
 end
 
 function drawLinesPmf(pmf::Pmf{T},
-    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
     fig = Cmk.Figure(size=(600, 400))
     Cmk.lines(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
@@ -289,25 +240,20 @@ function drawLinesPmf(pmf::Pmf{T},
 
 end
 
-function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
     return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
 end
 
-function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where {T}
+function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
     return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
 end
 
-# \sum_i (p_i * q_i), where q_i quantities, p_i - quantities' probabilities
-function getMeanPosteriorName(pmf::Pmf)::Flt
-    return sum(pmf.names .* pmf.posteriors)
-end
-
-function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Union{Flt, Int}
+function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
     inds::Vec{Int} = findall((<=)(cutoffName), pmf.names)
     return sum(pmf.posteriors[inds])
 end
 
-function getPosteriorQuantile(pmf::Pmf{T}, prob::Flt)::Mfi where T<:Union{Flt, Int}
+function getPosteriorQuantile(pmf::Pmf{T}, prob::Flt)::Flt where T<:Ufi
     @assert 0 <= prob <= 1 "prob must be in range [0-1]"
     totalProb::Flt = 0
     for i in eachindex(pmf.posteriors)
@@ -316,10 +262,10 @@ function getPosteriorQuantile(pmf::Pmf{T}, prob::Flt)::Mfi where T<:Union{Flt, I
             return pmf.names[i]
         end
     end
-    return nothing
+    return -99.0
 end
 
-function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Mfi} where T<:Union{Flt, Int}
+function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Flt} where T<:Ufi
     intervalLow::Flt = 0.5 - prob/2
     intervalHigh::Flt = 0.5 + prob/2
     return getPosteriorQuantile.(Ref(pmf), [intervalLow, intervalHigh])
@@ -627,3 +573,4 @@ getPosteriorQuantile.(Ref(trainPowerLawPriors), [0.05, 0.95])
 getPosteriorCredibleInterval(trainPowerLawPriors, 0.9)
 
 #+END_SRC
+
