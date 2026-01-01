@@ -606,3 +606,15 @@ This chapter focused on estimating counts (or the size of a population).
 In the next chapter we will talk about the odds, as an alternative way to
 express probabilities, and Bayes Rule as an alternative form of Bayes's Theorem.
 
+* 5.8. Exercises
+** 5.8.1. Exercise 1
+
+In a lecture hall the safe capacity of the room is 1200 people, so you want to
+estimate how many people are there, therefore:
+
+- You ask how many people were born on May 11 and two people raise their hands.
+- You ask how many were born on May 23 and 1 person raises their hand.
+- Finally, you ask how many were born on August 1, and no one raises their hand.
+
+How many people are in the audience? What is the probability that there are more
+than 1200 people. Hint: Remember the binomial distribution.
