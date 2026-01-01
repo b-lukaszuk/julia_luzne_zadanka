@@ -581,3 +581,21 @@ getPosteriorCredibleInterval(trainPowerLawPriors, 0.9)
 
 Reasoning similar to the one presented in this chapter was used to solve [[https://en.wikipedia.org/wiki/German_tank_problem][the
 German Tank Problem]] during WW2.
+
+* 5.6. Informative Priors
+
+Among Bayesians there are two approaches to choosing prior distributions:
+
+- informative (based on the background information about the problem),
+- uninformative (as unrestricted as possible)
+
+Both got priors and cons, for instance in the spectrum of
+objectiveness-subjectiveness.
+
+If you have a lot of data then the choice of the prior doesn't really matter.
+However, with a limited amount of data you will likely to get different results
+(compare the train case with uniform priors and power law priors).
+
+My impression is that the author of the book inclines rather towards informative
+priors.
+
