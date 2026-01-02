@@ -708,3 +708,12 @@ getPosteriorGT(lecture, 1200)
 
 #+END_SRC
 
+
+** 5.8.2. Exercise 2
+There are rabbits in a garden behind a house. And there is a camera that takes a
+picture of the first rabbit it seas in a given day. After three days there are
+three pictures, two of them are the pictures of the same rabbit, the other one
+is of different rabbit. How many rabbits are in the garden?
+
+Choose uniform prior from 4 to 10.
+All rabbits are equally likely to be photographed.
