@@ -108,16 +108,8 @@ function pmf2df(pmf::Pmf{A})::Dfs.DataFrame where A<:Ufi
     )
 end
 
-function getCounts(v::Vec{T})::Dict{T,Int} where {T}
-    result::Dict{T,Int} = Dict()
-    for elt in v
-        result[elt] = get(result, elt, 0) + 1
-    end
-    return result
-end
-
 function getPmfFromSeq(seq::Vec{T})::Pmf{T} where T<:Ufi
-    counts::Dict{T,Int} = getCounts(seq)
+    counts::Dict{T,Int} = Sb.countmap(seq)
     sortedKeys::Vec{T} = keys(counts) |> collect |> sort
     sortedVals::Vec{Int} = [counts[k] for k in sortedKeys]
     return Pmf(sortedKeys, sortedVals)
@@ -707,7 +699,6 @@ Prob n people in the hall > 1200:
 getPosteriorGT(lecture, 1200)
 
 #+END_SRC
-
 
 ** 5.8.2. Exercise 2
 There are rabbits in a garden behind a house. And there is a camera that takes a
