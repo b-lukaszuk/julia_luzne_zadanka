@@ -253,6 +253,11 @@ function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
     return sum(pmf.posteriors[inds])
 end
 
+function getPosteriorGT(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
+    inds::Vec{Int} = findall((>)(cutoffName), pmf.names)
+    return sum(pmf.posteriors[inds])
+end
+
 function getPosteriorQuantile(pmf::Pmf{T}, prob::Flt)::Flt where T<:Ufi
     @assert 0 <= prob <= 1 "prob must be in range [0-1]"
     totalProb::Flt = 0
@@ -269,6 +274,16 @@ function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Flt} where T<
     intervalLow::Flt = 0.5 - prob/2
     intervalHigh::Flt = 0.5 + prob/2
     return getPosteriorQuantile.(Ref(pmf), [intervalLow, intervalHigh])
+end
+
+function drawPriorsPosteriors(pmf::Pmf{<:Ufi}, title::Str,
+                              xlabel::Str, ylabel::Str)::Cmk.Figure
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    Cmk.lines!(ax, pmf.names, pmf.priors, label="prior")
+    Cmk.lines!(ax, pmf.names, pmf.posteriors, label="posteriors")
+    Cmk.axislegend();
+    return fig
 end
 
 function drawProbsComparison(pmf1::Pmf{<:Ufi}, pmf2::Pmf{<:Ufi}, fieldName::Str,
