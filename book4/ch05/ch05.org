@@ -618,3 +618,78 @@ estimate how many people are there, therefore:
 
 How many people are in the audience? What is the probability that there are more
 than 1200 people. Hint: Remember the binomial distribution.
+
+Priors:
+
+#+BEGIN_SRC
+
+# 1200 is our reference point
+# let's say a person can tell the difference
+# when there is half less/more people than expected
+# so we will test the range of people:
+lecture = getPmfFromSeq(c(600:1800))
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+# for binom distribution calculations
+# assumption: prob that a person was born on a given day is 1/365
+# assumption: equal distrib of births through year
+# assumption: independence of birth dates and their probabilities
+# so, overall we got k successes, i.e. 2 AND 1 AND 0
+# p = 1/365
+# n - number of people in the lecture hall
+p = 1/365
+ks = [2, 1, 0]
+ns = lecture.names
+
+#+END_SRC
+
+Update:
+
+#+BEGIN_SRC
+
+likelihoods = ones(Flt, lecture.names |> len)
+for k in ks
+    likelihoods .*= Dst.pdf.(Dst.Binomial.(ns, p), k)
+end
+setLikelihoods!(lecture, likelihoods)
+bayesUpdate!(lecture, true)
+
+#+END_SRC
+
+Visual inspection:
+
+#+BEGIN_SRC
+
+drawPriorsPosteriors(
+    lecture, "Lecture hall", "number of people in the room", "PMF")
+
+#+END_SRC
+
+Most probable number of people in the hall:
+
+#+BEGIN_SRC
+
+indMax = getIndMaxPosterior(lecture)
+lecture.names[indMax], lecture.posteriors[indMax]
+
+#+END_SRC
+
+95% CI:
+
+#+BEGIN_SRC
+
+getPosteriorCredibleInterval(lecture, 0.95)
+
+#+END_SRC
+
+Prob n people in the hall > 1200:
+
+#+BEGIN_SRC
+
+getPosteriorGT(lecture, 1200)
+
+#+END_SRC
+
