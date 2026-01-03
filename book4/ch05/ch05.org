@@ -779,3 +779,42 @@ In a criminal justice system, all prison sentences are either 1, 2, or 3 years,
 with an equal number of each. One day, you visit a prison and choose a prisoner
 at random. What is the probability that they are serving a 3-year sentence? What
 is the average remaining sentence of the prisoners you observe?
+
+*** Solution
+
+Computer simulation:
+
+#+BEGIN_SRC
+
+mutable struct Prisoner
+    sentenceYrs::Int
+    timeLeftYrs::Int
+end
+
+prisoners = Prisoner.(1:3, 1:3)
+
+# actually a 3-year cycle would be enough, but whatever
+for _ in 1:1000
+    foreach(p -> p.timeLeftYrs -= 1, prisoners)
+    filter!(p -> p.timeLeftYrs > 0, prisoners)
+    append!(prisoners, Prisoner.(1:3, 1:3))
+end
+
+#+END_SRC
+
+Probability that a prisoner is serving x-year sentence:
+
+#+BEGIN_SRC
+
+[p.sentenceYrs for p in prisoners] |> Sb.proportionmap
+
+#+END_SRC
+
+Average remaining sentence:
+
+#+BEGIN_SRC
+
+sum([p.timeLeftYrs for p in prisoners])/len(prisoners)
+
+#+END_SRC
+
