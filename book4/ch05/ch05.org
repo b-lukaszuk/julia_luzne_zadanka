@@ -772,3 +772,10 @@ drawPriorsPosteriors(rabbits, "Rabbits in the garden with the camera phototrap",
                      "number of rabbits", "PMF")
 
 #+END_SRC
+
+** 5.8.3. Exercise 3
+
+In a criminal justice system, all prison sentences are either 1, 2, or 3 years,
+with an equal number of each. One day, you visit a prison and choose a prisoner
+at random. What is the probability that they are serving a 3-year sentence? What
+is the average remaining sentence of the prisoners you observe?
