@@ -218,10 +218,10 @@ function updateBinomial!(pmf::Pmf{<:Ufi}, k::Int, n::Int)::Pmf{<:Ufi}
     return bayesUpdate!(pmf, true)
 end
 
-function drawLinesPmf(pmf::Pmf{T},
+function drawPmf(pmf::Pmf{T}, drawFn::Function,
     pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
     fig = Cmk.Figure(size=(600, 400))
-    Cmk.lines(fig[1, 1],
+    drawFn(fig[1, 1],
         pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
         axis=(;
             title=title,
@@ -229,15 +229,16 @@ function drawLinesPmf(pmf::Pmf{T},
             ylabel=ylabel,
         ))
     return fig
-
 end
 
-function drawPriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
-    return drawLinesPmf(pmf, "priors", title, xlabel, ylabel)
+function drawPriors(pmf::Pmf{T}, drawFn::Function,
+                    title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn, "priors", title, xlabel, ylabel)
 end
 
-function drawPosteriors(pmf::Pmf{T}, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
-    return drawLinesPmf(pmf, "posteriors", title, xlabel, ylabel)
+function drawPosteriors(pmf::Pmf{T}, drawFn::Function,
+                        title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn, "posteriors", title, xlabel, ylabel)
 end
 
 function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
@@ -268,25 +269,25 @@ function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Flt} where T<
     return getPosteriorQuantile.(Ref(pmf), [intervalLow, intervalHigh])
 end
 
-function drawPriorsPosteriors(pmf::Pmf{<:Ufi}, title::Str,
-                              xlabel::Str, ylabel::Str)::Cmk.Figure
+function drawPriorsPosteriors(pmf::Pmf{<:Ufi}, drawFn!::Function,
+                              title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure
     fig::Cmk.Figure = Cmk.Figure()
     ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
-    Cmk.lines!(ax, pmf.names, pmf.priors, label="prior")
-    Cmk.lines!(ax, pmf.names, pmf.posteriors, label="posteriors")
+    drawFn!(ax, pmf.names, pmf.priors, label="prior")
+    drawFn!(ax, pmf.names, pmf.posteriors, label="posteriors")
     Cmk.axislegend();
     return fig
 end
 
 function drawProbsComparison(pmf1::Pmf{<:Ufi}, pmf2::Pmf{<:Ufi}, fieldName::Str,
-                             label1::Str, label2::Str, title::Str,
-                             xlabel::Str, ylabel::Str)::Cmk.Figure
+                             drawFn!::Function, label1::Str, label2::Str,
+                             title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure
     fig::Cmk.Figure = Cmk.Figure()
     ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
     ys1::Vec{Flt} = getproperty(pmf1, Symbol(fieldName))
     ys2::Vec{Flt} = getproperty(pmf2, Symbol(fieldName))
-    Cmk.lines!(ax, pmf1.names, ys1, label=label1)
-    Cmk.lines!(ax, pmf2.names, ys2, label=label2)
+    drawFn!(ax, pmf1.names, ys1, label=label1)
+    drawFn!(ax, pmf2.names, ys2, label=label2)
     Cmk.axislegend();
     return fig
 end
@@ -347,7 +348,7 @@ Posteriors:
 
 #+BEGIN_SRC
 
-drawPosteriors(train,
+drawPosteriors(train, Cmk.lines,
                "Posterior distribution\nafter locomative no. 60 was observed",
                "Number of trains", "PMF")
 
@@ -471,7 +472,7 @@ First, let's see the priors:
 #+BEGIN_SRC
 
 drawProbsComparison(trainPowerLawPriors, trainUniformPriors, "priors",
-                    "power law", "uniform",
+                    Cmk.lines!, "power law", "uniform",
                     "Prior distributions", "Number of trains", "PMF")
 
 #+END_SRC
@@ -491,7 +492,7 @@ And posteriors:
 #+BEGIN_SRC
 
 drawProbsComparison(trainPowerLawPriors, trainUniformPriors, "posteriors",
-                    "power law", "uniform",
+                    Cmk.lines!, "power law", "uniform",
                     "Prior distributions", "Number of trains", "PMF")
 
 #+END_SRC
@@ -670,8 +671,8 @@ Visual inspection:
 
 #+BEGIN_SRC
 
-drawPriorsPosteriors(
-    lecture, "Lecture hall", "number of people in the room", "PMF")
+drawPriorsPosteriors(lecture, Cmk.lines!,
+                     "Lecture hall", "number of people in the room", "PMF")
 
 #+END_SRC
 
@@ -768,8 +769,19 @@ And its graphical depiction:
 
 #+BEGIN_SRC
 
-drawPriorsPosteriors(rabbits, "Rabbits in the garden with the camera phototrap",
+drawPriorsPosteriors(rabbits, Cmk.lines!,
+                     "Rabbits in the garden with the camera phototrap",
                      "number of rabbits", "PMF")
+
+#+END_SRC
+
+And another graphics:
+
+#+BEGIN_SRC
+
+drawPosteriors(rabbits, Cmk.barplot,
+               "Rabbits in the garden with the camera phototrap",
+               "number of rabbits", "PMF")
 
 #+END_SRC
 
@@ -817,4 +829,3 @@ Average remaining sentence:
 sum([p.timeLeftYrs for p in prisoners])/len(prisoners)
 
 #+END_SRC
-
