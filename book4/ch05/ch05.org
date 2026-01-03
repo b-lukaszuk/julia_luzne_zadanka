@@ -708,3 +708,67 @@ is of different rabbit. How many rabbits are in the garden?
 
 Choose uniform prior from 4 to 10.
 All rabbits are equally likely to be photographed.
+
+First the rabbits:
+
+#+BEGIN_SRC
+
+rabbits = getPmfFromSeq(c(4:10))
+
+#+END_SRC
+
+Reasoning for likelihood:
+
+if:
+
+- rx - rabbit x that occurred twice
+- aor - any other rabbit that occurred only once
+
+Possible distributions of rabbits in the 3 days:
+
+- rx, rx, aor
+- rx, aor, rx
+- aor, rx, rx
+
+for option1 (rx, rx, aor) where n - total number of rabbits:
+
+- P(rx) = 1/n AND P(rx) = 1/n AND P(aor) = (n-1)/n
+
+other options the same calculations but in different order (so P(option1)*3)
+
+And so we got:
+
+$ \frac{1}{n} * \frac{1}{n} * \frac{n-1}{n} = \frac{1 * 1 * (n-1)}{n * n * n} $
+
+Which gives us:
+
+$ \frac{n - 1}{n^3} $
+
+So the likelihood function is:
+
+#+BEGIN_SRC
+
+function getRabbitLikelihood(nRabbits::Int)::Flt
+    @assert 4 <= nRabbits <= 10 "nRabbits must be in range [4-10]"
+    return (nRabbits-1)/(nRabbits^3) * 3
+end
+
+#+END_SRC
+
+The likelihoods and the update are:
+
+#+BEGIN_SRC
+
+setLikelihoods!(rabbits, getRabbitLikelihood.(rabbits.names))
+bayesUpdate!(rabbits, true)
+
+#+END_SRC
+
+And its graphical depiction:
+
+#+BEGIN_SRC
+
+drawPriorsPosteriors(rabbits, "Rabbits in the garden with the camera phototrap",
+                     "number of rabbits", "PMF")
+
+#+END_SRC
