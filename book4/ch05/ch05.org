@@ -792,7 +792,7 @@ with an equal number of each. One day, you visit a prison and choose a prisoner
 at random. What is the probability that they are serving a 3-year sentence? What
 is the average remaining sentence of the prisoners you observe?
 
-*** Solution
+*** Solution 1
 
 Computer simulation:
 
@@ -829,3 +829,27 @@ Average remaining sentence:
 sum([p.timeLeftYrs for p in prisoners])/len(prisoners)
 
 #+END_SRC
+
+*** Solution 2
+The posteriors should not be uniform if the equal number of 1-, 2-, 3- year
+sentences is made each year.
+
+Explanation:
+
+- we start with: 1, 2, 3, (1, 2, 3 years remained),
+- after 1 yr we release the old 1yr and got: 2 (1 yr remained), 3 (2 years remained) + newly sentenced: 1, 2, 3 (1, 2, 3 years remained),
+- after another yr we reduce the time left and again add newly sentenced.
+
+(compare with Solution 1 above)
+
+So at any moment there should be more 3years than 2 years and 1 years (3 > 2 > 1).
+
+#+BEGIN_SRC
+
+prisoners = getPmfFromSeq(c(1:3))
+# likelihood proportional to the sentence
+setLikelihoods!(prisoners, prisoners.names ./ sum(prisoners.names))
+bayesUpdate!(prisoners, true)
+
+#+END_SRC
+
