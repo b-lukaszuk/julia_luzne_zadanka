@@ -853,3 +853,26 @@ bayesUpdate!(prisoners, true)
 
 #+END_SRC
 
+** 5.8.4. Exercise 4
+
+If I chose a random adult in the U.S., what is the probability that they have a
+sibling? To be precise, what is the probability that their mother has had at
+least one other child.
+
+The following priors are based on [[https://www.pewresearch.org/social-trends/2015/05/07/family-size-among-mothers/][this article from the Pew Research Center]].
+
+#+BEGIN_SRC
+
+family = Pmf([1, 2, 3, 4], [22, 41, 24, 14])
+
+Cmk.barplot(family.names, family.priors,
+            axis=(; title="Distribution of family size", ylabel="PMF",
+                  xticks=(1:4, ["1 child", "2 children", "3 children", "4+ children"])
+                  )
+            )
+
+#+END_SRC
+
+For simplicity, let’s assume that all families in the 4+ category have exactly 4
+children.
+
