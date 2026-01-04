@@ -218,27 +218,22 @@ function updateBinomial!(pmf::Pmf{<:Ufi}, k::Int, n::Int)::Pmf{<:Ufi}
     return bayesUpdate!(pmf, true)
 end
 
-function drawPmf(pmf::Pmf{T}, drawFn::Function,
-    pmfFieldForYs::Str, title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
-    fig = Cmk.Figure(size=(600, 400))
-    drawFn(fig[1, 1],
-        pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)), color="navy",
-        axis=(;
-            title=title,
-            xlabel=xlabel,
-            ylabel=ylabel,
-        ))
+function drawPmf(pmf::Pmf{T}, drawFn!::Function, pmfFieldForYs::Str, title::Str,
+                 xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    fig::Cmk.Figure = Cmk.Figure(size=(600, 400))
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    drawFn!(ax, pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)))
     return fig
 end
 
-function drawPriors(pmf::Pmf{T}, drawFn::Function,
-                    title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
-    return drawPmf(pmf, drawFn, "priors", title, xlabel, ylabel)
+function drawPriors(pmf::Pmf{T}, drawFn!::Function, title::Str,
+                    xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn!, "priors", title, xlabel, ylabel)
 end
 
-function drawPosteriors(pmf::Pmf{T}, drawFn::Function,
-                        title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
-    return drawPmf(pmf, drawFn, "posteriors", title, xlabel, ylabel)
+function drawPosteriors(pmf::Pmf{T}, drawFn!::Function, title::Str,
+                        xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn!, "posteriors", title, xlabel, ylabel)
 end
 
 function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
@@ -348,7 +343,7 @@ Posteriors:
 
 #+BEGIN_SRC
 
-drawPosteriors(train, Cmk.lines,
+drawPosteriors(train, Cmk.lines!,
                "Posterior distribution\nafter locomative no. 60 was observed",
                "Number of trains", "PMF")
 
@@ -779,7 +774,7 @@ And another graphics:
 
 #+BEGIN_SRC
 
-drawPosteriors(rabbits, Cmk.barplot,
+drawPosteriors(rabbits, Cmk.barplot!,
                "Rabbits in the garden with the camera phototrap",
                "number of rabbits", "PMF")
 
@@ -875,4 +870,3 @@ Cmk.barplot(family.names, family.priors,
 
 For simplicity, let’s assume that all families in the 4+ category have exactly 4
 children.
-
