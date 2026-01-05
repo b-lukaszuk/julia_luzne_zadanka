@@ -882,7 +882,12 @@ floats in the result):
 - 100 * 0.238 * 3 children
 - 100 * 0.139 * 4 children
 
-Out of this `n` children only $100 * 0.218 * 1$ has no sibling.
+So, we got n children:
+
+$n = \sum_{i=1}^{4} 100 * P(children_i) * i_{children} \approx 229.7$
+
+Out of this `n` children only $100 * 0.218 * 1 \approx 22.8$ (so $22.8/229.7 \approx
+0.0949$) has no sibling.
 
 So we can calculate the posteriors (only the probabilities) as:
 
