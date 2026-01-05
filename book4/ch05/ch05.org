@@ -870,3 +870,41 @@ Cmk.barplot(family.names, family.priors,
 
 For simplicity, let’s assume that all families in the 4+ category have exactly 4
 children.
+
+*** Solution
+
+Per 100 mothers in generation 1, the next generation (generation 2) got
+the expected counts (one may choose some big round number of mothers to avoid
+floats in the result):
+
+- 100 * 0.218 * 1 children
+- 100 * 0.406 * 2 children
+- 100 * 0.238 * 3 children
+- 100 * 0.139 * 4 children
+
+Out of this `n` children only $100 * 0.218 * 1$ has no sibling.
+
+So we can calculate the posteriors (only the probabilities) as:
+
+#+BEGIN_SRC
+
+family.posteriors = family.names .* family.priors
+normalizePosteriors!(family)
+
+#+END_SRC
+
+Therefore, the probability that a randomly chosen US adult got a sibling is:
+
+#+BEGIN_SRC
+
+sum(family.posteriors[2:end])
+
+#+END_SRC
+
+or
+
+#+BEGIN_SRC
+
+getPosteriorGT(family, 1)
+
+#+END_SRC
