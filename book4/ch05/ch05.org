@@ -913,3 +913,28 @@ or
 getPosteriorGT(family, 1)
 
 #+END_SRC
+
+** 5.8.5. Exercise 5
+
+[[https://en.wikipedia.org/wiki/Doomsday_argument][Doomsday argument]]
+
+Suppose there are only two kinds of intelligent civilizations:
+
+- “short-lived” - go extinct after only 200 billion individuals born
+- “long-lived” kind survive until 2,000 billion individuals are born.
+
+Suppose both are equally likely. Which kind of civilization do you think we live
+in?
+
+According to the [[https://www.prb.org/articles/how-many-people-have-ever-lived-on-earth/][Population Reference Bureau]] the total number of people who have
+ever lived is about 108 billion.
+
+Assume that you are, in fact, human being number 108 billion.
+
+If `N` is the total number who will ever live and we consider you to be a
+randomly-chosen person, it is equally likely that you could have been person 1,
+or N, or any number in between. So what is the probability that you would be
+number 108 billion?
+
+Given this data and dubious prior, what is the probability that our civilization
+will be short-lived?
