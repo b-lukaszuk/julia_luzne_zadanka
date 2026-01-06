@@ -920,7 +920,7 @@ getPosteriorGT(family, 1)
 
 Suppose there are only two kinds of intelligent civilizations:
 
-- “short-lived” - go extinct after only 200 billion individuals born
+- “short-lived” - go extinct after only 200 billion individuals born,
 - “long-lived” kind survive until 2,000 billion individuals are born.
 
 Suppose both are equally likely. Which kind of civilization do you think we live
@@ -938,3 +938,31 @@ number 108 billion?
 
 Given this data and dubious prior, what is the probability that our civilization
 will be short-lived?
+
+First, the PMF:
+
+#+BEGIN_SRC
+
+# 200_000_000_000 (two hundred billion individuals)
+# 2_000_000_000_000 (two thousand billion individuals)
+# billion 10^9
+doom = getPmfFromSeq([200e9, 2000e9])
+
+#+END_SRC
+
+Probability of being number 108 billion, if being each number (1..N) is equally
+likely:
+
+#+BEGIN_SRC
+
+setLikelihoods!(doom, 1 ./ doom.names)
+
+#+END_SRC
+
+Probability that our civilization is short-lived (under the dubious prior)?
+
+#+BEGIN_SRC
+
+bayesUpdate!(doom, true)
+
+#+END_SRC
