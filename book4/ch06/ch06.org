@@ -329,3 +329,23 @@ This chapter talks about:
 Bayes’s Rule is convenient if you want to do a Bayesian update on paper or in
 your head. It also sheds light on the important idea of evidence and how we can
 quantify the strength of evidence.
+
+* 6.1. Odds
+
+Odds (or odds in favor) are defined as:
+
+$Odds = \frac{p}{q}$
+
+where:
+
+- p - probability of a success
+- q - probability of failure
+
+#+BEGIN_SRC
+
+function getOdds(pSuccess::Flt)::Flt
+    @assert 0 <= pSuccess <= 1 "pSuccess must be in range [0-1]"
+    return pSuccess / (1-pSuccess)
+end
+
+#+END_SRC
