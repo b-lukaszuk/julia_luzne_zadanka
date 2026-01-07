@@ -334,12 +334,12 @@ quantify the strength of evidence.
 
 Odds (or odds in favor) are defined as:
 
-$Odds = \frac{p}{q}$
+$Odds = \frac{p}{q} = \frac{p}{1-p}$
 
 where:
 
 - p - probability of a success
-- q - probability of failure
+- q - probability of failure (1-p)
 
 #+BEGIN_SRC
 
@@ -349,3 +349,47 @@ function getOdds(pSuccess::Flt)::Flt
 end
 
 #+END_SRC
+
+Let's say p = 0.75 then odds are three to one (3:1) in favor:
+
+#+BEGIN_SRC
+
+getOdds(0.75)
+
+#+END_SRC
+
+When probabilities are low, it is more common to report the odds against rather
+than the odds in favor. For example, if my horse has a 10% chance of winning,
+the odds in favor are:
+
+#+BEGIN_SRC
+
+getOdds(0.1)
+
+#+END_SRC
+
+1:9, but odds against are 9:1, see:
+
+#+BEGIN_SRC
+
+getOdds(0.9)
+
+#+END_SRC
+
+We can also do the opposite transformation, below my (BL) conversion for practice
+
+$odds = \frac{p}{1-p}$
+
+$\frac{p}{1-p} = odds$
+
+$\frac{p}{1-p} = odds$ # multiply both sides by (1-p)
+
+$p = odds * (1-p)$ # act on right side: multiply odds by (1-p)
+
+$p = odds - odds * p$ # move (odds*p) to the left with the opposite sign
+
+$p + (odds * p) = odds$ # rewrite left side to different equivalent form
+
+$p * (1 + odds) = odds$ # move (1+odds) to the right with the opposite sign
+
+$p = odds / (1 + odds)$
