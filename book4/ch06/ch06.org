@@ -317,3 +317,15 @@ str(sth) = string(sth)
 
 #+END_SRC
 
+
+* 6. Odds and Addends
+
+This chapter talks about:
+
+- odds
+- Bayes's Rule
+- addends (quantities being added)
+
+Bayes’s Rule is convenient if you want to do a Bayesian update on paper or in
+your head. It also sheds light on the important idea of evidence and how we can
+quantify the strength of evidence.
