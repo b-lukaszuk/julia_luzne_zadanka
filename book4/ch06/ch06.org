@@ -317,7 +317,6 @@ str(sth) = string(sth)
 
 #+END_SRC
 
-
 * 6. Odds and Addends
 
 This chapter talks about:
@@ -380,7 +379,7 @@ We can also do the opposite transformation, below my (BL) conversion for practic
 
 $odds = \frac{p}{1-p}$ # swap sides, result below
 
-$\frac{p}{1-p} = odds$ # multiply both sides by (1-p), result below
+$\frac{p}{1-p} = odds$ # move /(1-p) to the other side with the opposite sign, result below
 
 $p = odds * (1-p)$ # act on right side: multiply odds by (1-p), result below
 
@@ -391,3 +390,46 @@ $p + (odds * p) = odds$ # rewrite left side to different equivalent form, result
 $p * (1 + odds) = odds$ # move (1+odds) to the right with the opposite sign, result below
 
 $p = odds / (1 + odds)$
+
+The last formula can be enclosed into Julia's function:
+
+#+BEGIN_SRC
+
+function getProb(odds::Flt)::Flt
+    @assert odds >= 0 "odds must be >= 0"
+    return odds / (odds + 1)
+end
+
+#+END_SRC
+
+For example, if the odds are 3/2, the probability is:
+
+#+BEGIN_SRC
+
+getProb(3/2)
+
+#+END_SRC
+
+If we represent odds, e.g. as counts we get:
+
+#+BEGIN_SRC
+
+# yes - num times it will happen, no - num times it won't happen
+function getProb(yes::Int, no::Int)::Flt
+    @assert yes >= 0 "yes must be >= 0"
+    @assert no >= 0 "no must be > 0"
+    return yes / (yes + no)
+end
+
+#+END_SRC
+
+And:
+
+#+BEGIN_SRC
+
+getProb(3, 2)
+
+#+END_SRC
+
+It's worth to know odds, since some computations are easier to do with odds than
+with probabilities.
