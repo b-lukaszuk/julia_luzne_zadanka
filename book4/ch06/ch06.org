@@ -433,3 +433,36 @@ getProb(3, 2)
 
 It's worth to know odds, since some computations are easier to do with odds than
 with probabilities.
+
+* 6.2. Bayes's Rule
+
+Bayes theorem is:
+
+$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
+
+
+Writing odds(A) for odds in favor of A, we can express Bayes’s Theorem in “odds
+form”:
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+Let's solve the cookies problem with it, i.e. we got 2 bowls of cookies. Bowl 1
+contains 30/10 vanilla/chocolate cookies, Bowl 2 contains 20/20 vanilla
+chocolate cookies. You choose one bowl at random and draw a cookie, the cookie
+is vanilla. What is the probability that it came from Bowl 1?
+
+#+BEGIN_SRC
+
+priorOdds = 1/1 # odds(Bowl 1) one Bowl 1 and one Bowl 2
+likelihoodRatio = (30/40) / (20/40) # P(vanilla | Bowl 1) / P(vanilla | Bowl 2)
+postOdds = priorOdds * likelihoodRatio
+
+#+END_SRC
+
+Which after changing to probability is (compare with Chapter 3.3):
+
+#+BEGIN_SRC
+
+getProb(postOdds)
+
+#+END_SRC
