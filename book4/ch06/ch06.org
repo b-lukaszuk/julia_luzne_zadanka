@@ -466,3 +466,21 @@ Which after changing to probability is (compare with Chapter 3.3):
 getProb(postOdds)
 
 #+END_SRC
+
+
+If we draw (with replacement) another cookie, but this time a chocolate one, we get:
+
+#+BEGIN_SRC
+
+likelihoodRatio = (10/40) / (20/40) # P(chocolate | Bowl 1) / P(chocolate | Bowl 2)
+postOdds *= likelihoodRatio
+
+#+END_SRC
+
+Or:
+
+#+BEGIN_SRC
+
+getProb(postOdds)
+
+#+END_SRC
