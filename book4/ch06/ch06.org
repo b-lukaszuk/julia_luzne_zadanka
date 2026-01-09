@@ -393,7 +393,7 @@ $p + p * odds = odds$ # put whole left side in parenthesis, result below
 
 $(p + p * odds) = odds$ # extract p in front of parenthesis (extract it from p and from p*odds), result below
 
-$p * (1 + odds) = odds$ # move (1+odds) to the right with the opposite sign, result below
+$p * (1 + odds) = odds$ # move *(1+odds) to the right with the opposite sign, result below
 
 $p = odds / (1 + odds)$
 
@@ -482,14 +482,21 @@ $odds(A|D) = \frac{P(A|D)}{P(B|D)}$, where
 - `B` - event B (failure, complementary event to `A`),
 - `D` - data,
 
-after applying the formula above (and substituting P(A|D), and P(B|D) with it)
+Now, we take this formula, i.e.
+
+$odds(A|D) = \frac{P(A|D)}{P(B|D)}$
+
+and expand P(A|D) and P(B|D) from it with the presiously mentioned formula:
+
+$P(A|D) = P(A) * P(D|A)$
+
 we get:
 
-$odds(A|D) = \frac{P(A) * P(D|A)}{P(B) * P(D|B)}$
+$odds(A|D) = \frac{P(A) * P(D|A)}{P(B)*P(D|B)}$
 
 We can separate the first part of the fraction above, which will give us:
 
-$odds(A|B) = \frac{P(A)}{P(B)} * \frac{P(D|A)}{P(D|B)}$
+$odds(A|D) = \frac{P(A)}{P(B)} * \frac{P(D|A)}{P(D|B)}$
 
 since $\frac{P(A)}{P(B)}$ is just odds(A), we get:
 
