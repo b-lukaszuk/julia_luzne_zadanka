@@ -385,7 +385,13 @@ $p = odds * (1-p)$ # act on right side: multiply odds by (1-p), result below
 
 $p = odds - odds * p$ # move (odds*p) to the left with the opposite sign, result below
 
-$p + (odds * p) = odds$ # rewrite left side to different equivalent form, result below
+$p + (odds * p) = odds$ # rewrite it (remove parenthesis) to:
+
+$p + odds * p = odds$ # swap odds and p (multiplication is commutative), result below
+
+$p + p * odds = odds$ # put whole left side in parenthesis, result below
+
+$(p + p * odds) = odds$ # extract p in front of parenthesis (extract it from p and from p*odds), result below
 
 $p * (1 + odds) = odds$ # move (1+odds) to the right with the opposite sign, result below
 
@@ -436,7 +442,7 @@ with probabilities.
 
 * 6.2. Bayes's Rule
 
-Bayes theorem is:
+Bayes's Theorem is:
 
 $P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
 
@@ -445,6 +451,51 @@ Writing odds(A) for odds in favor of A, we can express Bayes’s Theorem in “o
 form”:
 
 $odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+** Bayes's Theorem from Probs to Odds
+
+I think I know how the probabilities turned to odds, my explanation is based on
+[[https://www.greenteapress.com/thinkbayes/html/thinkbayes006.html][this link]], briefly and in my own words:
+
+We know that probability of `A` given that `B` happened is just the probability
+of `A` happen and probability of `B` given that `A` happened. In formula we got:
+
+$P(A|B) = P(A) * P(B|A)$
+
+If we replace `B` in the formula above with `D` (for data) we get:
+
+$P(A|D) = P(A) * P(D|A)$
+
+Since `odds(A)` would be:
+
+$odds(A) = \frac{P(A)}{1 - P(A)}$
+
+or
+
+$odds(A) = \frac{P(A)}{P(B)}$
+
+then `odds(A|D)` would be:
+
+$odds(A|D) = \frac{P(A|D)}{P(B|D)}$, where
+
+- `A` - event A (success),
+- `B` - event B (failure, complementary event to `A`),
+- `D` - data,
+
+after applying the formula above (and substituting P(A|D), and P(B|D) with it)
+we get:
+
+$odds(A|D) = \frac{P(A) * P(D|A)}{P(B) * P(D|B)}$
+
+We can separate the first part of the fraction above, which will give us:
+
+$odds(A|B) = \frac{P(A)}{P(B)} * \frac{P(D|A)}{P(D|B)}$
+
+since $\frac{P(A)}{P(B)}$ is just odds(A), we get:
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+** Cookie problem with odds
 
 Let's solve the cookies problem with it, i.e. we got 2 bowls of cookies. Bowl 1
 contains 30/10 vanilla/chocolate cookies, Bowl 2 contains 20/20 vanilla
