@@ -542,3 +542,14 @@ Or:
 getProb(postOdds)
 
 #+END_SRC
+
+* 6.3. Oliver's Blood
+
+A task from the [[https://www.inference.org.uk/mackay/itila/][MacKay’s book]]:
+
+Two people have left traces of their own blood at the scene of a crime. A
+suspect, Oliver, is tested and found to have type ‘O’ blood. The blood groups of
+the two traces are found to be of type ‘O’ (a common type in the local
+population, having frequency 60%) and of type ‘AB’ (a rare type, with frequency
+1%). Do these data [the traces found at the scene] give evidence in favor of the
+proposition that Oliver was one of the people [who left blood at the scene]?
