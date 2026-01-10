@@ -553,3 +553,32 @@ the two traces are found to be of type ‘O’ (a common type in the local
 population, having frequency 60%) and of type ‘AB’ (a rare type, with frequency
 1%). Do these data [the traces found at the scene] give evidence in favor of the
 proposition that Oliver was one of the people [who left blood at the scene]?
+
+** Solution
+
+We might say that data favor a hypothesis if the hypothesis is more likely in
+light of the data than it was before.
+
+Bayes's Rule provides a way to make this intuition more precise.
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+Dividing both sides by odds(A), we get:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
+
+The term on the left is the ration of the posterior and prior odds. The term on
+the right is the likelihood ratio, also called the *Bayes factor*.
+
+When Bayes factor > 1 the data are more likely under A than under B, or that the
+odds are greater in the light of the data than they were before.
+
+If the Bayes factor is greater than 1, that means that the data were more likely
+under A than under B. And that means that the odds are greater, in light of the
+data, than they were before.
+
+If the Bayes factor is less than 1, that means the data were less likely under A
+than under B, so the odds in favor of A go down.
+
+Finally, if the Bayes factor is exactly 1, the data are equally likely under
+either hypothesis, so the odds do not change.
