@@ -554,7 +554,7 @@ population, having frequency 60%) and of type ‘AB’ (a rare type, with freque
 1%). Do these data [the traces found at the scene] give evidence in favor of the
 proposition that Oliver was one of the people [who left blood at the scene]?
 
-** Solution
+** Bayes factor
 
 We might say that data favor a hypothesis if the hypothesis is more likely in
 light of the data than it was before.
@@ -582,3 +582,46 @@ than under B, so the odds in favor of A go down.
 
 Finally, if the Bayes factor is exactly 1, the data are equally likely under
 either hypothesis, so the odds do not change.
+
+** Solution
+
+My own (BL) explanation:
+
+We just learned about Bayes factor, which is:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
+
+where:
+
+- odds(A|D) - Oliver left the blood O
+- odds(A) - Oliver did not leave blood O
+- P(D|A) - probability of finding blood groups O and AB, given it was Olivier
+- P(D|B) - probability of finding blood groups O and AB, given it was not Olivier
+
+We know that Olivier's got blood group O and:
+
+- P(group O) = 0.6
+- P(group AB) = 0.01
+
+So:
+
+- P(D|A) = P(O and AB | Olivier) = 0.01
+- P(D|B) = P(O and AB | not Olivier) = (0.6 * 0.01) * 2 =
+  $\frac{6}{10} * \frac{1}{100} * 2 = \frac{12}{1000}$ = 0.012
+
+above, we typed * 2, because we got two samples so two possibilities (O and AB)
+or (AB and O). If Olivier is criminal then we got only AB sample to explain.
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
+
+$\frac{odds(A|D)}{odds(A)} = \frac{\frac{1}{100}}{\frac{12}{1000}}$
+
+$\frac{odds(A|D)}{odds(A)}  = \frac{1}{100} * \frac{1000}{12}$
+
+$\frac{odds(A|D)}{odds(A)} = \frac{1000}{1200}$
+
+$\frac{odds(A|D)}{odds(A)} = \frac{10}{12}$
+
+$\frac{odds(A|D)}{odds(A)} = \frac{5}{6}$
+
+$\frac{odds(A|D)}{odds(A)} \approx 0.833$
