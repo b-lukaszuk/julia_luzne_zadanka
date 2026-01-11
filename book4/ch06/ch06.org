@@ -567,7 +567,7 @@ Dividing both sides by odds(A), we get:
 
 $\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
 
-The term on the left is the ration of the posterior and prior odds. The term on
+The term on the left is the ratio of the posterior and prior odds. The term on
 the right is the likelihood ratio, also called the *Bayes factor*.
 
 When Bayes factor > 1 the data are more likely under A than under B, or that the
@@ -595,7 +595,7 @@ where:
 
 - odds(A|D) - Oliver left the blood O
 - odds(A) - Oliver did not leave blood O
-- P(D|A) - probability of finding blood groups O and AB, given it was Olivier
+- P(D|A) - probability of finding blood group AB, given Olivier left blood group O
 - P(D|B) - probability of finding blood groups O and AB, given it was not Olivier
 
 We know that Olivier's got blood group O and:
@@ -605,14 +605,18 @@ We know that Olivier's got blood group O and:
 
 So:
 
-- P(D|A) = P(O and AB | Olivier) = 0.01
+- P(D|A) = P(AB | Olivier) = 0.01
 - P(D|B) = P(O and AB | not Olivier) = (0.6 * 0.01) * 2 =
   $\frac{6}{10} * \frac{1}{100} * 2 = \frac{12}{1000}$ = 0.012
 
 above, we typed * 2, because we got two samples so two possibilities (O and AB)
 or (AB and O). If Olivier is criminal then we got only AB sample to explain.
 
+The above can be applied to the formula:
+
 $\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
+
+Which gives us:
 
 $\frac{odds(A|D)}{odds(A)} = \frac{\frac{1}{100}}{\frac{12}{1000}}$
 
@@ -624,4 +628,18 @@ $\frac{odds(A|D)}{odds(A)} = \frac{10}{12}$
 
 $\frac{odds(A|D)}{odds(A)} = \frac{5}{6}$
 
-$\frac{odds(A|D)}{odds(A)} \approx 0.833$
+$\frac{odds(A|D)}{odds(A)} = 0.8(3)$
+
+Since Bayes factor ($\frac{P(D|A)}{P(D|B)}$) is < 1 then the evidence against
+Olivier being the criminal is a bit stronger.
+
+Moreover, given that:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = 0.8(3)$,
+
+then if we assume that the prior odds [$odds(A)$] equals 1 (so P(Olivier is
+criminal) = 50%) then $odds(A|D) \approx 0.83$ and from Section 6.1. we know that:
+
+$p = \frac{odds}{odds+1}$,
+
+so $P(A|D) = \frac{0.8(3)}{0.8(3) + 1} = 0.(45)$
