@@ -649,3 +649,32 @@ so $P(A|D) = \frac{0.8(3)}{0.8(3) + 1} = 0.(45)$
 Suppose that based on other evidence, you prior belief in Oliver’s guilt is 90%.
 How much would the blood evidence in this section change your beliefs? What if
 you initially thought there was only a 10% chance of his guilt?
+
+*** Prior Prob of guilt 90%
+
+Calculations for Bayes factor stay the same:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = 0.8(3)$,
+
+but the $odds(A)$ is now 0.9/(1-0.9) = 0.9/0.1 = 9. Compare with:
+
+#+BEGIN_SRC
+
+getOdds(0.9)
+
+#+END_SRC
+
+So now we got:
+
+$\frac{odds(A|D)}{odds(A)} = 0.8(3)$
+
+$\frac{odds(A|D)}{9} = 0.8(3)$
+
+$odds(A|D) = 0.8(3) * 9 = 7.5$
+
+Therefore P(A|D) is:
+
+$p = \frac{odds}{odds+1}$,
+
+so $P(A|D) = \frac{7.5}{7.5+1} \approx 0.88$
+
