@@ -643,3 +643,9 @@ criminal) = 50%) then $odds(A|D) \approx 0.83$ and from Section 6.1. we know tha
 $p = \frac{odds}{odds+1}$,
 
 so $P(A|D) = \frac{0.8(3)}{0.8(3) + 1} = 0.(45)$
+
+** 6.3.1. Exericse
+
+Suppose that based on other evidence, you prior belief in Oliver’s guilt is 90%.
+How much would the blood evidence in this section change your beliefs? What if
+you initially thought there was only a 10% chance of his guilt?
