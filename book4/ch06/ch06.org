@@ -705,3 +705,32 @@ Therefore P(A|D) is:
 $p = \frac{odds}{odds+1}$
 
 so $P(A|D) = \frac{\frac{5}{54}}{\frac{5}{54}+1} \approx 0.0847$
+
+* 6.4. Addends
+
+Time to talk about distributions of sums and results of other operations.
+
+Example, roll two 6-sided dice and add them up. What is the distribution of the
+sum?
+
+#+BEGIN_SRC
+
+die = getPmfFromSeq(1:6 |> c)
+
+Cmk.barplot(die.names, die.priors,
+            axis=(;xlabel="Outcome", ylabel="PMF", xticks=1:6)
+            )
+
+#+END_SRC
+
+For 2 dice (for the used function see Pmf>helper fns Section):
+
+#+BEGIN_SRC
+
+sum2die = addDist(die, die)
+
+Cmk.barplot(sum2die.names, sum2die.priors, color=:orange,
+            axis=(;title="6-sided die. Sum of 2 rolls.",
+                  xlabel="Outcome", ylabel="PMF", xticks=2:12))
+
+#+END_SRC
