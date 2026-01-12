@@ -678,3 +678,30 @@ $p = \frac{odds}{odds+1}$
 
 so $P(A|D) = \frac{7.5}{7.5+1} \approx 0.88$
 
+*** Prior Prob of guilt 10%
+
+Calculations for Bayes factor stay the same:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = \frac{5}{6} = 0.8(3)$
+
+but the odds(A) is now 0.1/(1-0.1) = 0.1/0.9 = 1/9 = 0.(1). Compare with:
+
+#+BEGIN_SRC
+
+getOdds(0.1)
+
+#+END_SRC
+
+So now we got:
+
+$\frac{odds(A|D)}{odds(A)} = \frac{5}{6}$
+
+$\frac{odds(A|D)}{\frac{1}{9}} = \frac{5}{6}$
+
+$odds(A|D) = \frac{5}{6} * \frac{1}{9} = \frac{5}{54} = 0.0(925)$
+
+Therefore P(A|D) is:
+
+$p = \frac{odds}{odds+1}$
+
+so $P(A|D) = \frac{\frac{5}{54}}{\frac{5}{54}+1} \approx 0.0847$
