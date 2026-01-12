@@ -637,10 +637,10 @@ Moreover, given that:
 
 $\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = 0.8(3)$,
 
-then if we assume that the prior odds [$odds(A)$] equals 1 (so P(Olivier is
+then if we assume that the prior odds [odds(A)] equals 1 (so P(Olivier is
 criminal) = 50%) then $odds(A|D) \approx 0.83$ and from Section 6.1. we know that:
 
-$p = \frac{odds}{odds+1}$,
+$p = \frac{odds}{odds+1}$
 
 so $P(A|D) = \frac{0.8(3)}{0.8(3) + 1} = 0.(45)$
 
@@ -654,9 +654,9 @@ you initially thought there was only a 10% chance of his guilt?
 
 Calculations for Bayes factor stay the same:
 
-$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = 0.8(3)$,
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)} = \frac{5}{6} = 0.8(3)$,
 
-but the $odds(A)$ is now 0.9/(1-0.9) = 0.9/0.1 = 9. Compare with:
+but the odds(A) is now 0.9/(1-0.9) = 0.9/0.1 = 9. Compare with:
 
 #+BEGIN_SRC
 
@@ -666,15 +666,15 @@ getOdds(0.9)
 
 So now we got:
 
-$\frac{odds(A|D)}{odds(A)} = 0.8(3)$
+$\frac{odds(A|D)}{odds(A)} = \frac{5}{6}$
 
-$\frac{odds(A|D)}{9} = 0.8(3)$
+$\frac{odds(A|D)}{9} = \frac{5}{6}$
 
-$odds(A|D) = 0.8(3) * 9 = 7.5$
+$odds(A|D) = \frac{5}{6} * 9 = \frac{45}{6} = 7\frac{3}{6} = 7\frac{1}{2} = 7.5$
 
 Therefore P(A|D) is:
 
-$p = \frac{odds}{odds+1}$,
+$p = \frac{odds}{odds+1}$
 
 so $P(A|D) = \frac{7.5}{7.5+1} \approx 0.88$
 
