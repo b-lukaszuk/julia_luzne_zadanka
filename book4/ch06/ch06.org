@@ -734,3 +734,30 @@ Cmk.barplot(sum2die.names, sum2die.priors, color=:orange,
                   xlabel="Outcome", ylabel="PMF", xticks=2:12))
 
 #+END_SRC
+
+If we have a sequence of Pmf objects that represent dice, we can compute the
+distribution of the sum like this:
+
+#+BEGIN_SRC
+
+sum3die = addDistSeq(rep(die, 3))
+
+#+END_SRC
+
+and
+
+#+BEGIN_SRC
+
+Cmk.lines(die.names, die.priors, color=:blue, label="once",
+          axis=(;title="Distributions of sums",
+                 xlabel="outcome", ylabel="PMF", xticks=0:18, yticks=0:0.02:0.16));
+Cmk.lines!(sum2die.names, sum2die.priors, color=:orange, linestyle=:dash, label="twice");
+Cmk.lines!(sum3die.names, sum3die.priors, color=:green, linestyle=:dot, label="thrice");
+Cmk.axislegend();
+Cmk.current_figure()
+
+#+END_SRC
+
+As an aside, this example demonstrates the Central Limit Theorem, which says
+that the distribution of a sum converges on a bell-shaped normal distribution,
+at least under some conditions.
