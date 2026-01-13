@@ -287,6 +287,35 @@ function drawProbsComparison(pmf1::Pmf{<:Ufi}, pmf2::Pmf{<:Ufi}, fieldName::Str,
     return fig
 end
 
+function getCartesianProduct(v1::Vec{A}, v2::Vec{B})::Vec{Tuple{A, B}} where {A, B}
+    result::Vec{Tuple{A, B}} = Vec{Tuple{A, B}}(undef, length(v1) * length(v2))
+    i::Int = 1
+    for a in v1, b in v2
+        result[i] = (a, b)
+        i += 1
+    end
+    return result
+end
+
+function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    nElts1::Int = length(pmf1.names)
+    nElts2::Int = length(pmf2.names)
+    @assert nElts1 == nElts2 "nElts1 must be equal nElts2"
+    result::Dict{Int, Flt} = Dict()
+    newName::Int = 0
+    newPrior::Flt = 0.0
+    for (n1, n2) in getCartesianProduct(pmf1.names, pmf2.names)
+        for (p1, p2) in getCartesianProduct(pmf1.priors, pmf2.priors)
+            newName = n1 + n2
+            newPrior = p1 * p2
+            result[newName] = get(result, newName, 0) + newPrior
+        end
+    end
+    sortedNames::Vec{Int} = sort(c(keys(result)))
+    sortedPriors::Vec{Flt} = [result[n] for n in sortedNames]
+    return Pmf(sortedNames, sortedPriors)
+end
+
 #+END_SRC
 
 ** other fns
@@ -731,7 +760,8 @@ sum2die = addDist(die, die)
 
 Cmk.barplot(sum2die.names, sum2die.priors, color=:orange,
             axis=(;title="6-sided die. Sum of 2 rolls.",
-                  xlabel="Outcome", ylabel="PMF", xticks=2:12))
+                  xlabel="Outcome", ylabel="PMF",
+                  xticks=2:12, yticks=0:0.02:0.16))
 
 #+END_SRC
 
