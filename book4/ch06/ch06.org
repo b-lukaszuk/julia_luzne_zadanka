@@ -761,3 +761,36 @@ Cmk.current_figure()
 As an aside, this example demonstrates the Central Limit Theorem, which says
 that the distribution of a sum converges on a bell-shaped normal distribution,
 at least under some conditions.
+
+* 6.5. Gluten Sensitivity
+
+Example inspired by [[https://onlinelibrary.wiley.com/doi/abs/10.1111/apt.13372][this scientific paper]]:
+
+Out of 35 subjects, 12 correctly identified the gluten flour based on resumption
+of symptoms while they were eating it. Another 17 wrongly identified the
+gluten-free flour based on their symptoms, and 6 were unable to distinguish.
+
+This conclusion seems odd to me (AD), because if none of the patients were
+sensitive to gluten, we would expect some of them to identify the gluten flour
+by chance. So here’s the question: based on this data, how many of the subjects
+are sensitive to gluten and how many are guessing?
+
+We can use Bayes’s Theorem to answer this question, but first we have to make
+some modeling decisions. I’ll assume:
+
+- People who are sensitive to gluten have a 95% chance of correctly identifying
+  gluten flour under the challenge conditions, and
+
+- People who are not sensitive have a 40% chance of identifying the gluten flour
+  by chance (and a 60% chance of either choosing the other flour or failing to
+  distinguish).
+
+These particular values are arbitrary, but the results are not sensitive to
+these choices.
+
+I will solve this problem in two steps. First, assuming that we know how many
+subjects are sensitive, I will compute the distribution of the data. Then, using
+the likelihood of the data, I will compute the posterior distribution of the
+number of sensitive patients.
+
+The first is the forward problem; the second is the inverse problem.
