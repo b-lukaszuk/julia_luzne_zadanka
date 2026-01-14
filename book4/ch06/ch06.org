@@ -316,6 +316,10 @@ function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return Pmf(sortedNames, sortedPriors)
 end
 
+function addDistSeq(seq::Vector{Pmf{Int}})::Pmf{Int}
+    return reduce(addDist, seq)
+end
+
 #+END_SRC
 
 ** other fns
