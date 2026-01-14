@@ -299,9 +299,6 @@ function rep(v::Vec{A}, times::Vec{Int})::Vec{A} where A
     return result
 end
 
-c(sth) = collect(sth)
-str(sth) = string(sth)
-
 #+END_SRC
 
 * 4.1. The Euro Problem

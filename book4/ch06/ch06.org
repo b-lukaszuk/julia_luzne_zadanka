@@ -345,9 +345,6 @@ function rep(v::Vec{A}, times::Vec{Int})::Vec{A} where A
     return result
 end
 
-c(sth) = collect(sth)
-str(sth) = string(sth)
-
 #+END_SRC
 
 * 6. Odds and Addends
@@ -676,6 +673,15 @@ criminal) = 50%) then $odds(A|D) \approx 0.83$ and from Section 6.1. we know tha
 $p = \frac{odds}{odds+1}$
 
 so $P(A|D) = \frac{0.8(3)}{0.8(3) + 1} = 0.(45)$
+
+In code:
+
+#+BEGIN_SRC
+
+getOdds(0.9)
+
+#+END_SRC
+
 
 ** 6.3.1. Exericse
 

@@ -312,9 +312,6 @@ function rep(v::Vec{A}, times::Vec{Int})::Vec{A} where A
     return result
 end
 
-c(sth) = collect(sth)
-str(sth) = string(sth)
-
 #+END_SRC
 
 * 5.1. The Train Problem

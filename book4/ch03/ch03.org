@@ -234,9 +234,6 @@ function rep(v::Vector{A}, times::Vector{Int})::Vector{A} where A
     return result
 end
 
-c(sth) = collect(sth)
-str(sth) = string(sth)
-
 #+END_SRC
 
 * 3.1. Distributions
