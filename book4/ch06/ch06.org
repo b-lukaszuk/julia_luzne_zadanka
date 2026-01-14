@@ -298,9 +298,6 @@ function getCartesianProduct(v1::Vec{A}, v2::Vec{B})::Vec{Tuple{A, B}} where {A,
 end
 
 function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
-    nElts1::Int = length(pmf1.names)
-    nElts2::Int = length(pmf2.names)
-    @assert nElts1 == nElts2 "nElts1 must be equal nElts2"
     result::Dict{Int, Flt} = Dict()
     newName::Int = 0
     newPrior::Flt = 0.0
@@ -834,3 +831,51 @@ the likelihood of the data, I will compute the posterior distribution of the
 number of sensitive patients.
 
 The first is the forward problem; the second is the inverse problem.
+
+* 6.6. The Forward Problem
+Suppose we know that 10 of 35 subjects are sensitive to gluten.
+
+#+BEGIN_SRC
+
+n = 35
+nSensitive = 10
+nInsensitive = n - nSensitive
+
+#+END_SRC
+
+Each sensitive subject has a 95% chance of identifying the gluten flour. The
+insensitive one got only 40% chance for that.
+
+#+BEGIN_SRC
+
+distSensitive = getBinomPmf(nSensitive, 0.95)
+distInsensitive = getBinomPmf(nInsensitive, 0.4)
+
+#+END_SRC
+
+Let's look at the total distribution:
+
+#+BEGIN_SRC
+
+distTotal = addDist(distSensitive, distInsensitive)
+
+#+END_SRC
+
+
+and all the distributions together:
+
+#+BEGIN_SRC
+
+Cmk.lines(distSensitive.names, distSensitive.priors,
+          color=:blue, linestyle=:dot, label="sensitive",
+          axis=(;title="Gluten sensitivity",
+                 xlabel="number of correct identifications", ylabel="PMF",
+                xticks=0:5:35, yticks=0:0.1:0.6));
+Cmk.lines!(distInsensitive.names, distInsensitive.priors, color=:orange,
+           linestyle=:dash, label="insensitive");
+Cmk.lines!(distTotal.names, distTotal.priors,
+           color=:green, label="total");
+Cmk.axislegend();
+Cmk.current_figure()
+
+#+END_SRC
