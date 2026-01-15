@@ -299,18 +299,14 @@ end
 
 function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     result::Dict{Int, Flt} = Dict()
-    newName::Int = 0
-    newPrior::Flt = 0.0
-    for (n1, n2) in getCartesianProduct(pmf1.names, pmf2.names)
-        for (p1, p2) in getCartesianProduct(pmf1.priors, pmf2.priors)
-            newName = n1 + n2
-            newPrior = p1 * p2
-            result[newName] = get(result, newName, 0) + newPrior
-        end
+    names::Vec{Int} = map(sum, getCartesianProduct(pmf1.names, pmf2.names))
+    priors::Vec{Flt} = map(prod, getCartesianProduct(pmf1.priors, pmf2.priors))
+    for i in eachindex(names)
+        result[names[i]] = get(result, names[i], 0.0) + priors[i]
     end
-    sortedNames::Vec{Int} = sort(c(keys(result)))
-    sortedPriors::Vec{Flt} = [result[n] for n in sortedNames]
-    return Pmf(sortedNames, sortedPriors)
+    sortedKeys::Vec{Int} = sort(c(keys(result)))
+    sortedVals::Vec{Flt} = [result[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
 end
 
 function addDistSeq(seq::Vector{Pmf{Int}})::Pmf{Int}
