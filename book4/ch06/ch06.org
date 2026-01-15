@@ -875,3 +875,41 @@ Cmk.axislegend();
 Cmk.current_figure()
 
 #+END_SRC
+
+* 6.7. The Inverse Problem
+
+Now, let's compute the posteriors for every possible value of `num_sensitive`
+(the article from section 6.5 mentions 35 subjects).
+
+#+BEGIN_SRC
+
+n = 35
+distsTotal = Dict{Int, Pmf{Int}}()
+for nSensitive in 0:n
+    nInsensitive = n - nSensitive
+    distSensitive = getBinomPmf(nSensitive, 0.95)
+    distInsensitive = getBinomPmf(nInsensitive, 0.4)
+    distTotal = addDist(distSensitive, distInsensitive)
+    distsTotal[nSensitive] = distTotal
+end
+
+#+END_SRC
+
+And see how it looks on a graph:
+
+#+BEGIN_SRC
+
+Cmk.lines(distsTotal[0].names, distsTotal[0].priors,
+          label="numSensitive = 0",
+          axis=(;title="Gluten sensitivity",
+                xlabel="Number of corect identifications",
+                ylabel="PMF", xticks=[0, 5:5:35...], yticks=0:0.05:0.25));
+Cmk.lines!(distsTotal[10].names, distsTotal[10].priors, label="numSensitive = 10");
+Cmk.lines!(distsTotal[20].names, distsTotal[20].priors,
+           label="numSensitive = 20", linestyle=:dash);
+Cmk.lines!(distsTotal[30].names, distsTotal[30].priors,
+           label="numSensitive = 30", linestyle=:dot);
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
+
+#+END_SRC
