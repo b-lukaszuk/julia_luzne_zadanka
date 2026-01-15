@@ -200,6 +200,14 @@ function updatePosteriors!(pmf::Pmf{<:Ufi},
     return pmf
 end
 
+function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
+    @assert n >= 0 "n must be >= 0"
+    @assert 0 <= p <= 1 "p must be in the range [0-1]"
+    binDst = Dst.Binomial(n, p)
+    ks::Vec{Int} = c(0:n)
+    return Pmf(ks, Dst.pdf.(binDst, ks))
+end
+
 function updateBinomial!(pmf::Pmf{<:Ufi},
                            events::Vec{A},
                            eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Ufi} where A
