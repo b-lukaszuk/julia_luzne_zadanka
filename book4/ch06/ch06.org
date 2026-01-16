@@ -995,3 +995,20 @@ getPosteriorCredibleInterval(gluten12, 0.95),
 getPosteriorCredibleInterval(gluten20, 0.95)
 
 #+END_SRC
+
+* 6.8. Summary
+
+The first part of the chapter is about Bayes’s Rule, evidence, and how we can
+quantify the strength of evidence using a likelihood ratio or Bayes factor.
+
+Reminder, the *Bayes's Rule* formula is:
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+Dividing both sides by odds(A), we get another useful formula (we used it for
+6.3. Oliver's Blood):
+
+$\frac{odds(A|D)}{odds(A)} = \frac{P(D|A)}{P(D|B)}$
+
+The second part of the chapter is about `add_dist`, which computes the
+distribution of a sum (we used it for 6.5. Gluten Sensitivity).
