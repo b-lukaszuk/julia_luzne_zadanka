@@ -921,3 +921,49 @@ Cmk.axislegend(position=:lt);
 Cmk.current_figure()
 
 #+END_SRC
+
+Now, we can get the likelihood [P(D|H), i.e. P(12 correct identifications|x
+gluten sensitive people)] from our data (compare with the section 6.5.) like so:
+
+#+BEGIN_SRC
+
+n = 35
+nIdentifications = 12
+likelihoodGluten12 = Dict(i => getPriorByName(distsTotal[i], nIdentifications) for i in 0:n)
+
+gluten12 = getPmfFromSeq(c(0:n))
+setLikelihoods!(gluten12, [likelihoodGluten12[i] for i in 0:n])
+bayesUpdate!(gluten12, true)
+
+#+END_SRC
+
+For comparison let's make it also for 20 correct identifications.
+
+#+BEGIN_SRC
+
+n = 35
+nIdentifications = 20
+likelihoodGluten20 = Dict(i => getPriorByName(distsTotal[i], nIdentifications) for i in 0:n)
+
+gluten20 = getPmfFromSeq(c(0:n))
+setLikelihoods!(gluten20, [likelihoodGluten20[i] for i in 0:n])
+bayesUpdate!(gluten20, true)
+
+#+END_SRC
+
+Now we may draw it:
+
+#+BEGIN_SRC
+
+Cmk.lines(gluten12.names, gluten12.posteriors,
+          color=:blue, label="posterior with 12 correct identifications",
+          axis=(;title="Gluten experiment.\nPosterior distributions",
+                xlabel="Number of gluten sensitive subjects",
+                ylabel="PMF", xticks=[0, 5:5:35...], yticks=0:0.05:0.25)
+          );
+Cmk.lines!(gluten20.names, gluten20.posteriors,
+           color=:orange, label="posterior with 20 correct identifications");
+Cmk.axislegend(position=:rt);
+Cmk.current_figure()
+
+#+END_SRC
