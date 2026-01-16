@@ -967,3 +967,31 @@ Cmk.axislegend(position=:rt);
 Cmk.current_figure()
 
 #+END_SRC
+
+Let's check the maximum probability for true number of gluten sensitive subjects
+for both Pmfs.
+
+#+BEGIN_SRC
+
+ind12 = getIndMaxPosterior(gluten12)
+gluten12.names[ind12], gluten12.posteriors[ind12]
+
+#+END_SRC
+
+And
+
+#+BEGIN_SRC
+
+ind20 = getIndMaxPosterior(gluten20)
+gluten20.names[ind20], gluten20.posteriors[ind20]
+
+#+END_SRC
+
+We can also examine 95% credible intervals for the Pmfs.
+
+#+BEGIN_SRC
+
+getPosteriorCredibleInterval(gluten12, 0.95),
+getPosteriorCredibleInterval(gluten20, 0.95)
+
+#+END_SRC
