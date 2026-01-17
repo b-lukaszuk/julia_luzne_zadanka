@@ -305,10 +305,21 @@ function getCartesianProduct(v1::Vec{A}, v2::Vec{B})::Vec{Tuple{A, B}} where {A,
     return result
 end
 
-function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+"""
+metlDists
+    aggregates pmf1 and pmf2
+    applies fnNames to cartesianProduct(pmf1.names, pmf2.names)
+    applies fnPriors to cartesianProduct(pmf1.priors, pmf2.priors)
+
+args:
+    fnNames - function to be applied on Tuple{Int, Int} (name1.1, name2.1)
+    fnPriors - function to be applied on Tuple{Int, Int} (prior1.1, prior2.1)
+"""
+function meltDists(pmf1::Pmf{Int}, pmf2::Pmf{Int},
+                   fnNames::Function, fnPriors::Function)::Pmf{Int}
     result::Dict{Int, Flt} = Dict()
-    names::Vec{Int} = map(sum, getCartesianProduct(pmf1.names, pmf2.names))
-    priors::Vec{Flt} = map(prod, getCartesianProduct(pmf1.priors, pmf2.priors))
+    names::Vec{Int} = map(fnNames, getCartesianProduct(pmf1.names, pmf2.names))
+    priors::Vec{Flt} = map(fnPriors, getCartesianProduct(pmf1.priors, pmf2.priors))
     for i in eachindex(names)
         result[names[i]] = get(result, names[i], 0.0) + priors[i]
     end
@@ -317,8 +328,8 @@ function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return Pmf(sortedKeys, sortedVals)
 end
 
-function addDistSeq(seq::Vector{Pmf{Int}})::Pmf{Int}
-    return reduce(addDist, seq)
+function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return meltDists(pmf1, pmf2, sum, prod)
 end
 
 #+END_SRC
