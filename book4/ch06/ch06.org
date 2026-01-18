@@ -1042,7 +1042,7 @@ The *Bayes's Rule*:
 
 $odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
 
-From the other formula (the *Bayes factor* on the right) we get:
+From the formula (the *Bayes factor* on the right) we get:
 
 - P(D|A) - prob Elvis had a brother, given that Elvis was an identical twin
 - P(D|B) - prob Elvis had a brother, given that Elvis was NOT an identical twin
@@ -1084,3 +1084,43 @@ in Seattle?
 
 Use Bayes’s Rule to solve this problem. As a prior you can assume that it rains
 in Seattle about 10% of the time
+
+*** Exercise 2. Solution
+
+Necessary formulas:
+
+The *Bayes's Rule*:
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+From the formula we get:
+
+- P(D|A) - prob 3 yes, given that it's raining
+- P(D|B) - prob 3 yes, given that it's NOT raining
+- odds(A) - odds of raining
+
+Which are:
+
+- P(D|A) - $\frac{2}{3} * \frac{2}{3} * \frac{2}{3}$
+- P(D|B) - $\frac{1}{3} * \frac{1}{3} * \frac{1}{3}$
+- odds(A) - $\frac{0.1}{0.9}$
+
+So:
+
+#+BEGIN_SRC
+
+oaSeattle = getOdds(0.1)
+pdaSeattle = (2/3)^3
+pdbSeattle = (1/3)^3
+
+oddsSeattle = oaSeattle * (pdaSeattle / pdbSeattle)
+
+#+END_SRC
+
+Turning odds(A|D) to P(A|D) we get:
+
+#+BEGIN_SRC
+
+getProb(Flt(oddsSeattle))
+
+#+END_SRC
