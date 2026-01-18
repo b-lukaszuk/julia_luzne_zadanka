@@ -1124,3 +1124,12 @@ Turning odds(A|D) to P(A|D) we get:
 getProb(Flt(oddsSeattle))
 
 #+END_SRC
+
+** 6.9.3. Exercise 3
+
+According to [[https://www.cdc.gov/][CDC]] smokers are about 25 times more likely to develop lung cancer
+than nonsmokers.
+
+According to [[https://www.cdc.gov/][CDC]] about 14% of adults in the U.S. are smokers.
+
+If someone has hung cancer, what is the probability that they are a smoker?
