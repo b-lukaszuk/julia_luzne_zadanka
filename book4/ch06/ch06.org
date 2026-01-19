@@ -1135,3 +1135,43 @@ than nonsmokers.
 According to [[https://www.cdc.gov/][CDC]] about 14% of adults in the U.S. are smokers.
 
 If someone has hung cancer, what is the probability that they are a smoker?
+
+*** Exercise 3. Solution
+Necessary formulas:
+
+The *Bayes's Rule*:
+
+$odds(A|D) = odds(A) * \frac{P(D|A)}{P(D|B)}$
+
+From the formula we get:
+
+- P(D|A) - prob lung cancer, given that they are smoker
+- P(D|B) - prob lung cancer, given that they are NONsmoker
+- odds(A) - odds of being a smoker
+
+Which are:
+
+- P(D|A) - getProb(25)
+- P(D|B) - getProb(1/25)
+- odds(A) - getOdds(0.14)
+
+So:
+
+#+BEGIN_SRC
+
+oaLungCancer = getOdds(0.14)
+pdaLungCancer = getProb(25.0)
+pdbLunbCancer = getProb(1/25)
+
+# odds(A|D)
+oddsLungCancer = oaLungCancer * (pdaLungCancer / pdbLunbCancer)
+
+#+END_SRC
+
+Turning odds(A|D) to P(A|D) we get:
+
+#+BEGIN_SRC
+
+getProb(oddsLungCancer)
+
+#+END_SRC
