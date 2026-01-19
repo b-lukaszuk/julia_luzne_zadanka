@@ -1175,3 +1175,17 @@ Turning odds(A|D) to P(A|D) we get:
 getProb(oddsLungCancer)
 
 #+END_SRC
+
+** 6.9.4. Exercise 4
+
+In Dungeons & Dragons, the amount of damage a goblin can withstand is the sum of
+two six-sided dice. The amount of damage you inflict with a short sword is
+determined by rolling one six-sided die. A goblin is defeated if the total
+damage you inflict is greater than or equal to the amount it can withstand.
+
+Suppose you are fighting a goblin and you have already inflicted 3 points of
+damage. What is your probability of defeating the goblin with your next
+successful attack?
+
+Hint: You can use `Pmf.sub_dist` to subtract a constant amount, like 3, from a
+`Pmf`.
