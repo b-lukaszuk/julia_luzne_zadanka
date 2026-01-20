@@ -1189,3 +1189,55 @@ successful attack?
 
 Hint: You can use `Pmf.sub_dist` to subtract a constant amount, like 3, from a
 `Pmf`.
+
+#+BEGIN_SRC
+
+# die for the game
+die = getPmfFromSeq(c(1:6))
+
+#+END_SRC
+
+The goblin:
+
+#+BEGIN_SRC
+
+# fresh new goblin
+goblin = addDist(die, die)
+
+#+END_SRC
+
+Inflict 3 dmg points:
+
+#+BEGIN_SRC
+
+# already hurt goblin
+goblin = subtractDist(goblin, 3)
+# but still alive
+isAlive = goblin.names .> 0
+goblin = Pmf(goblin.names[isAlive], goblin.priors[isAlive])
+
+#+END_SRC
+
+
+Inflict dmg with a short sword (6-sided die):
+
+#+BEGIN_SRC
+
+# goblin after the next attack
+goblin = subtractDist(goblin, die)
+goblin.priors = goblin.priors ./ sum(goblin.priors)
+
+#+END_SRC
+
+Probability calculations:
+
+#+BEGIN_SRC
+
+# prob dead
+isDead = goblin.names .< 1
+sum(goblin.priors[isDead])
+
+# prob alive
+1 - sum(goblin.priors[isDead])
+
+#+END_SRC
