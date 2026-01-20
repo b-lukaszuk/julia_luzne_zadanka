@@ -332,6 +332,18 @@ function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return aggregateDists(pmf1, pmf2, sum, prod)
 end
 
+function difference(t::Tuple{Ufi, Ufi})::Ufi
+    return t[1] - t[2]
+end
+
+function subtractDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .- x, pmf1.priors)
+end
+
+function subtractDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return aggregateDists(pmf1, pmf2, difference, prod)
+end
+
 #+END_SRC
 
 ** other fns
