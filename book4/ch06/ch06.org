@@ -1247,9 +1247,25 @@ Probability calculations:
 
 # prob dead
 isDead = goblin.names .< 1
-sum(goblin.priors[isDead])
-
+probDead = sum(goblin.priors[isDead])
 # prob alive
-1 - sum(goblin.priors[isDead])
+probAlive = 1 - probDead
+
+(probDead, probAlive)
+
+#+END_SRC
+
+Graphical depiction:
+
+#+BEGIN_SRC
+
+Cmk.barplot(goblin.names, goblin.priors,
+            axis=(;title="The Goblin Problem",
+                  xlabel="hit points left", ylabel="PMF",
+                  xticks=-5:1:8, yticks=0:0.025:0.175));
+Cmk.vlines!(-0.5, color=:orange, linewidth=2, linestyle=:dash);
+Cmk.text!(-5.5, 0.1, text="prob dead = $(round3(probDead))");
+Cmk.text!(5, 0.1, text="prob alive = $(round3(probAlive))");
+Cmk.current_figure()
 
 #+END_SRC
