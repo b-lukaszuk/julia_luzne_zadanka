@@ -1279,3 +1279,46 @@ die?
 
 Hint: Pmf provides a function called `mul_dist` that takes two `Pmf` objects and
 returns a `Pmf` that represents the distribution of the product.
+
+First we create a die, throw it twice, multiply the outcome and report the product.
+
+#+BEGIN_SRC
+
+d6 = getPmfFromSeq(c(1:6))
+d6 = multDist(d6, d6)
+
+d8 = getPmfFromSeq(c(1:8))
+d8 = multDist(d8, d8)
+
+d12 = getPmfFromSeq(c(1:12))
+d12 = multDist(d12, d12)
+
+#+END_SRC
+
+We get the probs of throwing 12 for each die.
+
+#+BEGIN_SRC
+
+twelves = Dict(
+    6 => getPriorByName(d6, 12),
+    8 => getPriorByName(d8, 12),
+    12 => getPriorByName(d12, 12),
+)
+
+#+END_SRC
+
+We normalize the probs.
+
+#+BEGIN_SRC
+
+twelveProbs = Dict(k => v/sum(values(twelves)) for (k, v) in twelves)
+
+#+END_SRC
+
+And get the probs that it was an 8-sided die.
+
+#+BEGIN_SRC
+
+twelveProbs[8]
+
+#+END_SRC
