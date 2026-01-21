@@ -344,6 +344,14 @@ function subtractDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
     return aggregateDists(pmf1, pmf2, difference, prod)
 end
 
+function multDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .* x, pmf1.priors)
+end
+
+function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return aggregateDists(pmf1, pmf2, prod, prod)
+end
+
 #+END_SRC
 
 ** other fns
@@ -1284,14 +1292,13 @@ First we create a die, throw it twice, multiply the outcome and report the produ
 
 #+BEGIN_SRC
 
-d6 = getPmfFromSeq(c(1:6))
-d6 = multDist(d6, d6)
+sides = [6, 8, 12]
+dies = Dict()
 
-d8 = getPmfFromSeq(c(1:8))
-d8 = multDist(d8, d8)
-
-d12 = getPmfFromSeq(c(1:12))
-d12 = multDist(d12, d12)
+for nSides in sides
+    die = getPmfFromSeq(c(1:nSides))
+    dies[nSides] = multDist(die, die)
+end
 
 #+END_SRC
 
@@ -1299,11 +1306,10 @@ We get the probs of throwing 12 for each die.
 
 #+BEGIN_SRC
 
-twelves = Dict(
-    6 => getPriorByName(d6, 12),
-    8 => getPriorByName(d8, 12),
-    12 => getPriorByName(d12, 12),
-)
+twelves = Dict()
+for nSides in sides
+    twelves[nSides] = getPriorByName(dies[nSides], 12)
+end
 
 #+END_SRC
 
