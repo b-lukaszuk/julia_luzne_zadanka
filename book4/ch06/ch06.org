@@ -1328,3 +1328,16 @@ And get the probs that it was an 8-sided die.
 twelveProbs[8]
 
 #+END_SRC
+
+** 6.9.6. Exercise 6
+
+Betrayal at House on the Hill is a strategy game in which characters with
+different attributes explore a haunted house. Depending on their attributes, the
+characters roll different numbers of dice. For example, if attempting a task
+that depends on knowledge, Professor Longfellow rolls 5 dice, Madame Zostra
+rolls 4, and Ox Bellows rolls 3. Each die yields 0, 1, or 2 with equal
+probability.
+
+If a randomly chosen character attempts a task three times and rolls a total of
+3 on the first attempt, 4 on the second, and 5 on the third, which character do
+you think it was?
