@@ -1360,3 +1360,40 @@ Then the characters.
 nThrowsPerCharacter = [5, 4, 3]
 
 #+END_SRC
+
+A single attempt for each character.
+
+#+BEGIN_SRC
+
+characterRolls = Dict()
+for nThrows in nThrowsPerCharacter
+    characterRolls[nThrows] = addDistSeq(rep(die, nThrows))
+end
+
+#+END_SRC
+
+Three attempt prob for each character. `prod` because P(3) AND P(4) AND (P5).
+
+#+BEGIN_SRC
+
+sumsPerAttempts = [3, 4, 5]
+characterProbs = Dict()
+for nThrows in nThrowsPerCharacter
+    characterProbs[nThrows] = getPriorsByNames(characterRolls[nThrows],
+                                               sumsPerAttempts) |> prod
+end
+
+#+END_SRC
+
+
+Normalization of the probs for each character.
+
+#+BEGIN_SRC
+
+# 5 - Prof. Longfellow, 4 - Madame Zostra, 3 - Ox Bellows
+normalizedCharacterProbs = Dict(
+    k => v/sum(values(characterProbs)) for (k, v) in characterProbs)
+
+#+END_SRC
+
+Highest prob is for 4-times rolling character, i.e. Madame Zostra.
