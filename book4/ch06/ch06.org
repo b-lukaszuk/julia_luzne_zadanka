@@ -1341,3 +1341,22 @@ probability.
 If a randomly chosen character attempts a task three times and rolls a total of
 3 on the first attempt, 4 on the second, and 5 on the third, which character do
 you think it was?
+
+*** Solution
+
+First a 3-sided die which will be thrown.
+
+#+BEGIN_SRC
+
+die = getPmfFromSeq(c(0:2))
+
+#+END_SRC
+
+Then the characters.
+
+#+BEGIN_SRC
+
+# 5 - Prof. Longfellow, 4 - Madame Zostra, 3 - Ox Bellows
+nThrowsPerCharacter = [5, 4, 3]
+
+#+END_SRC
