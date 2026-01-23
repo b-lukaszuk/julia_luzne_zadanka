@@ -1397,3 +1397,11 @@ normalizedCharacterProbs = Dict(
 #+END_SRC
 
 Highest prob is for 4-times rolling character, i.e. Madame Zostra.
+
+** 6.9.7. Exercise 7
+
+There are 538 members of the United States Congress. Suppose we audit their
+investment portfolios and find that 312 of them out-perform the market. Let’s
+assume that an honest member of Congress has only a 50% chance of out-performing
+the market, but a dishonest member who trades on inside information has a 90%
+chance. How many members of Congress are honest?
