@@ -1406,7 +1406,7 @@ assume that an honest member of Congress has only a 50% chance of out-performing
 the market, but a dishonest member who trades on inside information has a 90%
 chance. How many members of Congress are honest?
 
-** Solution
+*** Solution
 
 Necessary variables:
 
@@ -1440,5 +1440,43 @@ probsOutperformers = Dict()
 for (nHonest, dist) in distsBothSenatorTypes
     probsOutperformers[nHonest] = getPriorByName(dist, nOutperformers)
 end
+
+#+END_SRC
+
+Normalize the probs:
+
+#+BEGIN_SRC
+
+outperformers = getPmfFromSeq(0:nSenators |> c)
+setPosteriors!(outperformers, [probsOutperformers[i] for i in 0:nSenators])
+normalizePosteriors!(outperformers)
+
+#+END_SRC
+
+Check the result visually:
+
+#+BEGIN_SRC
+
+Cmk.lines(outperformers.names, outperformers.posteriors,
+            axis=(;title="Senators problem", xlabel="number of honest senators",
+                  ylabel="PMF", xticks=[0,50:50:500...], yticks=0:0.002:0.014)
+            )
+
+#+END_SRC
+
+Add some summary statistics/metrics:
+
+#+BEGIN_SRC
+
+indMax = getIndMaxPosterior(outperformers)
+outperformers.names[indMax], outperformers.posteriors[indMax]
+
+#+END_SRC
+
+and some other summary statistics/metrics:
+
+#+BEGIN_SRC
+
+getPosteriorCredibleInterval(outperformers, 0.95)
 
 #+END_SRC
