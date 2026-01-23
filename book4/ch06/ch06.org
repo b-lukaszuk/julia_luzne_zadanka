@@ -1405,3 +1405,40 @@ investment portfolios and find that 312 of them out-perform the market. Let’s
 assume that an honest member of Congress has only a 50% chance of out-performing
 the market, but a dishonest member who trades on inside information has a 90%
 chance. How many members of Congress are honest?
+
+** Solution
+
+Necessary variables:
+
+#+BEGIN_SRC
+
+nSenators = 538
+nOutperformers = 312
+pOutperformHonest = 0.5
+pOutperformDishonest = 0.9
+
+#+END_SRC
+
+Distributions:
+
+#+BEGIN_SRC
+
+distsBothSenatorTypes = Dict()
+for nHonest in 0:nSenators
+    distHonest = getBinomPmf(nHonest, pOutperformHonest)
+    distDishonest = getBinomPmf(nSenators-nHonest, pOutperformDishonest)
+    distsBothSenatorTypes[nHonest] = addDist(distHonest, distDishonest)
+end
+
+#+END_SRC
+
+Probs for `nOutperformers`:
+
+#+BEGIN_SRC
+
+probsOutperformers = Dict()
+for (nHonest, dist) in distsBothSenatorTypes
+    probsOutperformers[nHonest] = getPriorByName(dist, nOutperformers)
+end
+
+#+END_SRC
