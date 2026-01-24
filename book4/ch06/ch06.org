@@ -1367,7 +1367,7 @@ A single attempt for each character.
 
 #+BEGIN_SRC
 
-characterRolls = Dict()
+characterRolls::Dict{Int, Pmf{Int}} = Dict()
 for nThrows in nThrowsPerCharacter
     characterRolls[nThrows] = addDistSeq(rep(die, nThrows))
 end
@@ -1379,7 +1379,7 @@ Three attempt prob for each character. `prod` because P(3) AND P(4) AND (P5).
 #+BEGIN_SRC
 
 sumsPerAttempts = [3, 4, 5]
-characterProbs = Dict()
+characterProbs::Dict{Int, Flt} = Dict()
 for nThrows in nThrowsPerCharacter
     characterProbs[nThrows] = getPriorsByNames(characterRolls[nThrows],
                                                sumsPerAttempts) |> prod
@@ -1393,8 +1393,9 @@ Normalization of the probs for each character.
 #+BEGIN_SRC
 
 # 5 - Prof. Longfellow, 4 - Madame Zostra, 3 - Ox Bellows
-normalizedCharacterProbs = Dict(
-    k => v/sum(values(characterProbs)) for (k, v) in characterProbs)
+characters = getPmfFromSeq(nThrowsPerCharacter)
+setPosteriors!(characters, [characterProbs[i] for i in nThrowsPerCharacter])
+normalizePosteriors!(characters)
 
 #+END_SRC
 
@@ -1425,7 +1426,7 @@ Distributions:
 
 #+BEGIN_SRC
 
-distsBothSenatorTypes = Dict()
+distsBothSenatorTypes::Dict{Int, Pmf{Int}} = Dict()
 for nHonest in 0:nSenators
     distHonest = getBinomPmf(nHonest, pOutperformHonest)
     distDishonest = getBinomPmf(nSenators-nHonest, pOutperformDishonest)
@@ -1438,7 +1439,7 @@ Probs for `nOutperformers`:
 
 #+BEGIN_SRC
 
-probsOutperformers = Dict()
+probsOutperformers::Dict{Int, Flt} = Dict()
 for (nHonest, dist) in distsBothSenatorTypes
     probsOutperformers[nHonest] = getPriorByName(dist, nOutperformers)
 end
