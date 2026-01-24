@@ -312,14 +312,14 @@ aggregateDists
     applies fnPriors to cartesianProduct(pmf1.priors, pmf2.priors)
 
 args:
-    fnNames - function to be applied on Tuple{Int, Int} (name1.1, name2.1)
-    fnPriors - function to be applied on Tuple{Int, Int} (prior1.1, prior2.1)
+    fnNamesAgg - function to be applied on Tuple{Int, Int} (name1.1, name2.1), to aggregate two names
+    fnPriorsAgg - function to be applied on Tuple{Int, Int} (prior1.1, prior2.1) to aggregate two priors
 """
 function aggregateDists(pmf1::Pmf{Int}, pmf2::Pmf{Int},
-                        fnNames::Function, fnPriors::Function)::Pmf{Int}
+                        fnNamesAgg::Function, fnPriorsAgg::Function)::Pmf{Int}
     result::Dict{Int, Flt} = Dict()
-    names::Vec{Int} = map(fnNames, getCartesianProduct(pmf1.names, pmf2.names))
-    priors::Vec{Flt} = map(fnPriors, getCartesianProduct(pmf1.priors, pmf2.priors))
+    names::Vec{Int} = map(fnNamesAgg, getCartesianProduct(pmf1.names, pmf2.names))
+    priors::Vec{Flt} = map(fnPriorsAgg, getCartesianProduct(pmf1.priors, pmf2.priors))
     for i in eachindex(names)
         result[names[i]] = get(result, names[i], 0.0) + priors[i]
     end
@@ -1293,7 +1293,7 @@ First we create a die, throw it twice, multiply the outcome and report the produ
 #+BEGIN_SRC
 
 sides = [6, 8, 12]
-dies = Dict()
+dies::Dict{Int, Pmf{Int}} = Dict()
 
 for nSides in sides
     die = getPmfFromSeq(c(1:nSides))
@@ -1306,7 +1306,7 @@ We get the probs of throwing 12 for each die.
 
 #+BEGIN_SRC
 
-twelves = Dict()
+twelves::Dict{Int, Flt} = Dict()
 for nSides in sides
     twelves[nSides] = getPriorByName(dies[nSides], 12)
 end
@@ -1317,15 +1317,17 @@ We normalize the probs.
 
 #+BEGIN_SRC
 
-twelveProbs = Dict(k => v/sum(values(twelves)) for (k, v) in twelves)
+twelvesDist = getPmfFromSeq(sides)
+setPosteriors!(twelvesDist, [twelves[s] for s in sides])
+normalizePosteriors!(twelvesDist)
 
 #+END_SRC
 
-And get the probs that it was an 8-sided die.
+And check the probs that it was an 8-sided (or other-sided) die.
 
 #+BEGIN_SRC
 
-twelveProbs[8]
+twelvesDist
 
 #+END_SRC
 
