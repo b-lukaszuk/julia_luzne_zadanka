@@ -379,7 +379,6 @@ end
 
 #+END_SRC
 
-
 * 7.1. Cumulative Distribution Function
 
 So far we have used probability mass functions to represent distributions (PMF)
@@ -409,13 +408,13 @@ Now let's compare the PMF and CDF for the problem:
 
 #+BEGIN_SRC
 
-cumulative = cumsum(euroPmf.posteriors)
+euroCdf = pmf2cdf(euroPmf, false)
 
 Cmk.lines(euroPmf.names, euroPmf.posteriors, color=:orange, label="PMF",
           axis=(;title="Posterior distribution for the Euro problem",
                 xlabel="Proportion of heads(x)", ylabel="Probability",
                 xticks=0:0.2:1.0, yticks=0:0.2:1.0));
-Cmk.lines!(euroPmf.names, cumulative, color=:blue, label="CDF");
+Cmk.lines!(euroCdf.names, euroCdf.probabilities, color=:blue, label="CDF");
 Cmk.axislegend(position=:lt);
 Cmk.current_figure()
 
