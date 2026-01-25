@@ -379,3 +379,44 @@ end
 
 #+END_SRC
 
+
+* 7.1. Cumulative Distribution Function
+
+So far we have used probability mass functions to represent distributions (PMF)
+now we'll met the alternative, i.e. the cumulative distribution function (CDF).
+
+For that let's revise the euro problem (see section 4.1.):
+
+When spun on edge 250 times, a Belgian one-euro coin came up heads 140 times and
+tails 110. `It looks very suspicious to me,’ said Barry Blight, a statistics
+lecturer at the London School of Economics. `If the coin were unbiased, the
+chance of getting a result as extreme as that would be less than 7%.’
+
+We solved it previously like so:
+
+#+BEGIN_SRC
+
+euroPmf = getPmfFromSeq(c(range(0, 1, 101)))
+nHeads = 140
+nSpuns = 250
+
+updateBinomial!(euroPmf, nHeads, nSpuns)
+
+#+END_SRC
+
+
+Now let's compare the PMF and CDF for the problem:
+
+#+BEGIN_SRC
+
+cumulative = cumsum(euroPmf.posteriors)
+
+Cmk.lines(euroPmf.names, euroPmf.posteriors, color=:orange, label="PMF",
+          axis=(;title="Posterior distribution for the Euro problem",
+                xlabel="Proportion of heads(x)", ylabel="Probability",
+                xticks=0:0.2:1.0, yticks=0:0.2:1.0));
+Cmk.lines!(euroPmf.names, cumulative, color=:blue, label="CDF");
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
+
+#+END_SRC
