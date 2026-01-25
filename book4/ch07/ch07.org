@@ -1,0 +1,381 @@
+#+TITLE: Ch07. Minimum, Maximum, and Mixture
+#+STARTUP: overview
+#+STARTUP: indent
+#+OPTIONS: \n: t
+
+* Link to the chapter online
+[[https://allendowney.github.io/ThinkBayes2/chap07.html][Chapter 7]]
+
+* Warning
+*The content of this file may be incorrect, erroneous and/or harmful. Use it at Your own risk.*
+
+* Environment
+
+#+BEGIN_SRC
+
+println("Let's go.")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+cd(joinpath(homedir(), "Desktop", "julia/luzne_zadanka/book4/ch07")
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+using Pkg
+Pkg.activate(".")
+Pkg.status()
+
+#+END_SRC
+
+* Data Files
+None so far
+
+* Imports
+
+#+BEGIN_SRC
+
+# none so far
+
+#+END_SRC
+
+* Pmf
+** struct definition
+
+#+BEGIN_SRC
+
+len(collection) = length(collection)
+
+mutable struct Pmf{T}
+    names::Vec{T} # names of hypotheses
+    priors::Vec{Flt} # priors for each hypothesis
+    likelihoods::Vec{Flt} # likelihoods for each hypothesis
+    posteriors::Vec{Flt} # posteriors for each hypothesis
+
+    Pmf(ns::Vec{Int}, prs) =
+        (len(ns) != len(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Int}(
+            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
+        )
+
+    Pmf(ns::Vec{Flt}, prs) =
+        (len(ns) != len(prs)) ?
+        error("length(names) must be equal length(priors)") :
+        new{Flt}(
+            ns, (prs ./ sum(prs)), zeros(len(ns)), zeros(len(ns))
+        )
+end
+
+function round3(x::Flt)::Flt
+    return round(x, digits=3)
+end
+
+function getFirstN(v::Vec{A}, n::Int)::Str where A
+    @assert 0 < n <= 10 "n must be in range [1-10]"
+    vv::Vec{A} = first(v, n)
+    vv = eltype(v) == Flt ? round3.(vv) : vv
+    result::Str = join(string.(vv), ", ")
+    return len(v) > n ? result * "..." : result
+end
+
+function Base.show(io::IO, pmf::Pmf)
+    result::Str = "names: $(getFirstN(pmf.names, 10))\n"
+    result = result * "priors: $(getFirstN(pmf.priors, 10))\n"
+    result = result * "likelihoods: $(getFirstN(pmf.likelihoods, 10))\n"
+    result = result * "posteriors: $(getFirstN(pmf.posteriors, 10))\n"
+    print(io, result)
+    return nothing
+end
+
+#+END_SRC
+
+** helper fns
+
+#+BEGIN_SRC
+
+function pmf2df(pmf::Pmf{A})::Dfs.DataFrame where A<:Ufi
+    return Dfs.DataFrame(
+        (;
+        names=pmf.names,
+        priors=pmf.priors,
+        likelihoods=pmf.likelihoods,
+        posteriors=pmf.posteriors
+         )
+    )
+end
+
+function getPmfFromSeq(seq::Vec{T})::Pmf{T} where T<:Ufi
+    counts::Dict{T,Int} = Sb.countmap(seq)
+    sortedKeys::Vec{T} = keys(counts) |> collect |> sort
+    sortedVals::Vec{Int} = [counts[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
+end
+
+function getFieldValsEqName(pmf::Pmf{T}, name::T, fieldName::Str, default) where T<:Ufi
+    ind = findfirst(x -> x == name, getproperty(pmf, Symbol("names")))
+    return isnothing(ind) ? default : getproperty(pmf, Symbol(fieldName))[ind]
+end
+
+function getPriorByName(pmf::Pmf{T}, name::T)::Float64 where T<:Ufi
+    return getFieldValsEqName(pmf, name, "priors", 0.0)
+end
+
+function getPriorsByNames(pmf::Pmf{T}, names::Vec{T})::Vec{Float64} where T<:Ufi
+    return map(n -> getPriorByName(pmf, n), names)
+end
+
+function setLikelihoods!(pmf::Pmf{T}, newLikelihoods::Vec{Float64})::Pmf{T} where T<:Ufi
+    pmf.likelihoods = newLikelihoods
+    return pmf
+end
+
+function setPosteriors!(pmf::Pmf{T}, newPosteriors::Vec{Float64})::Pmf{T} where T<:Ufi
+    pmf.posteriors = newPosteriors
+    return pmf
+end
+
+"""
+        normalizes pmf.posteriors so they add up to 1
+"""
+function normalizePosteriors!(pmf::Pmf{T})::Pmf{T} where T<:Ufi
+    pmf.posteriors = pmf.posteriors ./ sum(pmf.posteriors)
+    return pmf
+end
+
+"""
+        updates posteriors (priors .* likeliehoods)
+        if normalize = true, then posteriors are normalized
+"""
+function bayesUpdate!(pmf::Pmf{T}, normalize::Bool)::Pmf{T} where T<:Ufi
+    setPosteriors!(pmf, pmf.priors .* pmf.likelihoods)
+    if normalize
+        normalizePosteriors!(pmf)
+    end
+    return pmf
+end
+
+function getIndMaxField(pmf::Pmf{T}, field::String)::Int where T<:Ufi
+    maxProb::Float64 = max(getproperty(pmf, Symbol(field))...)
+    return findfirst(x -> x == maxProb, getproperty(pmf, Symbol(field)))
+end
+
+function getIndMaxPosterior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "posteriors")
+end
+
+function getIndMaxPrior(pmf::Pmf)::Int
+    return getIndMaxField(pmf, "priors")
+end
+
+function getNameMaxPrior(pmf::Pmf{T})::T where T<:Ufi
+    return pmf.names[getIndMaxPrior(pmf)]
+end
+
+function getNameMaxPosterior(pmf::Pmf{T})::T where T<:Ufi
+    return pmf.names[getIndMaxPosterior(pmf)]
+end
+
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           nameThatOccurred::Ufi)::Pmf{<:Ufi}
+    hypos::Vec{<:Ufi} = pmf.names
+    likelihoods::Vec{Flt} = 1 ./ hypos
+    impossible::Bv = nameThatOccurred .> hypos
+    likelihoods[impossible] .= 0.0
+    setLikelihoods!(pmf, likelihoods)
+    if all(pmf.posteriors .== 0) # posteriors are initialized with 0s
+        return bayesUpdate!(pmf, true)
+    else
+        pmf.posteriors .*= pmf.likelihoods
+        return normalizePosteriors!(pmf)
+    end
+end
+
+function updatePosteriors!(pmf::Pmf{<:Ufi},
+                           namesThatOccurred::Vec{<:Ufi})::Pmf{<:Ufi}
+    foreach(n -> updatePosteriors!(pmf, n), namesThatOccurred)
+    return pmf
+end
+
+function getBinomPmf(n::Int, p::Flt)::Pmf{Int}
+    @assert n >= 0 "n must be >= 0"
+    @assert 0 <= p <= 1 "p must be in the range [0-1]"
+    binDst = Dst.Binomial(n, p)
+    ks::Vec{Int} = c(0:n)
+    return Pmf(ks, Dst.pdf.(binDst, ks))
+end
+
+function updateBinomial!(pmf::Pmf{<:Ufi},
+                           events::Vec{A},
+                           eventsProbs::Dict{A, Vec{Flt}})::Pmf{<:Ufi} where A
+    pmf.likelihoods .= 1
+    for e in events
+        pmf.likelihoods .*= eventsProbs[e]
+    end
+    return bayesUpdate!(pmf, true)
+end
+
+function updateBinomial!(pmf::Pmf{<:Ufi}, k::Int, n::Int)::Pmf{<:Ufi}
+    @assert n >= k >= 0 "n and k must be >= 0"
+    xs::Vec{<:Ufi} = pmf.names
+    likelihoods::Vec{Flt} = Dst.pdf.(Dst.Binomial.(n, xs), k)
+    setLikelihoods!(pmf, likelihoods)
+    return bayesUpdate!(pmf, true)
+end
+
+function drawPmf(pmf::Pmf{T}, drawFn!::Function, pmfFieldForYs::Str, title::Str,
+                 xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    fig::Cmk.Figure = Cmk.Figure(size=(600, 400))
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    drawFn!(ax, pmf.names, getproperty(pmf, Symbol(pmfFieldForYs)))
+    return fig
+end
+
+function drawPriors(pmf::Pmf{T}, drawFn!::Function, title::Str,
+                    xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn!, "priors", title, xlabel, ylabel)
+end
+
+function drawPosteriors(pmf::Pmf{T}, drawFn!::Function, title::Str,
+                        xlabel::Str, ylabel::Str)::Cmk.Figure where T<:Ufi
+    return drawPmf(pmf, drawFn!, "posteriors", title, xlabel, ylabel)
+end
+
+function getPosteriorLE(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
+    inds::Vec{Int} = findall((<=)(cutoffName), pmf.names)
+    return sum(pmf.posteriors[inds])
+end
+
+function getPosteriorGT(pmf::Pmf{T}, cutoffName::T)::Flt where T<:Ufi
+    inds::Vec{Int} = findall((>)(cutoffName), pmf.names)
+    return sum(pmf.posteriors[inds])
+end
+
+function getPosteriorQuantile(pmf::Pmf{T}, prob::Flt)::Flt where T<:Ufi
+    @assert 0 <= prob <= 1 "prob must be in range [0-1]"
+    totalProb::Flt = 0
+    for i in eachindex(pmf.posteriors)
+        totalProb += pmf.posteriors[i]
+        if totalProb >= prob
+            return pmf.names[i]
+        end
+    end
+    return -99.0
+end
+
+function getPosteriorCredibleInterval(pmf::Pmf{T}, prob::Flt)::Vec{Flt} where T<:Ufi
+    intervalLow::Flt = 0.5 - prob/2
+    intervalHigh::Flt = 0.5 + prob/2
+    return getPosteriorQuantile.(Ref(pmf), [intervalLow, intervalHigh])
+end
+
+function drawPriorsPosteriors(pmf::Pmf{<:Ufi}, drawFn!::Function,
+                              title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    drawFn!(ax, pmf.names, pmf.priors, label="prior")
+    drawFn!(ax, pmf.names, pmf.posteriors, label="posteriors")
+    Cmk.axislegend();
+    return fig
+end
+
+function drawProbsComparison(pmf1::Pmf{<:Ufi}, pmf2::Pmf{<:Ufi}, fieldName::Str,
+                             drawFn!::Function, label1::Str, label2::Str,
+                             title::Str, xlabel::Str, ylabel::Str)::Cmk.Figure
+    fig::Cmk.Figure = Cmk.Figure()
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title, xlabel=xlabel, ylabel=ylabel)
+    ys1::Vec{Flt} = getproperty(pmf1, Symbol(fieldName))
+    ys2::Vec{Flt} = getproperty(pmf2, Symbol(fieldName))
+    drawFn!(ax, pmf1.names, ys1, label=label1)
+    drawFn!(ax, pmf2.names, ys2, label=label2)
+    Cmk.axislegend();
+    return fig
+end
+
+function getCartesianProduct(v1::Vec{A}, v2::Vec{B})::Vec{Tuple{A, B}} where {A, B}
+    result::Vec{Tuple{A, B}} = Vec{Tuple{A, B}}(undef, length(v1) * length(v2))
+    i::Int = 1
+    for a in v1, b in v2
+        result[i] = (a, b)
+        i += 1
+    end
+    return result
+end
+
+"""
+aggregateDists
+    aggregates pmf1 and pmf2 into another Pmf
+    applies fnNames to cartesianProduct(pmf1.names, pmf2.names)
+    applies fnPriors to cartesianProduct(pmf1.priors, pmf2.priors)
+
+args:
+    fnNamesAgg - function to be applied on Tuple{Int, Int} (name1.1, name2.1), to aggregate two names
+    fnPriorsAgg - function to be applied on Tuple{Int, Int} (prior1.1, prior2.1) to aggregate two priors
+"""
+function aggregateDists(pmf1::Pmf{Int}, pmf2::Pmf{Int},
+                        fnNamesAgg::Function, fnPriorsAgg::Function)::Pmf{Int}
+    result::Dict{Int, Flt} = Dict()
+    names::Vec{Int} = map(fnNamesAgg, getCartesianProduct(pmf1.names, pmf2.names))
+    priors::Vec{Flt} = map(fnPriorsAgg, getCartesianProduct(pmf1.priors, pmf2.priors))
+    for i in eachindex(names)
+        result[names[i]] = get(result, names[i], 0.0) + priors[i]
+    end
+    sortedKeys::Vec{Int} = sort(c(keys(result)))
+    sortedVals::Vec{Flt} = [result[k] for k in sortedKeys]
+    return Pmf(sortedKeys, sortedVals)
+end
+
+function addDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return aggregateDists(pmf1, pmf2, sum, prod)
+end
+
+function difference(t::Tuple{Ufi, Ufi})::Ufi
+    return t[1] - t[2]
+end
+
+function subtractDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .- x, pmf1.priors)
+end
+
+function subtractDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return aggregateDists(pmf1, pmf2, difference, prod)
+end
+
+function multDist(pmf1::Pmf{Int}, x::Int)::Pmf{Int}
+    return Pmf(pmf1.names .* x, pmf1.priors)
+end
+
+function multDist(pmf1::Pmf{Int}, pmf2::Pmf{Int})::Pmf{Int}
+    return aggregateDists(pmf1, pmf2, prod, prod)
+end
+
+#+END_SRC
+
+** other fns
+
+#+BEGIN_SRC
+
+function rep(x::A, times::Int)::Vec{A} where A
+    @assert times > 1 "times must be greater than 1"
+    return [x for _ in 1:times]
+end
+
+function rep(v::Vec{A}, times::Vec{Int})::Vec{A} where A
+    @assert (len(v) == len(times)) "length(v) not equal length(times)"
+    @assert all(map((>)(0), times)) "times elts must be GT 0"
+    result::Vec{A} = Vec{eltype(v)}(undef, sum(times))
+    currInd::Int = 1
+    for i in eachindex(v)
+        for _ in 1:times[i]
+            result[currInd] = v[i]
+            currInd += 1
+        end
+    end
+    return result
+end
+
+#+END_SRC
+
