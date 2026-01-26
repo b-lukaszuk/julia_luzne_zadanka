@@ -482,3 +482,19 @@ Cmk.axislegend(position=:lt);
 Cmk.current_figure()
 
 #+END_SRC
+
+What is the probability that a coin gives in reality $\le 0.61$ heads?
+
+#+BEGIN_SRC
+
+euroCdf.probabilities[findfirst((==)(0.61), euroCdf.names)]
+
+#+END_SRC
+
+Answering the opposite question is also possible.
+
+#+BEGIN_SRC
+
+euroCdf.names[findfirst(n -> isapprox(n, 0.96, atol=0.005), euroCdf.probabilities)]
+
+#+END_SRC
