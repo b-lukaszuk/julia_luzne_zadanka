@@ -487,7 +487,7 @@ What is the probability that a coin gives in reality $\le 0.61$ heads?
 
 #+BEGIN_SRC
 
-euroCdf.probabilities[findfirst((==)(0.61), euroCdf.names)]
+getFirstProbGtEqName(euroCdf, 0.61)
 
 #+END_SRC
 
@@ -495,6 +495,26 @@ Answering the opposite question is also possible.
 
 #+BEGIN_SRC
 
-euroCdf.names[findfirst(n -> isapprox(n, 0.96, atol=0.005), euroCdf.probabilities)]
+getFirstNameGtEqProb(euroCdf, 0.96)
 
 #+END_SRC
+
+We can also calculate credible interval:
+
+#+BEGIN_SRC
+
+getCredibleInterval(euroCdf, 0.9)
+
+#+END_SRC
+
+We can convert `CDF` to `PMF` with:
+
+#+BEGIN_SRC
+
+pmfEuro = cdf2Pmf(euroCdf)
+
+#+END_SRC
+
+One reason `Cdf` objects are useful is that they compute quantiles efficiently.
+Another is that they make it easy to compute the distribution of a maximum or
+minimum, as we’ll see in the next section.
