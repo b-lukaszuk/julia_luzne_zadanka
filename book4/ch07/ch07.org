@@ -379,6 +379,69 @@ end
 
 #+END_SRC
 
+* Cdf
+** struct definition
+
+#+BEGIN_SRC
+
+len(collection) = length(collection)
+
+mutable struct Cdf{T}
+    names::Vector{T}
+    probabilities::Vector{Float64}
+
+    # probabilities are uniform, i.e. initially each prior is equally likely
+    Cdf(ns::Vector{Int}, posts) =
+        (len(ns) != len(posts)) ?
+        error("length(names) must be equal length(probabilities)") :
+        new{Int}(ns, posts)
+    Cdf(ns::Vector{Float64}, posts) =
+        (len(ns) != len(posts)) ?
+        error("length(names) must be equal length(probabilities)") :
+        new{Float64}(ns, posts)
+end
+
+function round3(x::Flt)::Flt
+    return round(x, digits=3)
+end
+
+function getFirstN(v::Vec{A}, n::Int)::Str where A
+    @assert 0 < n <= 10 "n must be in range [1-10]"
+    vv::Vec{A} = first(v, n)
+    vv = eltype(v) == Flt ? round3.(vv) : vv
+    result::Str = join(string.(vv), ", ")
+    return len(v) > n ? result * "..." : result
+end
+
+function Base.show(io::IO, cdf::Cdf)
+    result::Str = "names: $(getFirstN(cdf.names, 10))\n"
+    result = result * "probabilities: $(getFirstN(cdf.probabilities, 10))\n"
+    print(io, result)
+    return nothing
+end
+
+#+END_SRC
+
+** helper fns
+
+#+BEGIN_SRC
+
+function pmf2cdf(pmfDist::Pmf, usePriors::Bool=true)::Cdf
+    if usePriors
+        return Cdf(deepcopy(pmfDist.names), cumsum(pmfDist.priors))
+    else
+        return Cdf(deepcopy(pmfDist.names), cumsum(pmfDist.posteriors))
+    end
+end
+
+function cdf2Pmf(cdfDist::Cdf)::Pmf
+    diffs::Vector{Float64} = diff(cdfDist.probabilities)
+    prepend!(diffs, cdfDist.probabilities[1])
+    return Pmf(cdfDist.names, diffs)
+end
+
+#+END_SRC
+
 * 7.1. Cumulative Distribution Function
 
 So far we have used probability mass functions to represent distributions (PMF)
