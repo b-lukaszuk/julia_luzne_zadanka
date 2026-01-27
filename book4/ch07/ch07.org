@@ -533,3 +533,22 @@ pmfEuro = cdf2Pmf(euroCdf)
 One reason `Cdf` objects are useful is that they compute quantiles efficiently.
 Another is that they make it easy to compute the distribution of a maximum or
 minimum, as we’ll see in the next section.
+
+* 7.2. Best Three of Four
+
+In Dungeons & Dragons, each character has six attributes:
+
+- strength,
+- intelligence,
+- wisdom,
+- dexterity,
+- constitution, and
+- charisma.
+
+To generate a new character, players roll four 6-sided dice for each attribute
+and add up the best three. For example, if I roll for strength and get 1, 2, 3,
+4 on the dice, my character’s strength would be the sum of 2, 3, and 4, which
+is 9.
+
+As an exercise, let’s figure out the distribution of these attributes. Then, for
+each character, we’ll figure out the distribution of their best attribute.
