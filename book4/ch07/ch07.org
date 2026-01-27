@@ -440,6 +440,21 @@ function cdf2Pmf(cdfDist::Cdf)::Pmf
     return Pmf(cdfDist.names, diffs)
 end
 
+function getFirstNameGtEqProb(cdfDist::Cdf, prob::Float64)::Ufi
+    @assert 0 <= prob <= 1 "prob must be in range [0-1]"
+    return cdfDist.names[findfirst(x -> x >= prob, cdfDist.probabilities)]
+end
+
+function getFirstProbGtEqName(cdfDist::Cdf, name::Ufi)::Flt
+    return cdfDist.probabilities[findfirst(x -> x >= name, cdfDist.names)]
+end
+
+function getCredibleInterval(cdfDist::Cdf, prob::Float64)::Vector{Ufi}
+    @assert 0 <= prob <= 1 "prob must be in range [0-1]"
+    probs::Vector{Float64} = [0.5 - prob / 2, 0.5 + prob / 2]
+    return [getFirstNameGtEqProb(cdfDist, p) for p in probs]
+end
+
 #+END_SRC
 
 * 7.1. Cumulative Distribution Function
