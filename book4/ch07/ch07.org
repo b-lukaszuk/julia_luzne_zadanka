@@ -551,4 +551,25 @@ and add up the best three. For example, if I roll for strength and get 1, 2, 3,
 is 9.
 
 As an exercise, let’s figure out the distribution of these attributes. Then, for
-each character, we’ll figure out the distribution of their best attribute.
+each character, we’ll figure out the distribution of their best attribute, e.g.
+
+#+BEGIN_SRC
+
+die = getPmfFromSeq(c(1:6))
+dice = rep(die, 3)
+
+# distribution of the sum of three dice
+pmf3die = addDistSeq(dice)
+
+#+END_SRC
+
+and:
+
+#+BEGIN_SRC
+
+Cmk.lines(pmf3die.names, pmf3die.priors, color=:blue,
+          axis=(; title="Distribution of attributes", xlabel="Outcome", ylabel="PMF",
+                xticks=4:2:18, yticks=0:0.02:0.12)
+          )
+
+#+END_SRC
