@@ -619,3 +619,33 @@ Cmk.current_figure()
 #+END_SRC
 
 As expected best 3 of 4 tends to yield higher values.
+
+* 7.3. Maximum
+
+To compute the distribution of a maximum or minimum, we'll use a `Cdf`.
+
+#+BEGIN_SRC
+
+cdfBest3of4 = pmf2cdf(pmfBest3of4)
+
+#+END_SRC
+
+`Cdf(x)` is a probability that a quantity is $\le x$ or equivalently that a random
+value chosen from the distribution is $\le x$.
+
+If we draw 6 values of the distribution then the probability that all 6 of them
+are $\le x$ is `Cdf(x)` raised to the 6th power:
+
+#+BEGIN_SRC
+
+cdfBest3of4.probabilities .^ 6
+
+#+END_SRC
+
+If all 6 values are $\le x$ that means that their maximum is $\le x$:
+
+#+BEGIN_SRC
+
+cdfMax6 = Cdf(copy(cdfBest3of4.names), cdfBest3of4.probabilities .^ 6)
+
+#+END_SRC
