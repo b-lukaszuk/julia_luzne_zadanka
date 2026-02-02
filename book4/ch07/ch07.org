@@ -573,3 +573,49 @@ Cmk.lines(pmf3die.names, pmf3die.priors, color=:blue,
           )
 
 #+END_SRC
+
+Best 3 of 4 is a bit troublesome, so let's do a computer simulation.
+
+#+BEGIN_SRC
+
+nRows = 10_000
+nCols = 4
+a = rand(1:6, nRows, nCols)
+
+#+END_SRC
+
+Choose best 3 of 4 per row and get its sum.
+
+#+BEGIN_SRC
+
+# sort ascending
+sort!(a, dims=2) # dims=1 columnwise, dims=2 rowwise
+b = a[:, 2:end]
+sumsBest3of4 = sum(b, dims=2)
+
+#+END_SRC
+
+Time to create a Pmf.
+
+#+BEGIN_SRC
+
+pmfBest3of4 = getPmfFromSeq(sumsBest3of4[:, 1])
+
+#+END_SRC
+
+And see the probability distribution.
+
+#+BEGIN_SRC
+
+Cmk.lines(pmf3die.names, pmf3die.priors, color=:blue, label="sum of 3 dice",
+          axis=(; title="Distribution of attributes", xlabel="Outcome", ylabel="PMF",
+                xticks=4:2:18, yticks=0:0.02:0.12)
+          );
+Cmk.lines!(pmfBest3of4.names, pmfBest3of4.priors, color=:orange,
+           linestyle=:dash , label="best 3 of 4");
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
+
+#+END_SRC
+
+As expected best 3 of 4 tends to yield higher values.
