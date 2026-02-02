@@ -642,10 +642,42 @@ cdfBest3of4.probabilities .^ 6
 
 #+END_SRC
 
-If all 6 values are $\le x$ that means that their maximum is $\le x$:
+If all 6 values are $\le x$ that means that their maximum is $\le x$, we can express
+it as a `Cdf`:
 
 #+BEGIN_SRC
 
 cdfMax6 = Cdf(copy(cdfBest3of4.names), cdfBest3of4.probabilities .^ 6)
+
+#+END_SRC
+
+The equivalent `Pmf` is:
+
+#+BEGIN_SRC
+
+pmfMax6 = cdf2Pmf(cdfMax6)
+Cmk.lines(pmfMax6.names, pmfMax6.priors, color=:blue, label="max of 6 attributes",
+          axis=(;title="Distribution of attributes", xlabel="Outcome", ylabel="PMF",
+                xticks=4:2:18, yticks=0:0.05:0.25)
+          );
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
+
+#+END_SRC
+
+Below, the comparison of the three `Cdf`s we have computed so far.
+
+#+BEGIN_SRC
+
+cdf3die = pmf2cdf(pmf3die)
+Cmk.lines(cdf3die.names, cdf3die.probabilities, color=:blue, label="sum of 3 dice",
+          axis=(;title="Distribution of attributes", xlabel="Outcome", ylabel="CDF",
+                xticks=4:2:18, yticks=0:0.2:1));
+Cmk.lines!(cdfBest3of4.names, cdfBest3of4.probabilities, color=:orange,
+           linestyle=:dash, label="best 3 of 4 dice");
+Cmk.lines!(cdfMax6.names, cdfMax6.probabilities, color=:green,
+           linestyle=:dot, label="max of 6 attributes");
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
 
 #+END_SRC
