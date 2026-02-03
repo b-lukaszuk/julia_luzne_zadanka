@@ -681,3 +681,17 @@ Cmk.axislegend(position=:lt);
 Cmk.current_figure()
 
 #+END_SRC
+
+* 7.4. Minimum
+
+Previously we computed the distribution of a character's best attribute. Now,
+let's compute the distribution of the worst.
+
+First, we compute the *complementary CDF*, i.e. the probability that a value from
+the distribution is greater than `x`.
+
+#+BEGIN_SRC
+
+prob_gt = 1 .- cdfBest3of4.probabilities
+
+#+END_SRC
