@@ -712,3 +712,28 @@ complementary CDF of the minimum:
 probLe6 = 1 .- probGt6
 
 #+END_SRC
+
+Let's convert it to a `Cdf`:
+
+#+BEGIN_SRC
+
+cdfMin6 = Cdf(cdfBest3of4.names |> copy, probLe6)
+
+#+END_SRC
+
+Let's compare it with the maximum:
+
+#+BEGIN_SRC
+
+Cmk.lines(cdfMin6.names, cdfMin6.probabilities,
+          color=:purple, label="minimum of 6",
+          axis=(;title="Minimum and maximum of six attributes",
+                xlabel="Outcome", ylabel="CDF", xticks=4:2:18, yticks=0:0.2:1)
+          );
+Cmk.lines!(cdfMax6.names, cdfMax6.probabilities,
+          color=:green, linestyle=:dot, label="maximum of 6",
+          );
+Cmk.axislegend(position=:lt);
+Cmk.current_figure()
+
+#+END_SRC
