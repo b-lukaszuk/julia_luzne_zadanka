@@ -692,6 +692,23 @@ the distribution is greater than `x`.
 
 #+BEGIN_SRC
 
-prob_gt = 1 .- cdfBest3of4.probabilities
+probGt = 1 .- cdfBest3of4.probabilities
+
+#+END_SRC
+
+For instance, the probability that all 6 exceed `x` is:
+
+#+BEGIN_SRC
+
+probGt6 = probGt .^ 6
+
+#+END_SRC
+
+If all 6 exceed `x`, that means their minimum exceeds `x`, so `probGt6` is the
+complementary CDF of the minimum:
+
+#+BEGIN_SRC
+
+probLe6 = 1 .- probGt6
 
 #+END_SRC
